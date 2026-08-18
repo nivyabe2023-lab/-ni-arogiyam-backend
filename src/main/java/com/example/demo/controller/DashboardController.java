@@ -9,7 +9,6 @@ import com.example.demo.repository.DoctorRepository;
 import com.example.demo.repository.MedicineRepository;
 import com.example.demo.repository.PatientRepository;
 import com.example.demo.repository.PrescriptionRepository;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +19,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/dashboard")
-@CrossOrigin(origins = "http://localhost:5173")
 public class DashboardController {
 
     private final PatientRepository patientRepository;
