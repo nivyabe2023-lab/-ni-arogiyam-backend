@@ -37,7 +37,6 @@ frontend/
 # Node dependencies
 node_modules/
 # Local Spring Boot configuration - DO NOT UPLOAD
-src/main/resources/application.properties
 
 # Local JDK - DO NOT UPLOAD
 .jdk/
