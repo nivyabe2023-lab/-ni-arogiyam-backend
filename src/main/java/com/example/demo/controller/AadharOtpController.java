@@ -65,37 +65,86 @@ public class AadharOtpController {
         boolean realSmsSent = false;
         String providerMessage = "";
 
-        // If Fast2SMS API key is provided, send real SMS to mobile
+        // If Fast2SMS API key is provided, attempt sending real SMS across available routes
         if (fast2smsApiKey != null && !fast2smsApiKey.trim().isEmpty() && phoneNumber.length() == 10) {
-            try {
-                RestTemplate restTemplate = new RestTemplate();
-                
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("authorization", fast2smsApiKey.trim());
-                headers.setContentType(MediaType.APPLICATION_JSON);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("authorization", fast2smsApiKey.trim());
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-                // Fast2SMS OTP POST payload
-                Map<String, Object> requestBody = Map.of(
+            // Attempt 1: Fast2SMS OTP Route
+            try {
+                Map<String, Object> otpBody = Map.of(
                     "route", "otp",
                     "variables_values", generatedOtp,
                     "numbers", phoneNumber
                 );
-
-                HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-
+                HttpEntity<Map<String, Object>> entity = new HttpEntity<>(otpBody, headers);
                 ResponseEntity<String> response = restTemplate.exchange(
                     "https://www.fast2sms.com/dev/bulkV2",
                     HttpMethod.POST,
-                    requestEntity,
+                    entity,
                     String.class
                 );
-
-                realSmsSent = response.getStatusCode().is2xxSuccessful();
-                providerMessage = "Real SMS dispatched to " + phoneNumber;
-                System.out.println("Fast2SMS Response: " + response.getBody());
+                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null && response.getBody().contains("\"return\":true")) {
+                    realSmsSent = true;
+                    providerMessage = "Real SMS delivered to " + phoneNumber;
+                }
             } catch (Exception e) {
-                System.err.println("Fast2SMS Send Error: " + e.getMessage());
-                providerMessage = "Fast2SMS notification: " + e.getMessage();
+                System.err.println("Fast2SMS OTP route attempt failed: " + e.getMessage());
+            }
+
+            // Attempt 2: Fast2SMS Quick Route (if OTP route failed)
+            if (!realSmsSent) {
+                try {
+                    Map<String, Object> qBody = Map.of(
+                        "route", "q",
+                        "message", "Your NI AROGIYAM Aadhaar verification OTP is " + generatedOtp + ". Valid for 5 mins.",
+                        "language", "english",
+                        "flash", 0,
+                        "numbers", phoneNumber
+                    );
+                    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(qBody, headers);
+                    ResponseEntity<String> response = restTemplate.exchange(
+                        "https://www.fast2sms.com/dev/bulkV2",
+                        HttpMethod.POST,
+                        entity,
+                        String.class
+                    );
+                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null && response.getBody().contains("\"return\":true")) {
+                        realSmsSent = true;
+                        providerMessage = "Real SMS dispatched via Fast2SMS Quick Route to " + phoneNumber;
+                    }
+                } catch (Exception e) {
+                    System.err.println("Fast2SMS Quick route attempt failed: " + e.getMessage());
+                }
+            }
+
+            // Attempt 3: Fast2SMS v3 Route (if Quick route failed)
+            if (!realSmsSent) {
+                try {
+                    Map<String, Object> v3Body = Map.of(
+                        "route", "v3",
+                        "sender_id", "TXTIND",
+                        "message", "Your NI AROGIYAM Aadhaar verification OTP is " + generatedOtp + ". Valid for 5 mins.",
+                        "language", "english",
+                        "flash", 0,
+                        "numbers", phoneNumber
+                    );
+                    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(v3Body, headers);
+                    ResponseEntity<String> response = restTemplate.exchange(
+                        "https://www.fast2sms.com/dev/bulkV2",
+                        HttpMethod.POST,
+                        entity,
+                        String.class
+                    );
+                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null && response.getBody().contains("\"return\":true")) {
+                        realSmsSent = true;
+                        providerMessage = "Real SMS dispatched via Fast2SMS v3 Route to " + phoneNumber;
+                    }
+                } catch (Exception e) {
+                    System.err.println("Fast2SMS v3 route attempt failed: " + e.getMessage());
+                }
             }
         }
 
