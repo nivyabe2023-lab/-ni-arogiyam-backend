@@ -220,7 +220,7 @@ public class AadharOtpController {
                 try {
                     Map<String, Object> reqBody = new HashMap<>();
                     reqBody.put("@entity", "in.co.sandbox.kyc.aadhaar.okyc.request");
-                    reqBody.put("reference_id", Long.parseLong(record.referenceId));
+                    reqBody.put("reference_id", String.valueOf(record.referenceId));
                     reqBody.put("otp", otp);
 
                     String jsonBody = objectMapper.writeValueAsString(reqBody);
@@ -241,6 +241,18 @@ public class AadharOtpController {
                     if (verifyResp.statusCode() == 200 && verifyResp.body() != null) {
                         JsonNode root = objectMapper.readTree(verifyResp.body());
                         JsonNode dataNode = root.get("data");
+
+                        String message = dataNode != null && dataNode.has("message") 
+                            ? dataNode.get("message").asText() 
+                            : "";
+
+                        // Check if Sandbox returned an error message like "OTP expired" or "Invalid OTP"
+                        if (message.toLowerCase().contains("expired") || message.toLowerCase().contains("invalid") || message.toLowerCase().contains("failed")) {
+                            return ResponseEntity.badRequest().body(Map.of(
+                                "verified", false,
+                                "message", message + ". Please request a new OTP and try again."
+                            ));
+                        }
 
                         otpCache.remove(aadharNumber);
 
