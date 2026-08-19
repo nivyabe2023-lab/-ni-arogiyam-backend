@@ -303,4 +303,20 @@ public class UserService {
                 savedUser.getEmail()
         );
     }
+
+    // =========================================================
+    // GET ALL REGISTERED USERS
+    // =========================================================
+
+    public java.util.List<java.util.Map<String, Object>> getAllUsers() {
+        return userRepository.findAll().stream().map(u -> {
+            java.util.Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", u.getId());
+            map.put("username", u.getUsername());
+            map.put("fullName", u.getFullName());
+            map.put("email", u.getEmail());
+            map.put("role", u.getRole());
+            return map;
+        }).toList();
+    }
 }
