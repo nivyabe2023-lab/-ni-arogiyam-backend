@@ -17,14 +17,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
 
                 registry.addMapping("/**")
-
-                        .allowedOriginPatterns(
-                                "http://localhost:5173",
-                                "http://127.0.0.1:5173",
-                                "https://ni-arogiyam.vercel.app",
-                                "https://ni-arogiyam-*.vercel.app"
-                        )
-
+                        .allowedOriginPatterns("*")
                         .allowedMethods(
                                 "GET",
                                 "POST",
@@ -33,10 +26,10 @@ public class CorsConfig {
                                 "PATCH",
                                 "OPTIONS"
                         )
-
                         .allowedHeaders("*")
-
-                        .allowCredentials(true);
+                        .exposedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(3600);
             }
         };
     }

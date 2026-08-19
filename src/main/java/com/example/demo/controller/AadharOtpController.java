@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api/aadhar")
-@CrossOrigin(origins = "*")
 public class AadharOtpController {
 
     @Value("${sandbox.api.key:key_live_8e0e61c26c0f4639b56827d9f891c800}")
