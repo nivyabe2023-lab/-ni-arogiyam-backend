@@ -18,6 +18,7 @@ public class Patient {
     private String bloodGroup;
     private String disease;
     private String address;
+    private String aadharNumber;
 
     // Default Constructor
     public Patient() {
@@ -26,7 +27,7 @@ public class Patient {
     // Parameterized Constructor
     public Patient(Long patientId, String firstName, String lastName, int age,
                    String gender, String phoneNumber, String bloodGroup,
-                   String disease, String address) {
+                   String disease, String address, String aadharNumber) {
         this.patientId = patientId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -36,6 +37,7 @@ public class Patient {
         this.bloodGroup = bloodGroup;
         this.disease = disease;
         this.address = address;
+        this.aadharNumber = aadharNumber;
     }
 
     public Long getPatientId() {
@@ -108,5 +110,13 @@ public class Patient {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getAadharNumber() {
+        return aadharNumber;
+    }
+
+    public void setAadharNumber(String aadharNumber) {
+        this.aadharNumber = aadharNumber;
     }
 }

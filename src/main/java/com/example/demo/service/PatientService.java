@@ -48,6 +48,7 @@ public class PatientService {
         existingPatient.setBloodGroup(patientDetails.getBloodGroup());
         existingPatient.setDisease(patientDetails.getDisease());
         existingPatient.setAddress(patientDetails.getAddress());
+        existingPatient.setAadharNumber(patientDetails.getAadharNumber());
 
         return patientRepository.save(existingPatient);
     }
