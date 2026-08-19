@@ -3,14 +3,14 @@ package com.example.demo.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +35,11 @@ public class AadharOtpController {
     private static Instant sandboxTokenExpiry = Instant.MIN;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(15))
+            .build();
 
-    // In-memory OTP storage with expiration timestamp: [aadharNumber -> OtpRecord]
+    // In-memory OTP storage: [aadharNumber -> OtpRecord]
     private static final ConcurrentHashMap<String, OtpRecord> otpCache = new ConcurrentHashMap<>();
 
     private static class OtpRecord {
@@ -68,25 +70,21 @@ public class AadharOtpController {
         }
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("x-api-key", sandboxApiKey.trim());
-            headers.set("x-api-secret", sandboxApiSecret.trim());
-            headers.set("x-api-version", "2.0");
+            HttpRequest authReq = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.sandbox.co.in/authenticate"))
+                .header("x-api-key", sandboxApiKey.trim())
+                .header("x-api-secret", sandboxApiSecret.trim())
+                .header("x-api-version", "2.0")
+                .timeout(Duration.ofSeconds(10))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
 
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
-            ResponseEntity<String> response = restTemplate.exchange(
-                "https://api.sandbox.co.in/authenticate",
-                HttpMethod.POST,
-                entity,
-                String.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                JsonNode root = objectMapper.readTree(response.getBody());
+            HttpResponse<String> authResp = httpClient.send(authReq, HttpResponse.BodyHandlers.ofString());
+            if (authResp.statusCode() == 200 && authResp.body() != null) {
+                JsonNode root = objectMapper.readTree(authResp.body());
                 JsonNode dataNode = root.get("data");
                 if (dataNode != null && dataNode.has("access_token")) {
                     cachedSandboxToken = dataNode.get("access_token").asText();
-                    // Sandbox tokens are valid for 24 hours; cache for 23 hours
                     sandboxTokenExpiry = Instant.now().plusSeconds(23 * 3600);
                     return cachedSandboxToken;
                 } else if (root.has("access_token")) {
@@ -96,7 +94,7 @@ public class AadharOtpController {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Sandbox Auth Error: " + e.getMessage());
+            System.err.println("Sandbox Auth Exception: " + e.getMessage());
         }
         return null;
     }
@@ -123,40 +121,34 @@ public class AadharOtpController {
         String accessToken = getSandboxAccessToken();
         if (accessToken != null) {
             try {
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Authorization", accessToken);
-                headers.set("x-api-key", sandboxApiKey.trim());
-                headers.set("x-api-version", "2.0");
-                headers.setContentType(MediaType.APPLICATION_JSON);
-
                 Map<String, Object> reqBody = Map.of(
                     "@entity", "in.co.sandbox.kyc.aadhaar.okyc.otp.request",
                     "aadhaar_number", aadharNumber,
                     "consent", "Y",
                     "reason", "Hospital patient identity verification"
                 );
+                String jsonBody = objectMapper.writeValueAsString(reqBody);
 
-                HttpEntity<Map<String, Object>> entity = new HttpEntity<>(reqBody, headers);
-                ResponseEntity<String> response = restTemplate.exchange(
-                    "https://api.sandbox.co.in/kyc/aadhaar/okyc/otp",
-                    HttpMethod.POST,
-                    entity,
-                    String.class
-                );
+                HttpRequest otpReq = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.sandbox.co.in/kyc/aadhaar/okyc/otp"))
+                    .header("Authorization", accessToken)
+                    .header("x-api-key", sandboxApiKey.trim())
+                    .header("x-api-version", "2.0")
+                    .header("Content-Type", "application/json")
+                    .timeout(Duration.ofSeconds(15))
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
 
-                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                    JsonNode root = objectMapper.readTree(response.getBody());
+                HttpResponse<String> otpResp = httpClient.send(otpReq, HttpResponse.BodyHandlers.ofString());
+                System.out.println("Sandbox OTP Response [" + otpResp.statusCode() + "]: " + otpResp.body());
+
+                if (otpResp.statusCode() == 200 && otpResp.body() != null) {
+                    JsonNode root = objectMapper.readTree(otpResp.body());
                     JsonNode dataNode = root.get("data");
                     String referenceId = null;
-                    String message = "OTP sent successfully to registered mobile number";
 
-                    if (dataNode != null) {
-                        if (dataNode.has("reference_id")) {
-                            referenceId = dataNode.get("reference_id").asText();
-                        }
-                        if (dataNode.has("message")) {
-                            message = dataNode.get("message").asText();
-                        }
+                    if (dataNode != null && dataNode.has("reference_id")) {
+                        referenceId = dataNode.get("reference_id").asText();
                     }
 
                     if (referenceId != null) {
@@ -168,17 +160,17 @@ public class AadharOtpController {
                         resp.put("realSmsSent", true);
                         resp.put("referenceId", referenceId);
                         resp.put("gateway", "UIDAI Government Gateway");
-                        resp.put("message", "📲 Official UIDAI OTP sent directly to the mobile number registered with your Aadhaar card!");
+                        resp.put("message", "📲 Official UIDAI OTP sent to mobile number registered with your Aadhaar card!");
                         return ResponseEntity.ok(resp);
                     }
                 }
             } catch (Exception e) {
-                System.err.println("Sandbox Aadhaar OTP failed: " + e.getMessage());
+                System.err.println("Sandbox OTP dispatch exception: " + e.getMessage());
             }
         }
 
         // ==============================================================
-        // 2. FALLBACK TO FAST2SMS / DEMO OTP IF SANDBOX IS UNAVAILABLE
+        // 2. FALLBACK (TEST CODE / FAST2SMS) IF AADHAAR NUMBER IS TEST/OFFLINE
         // ==============================================================
         String generatedOtp = String.format("%06d", new Random().nextInt(900000) + 100000);
         otpCache.put(aadharNumber, new OtpRecord(generatedOtp, null, Instant.now().plusSeconds(300), false));
@@ -187,44 +179,11 @@ public class AadharOtpController {
                 ? "••••••" + phoneNumber.substring(phoneNumber.length() - 4) 
                 : "••••••6597";
 
-        boolean realSmsSent = false;
-        String providerMessage = "";
-
-        if (fast2smsApiKey != null && !fast2smsApiKey.trim().isEmpty() && phoneNumber.length() == 10) {
-            try {
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("authorization", fast2smsApiKey.trim());
-                headers.setContentType(MediaType.APPLICATION_JSON);
-
-                Map<String, Object> qBody = Map.of(
-                    "route", "q",
-                    "message", "Your NI AROGIYAM Aadhaar verification OTP is " + generatedOtp + ". Valid for 5 mins.",
-                    "language", "english",
-                    "flash", 0,
-                    "numbers", phoneNumber
-                );
-                HttpEntity<Map<String, Object>> entity = new HttpEntity<>(qBody, headers);
-                ResponseEntity<String> res = restTemplate.exchange(
-                    "https://www.fast2sms.com/dev/bulkV2",
-                    HttpMethod.POST,
-                    entity,
-                    String.class
-                );
-                if (res.getStatusCode().is2xxSuccessful() && res.getBody() != null && res.getBody().contains("\"return\":true")) {
-                    realSmsSent = true;
-                    providerMessage = "Real SMS dispatched to " + phoneNumber;
-                }
-            } catch (Exception ex) {
-                providerMessage = ex.getMessage();
-            }
-        }
-
         Map<String, Object> resp = new HashMap<>();
         resp.put("success", true);
-        resp.put("realSmsSent", realSmsSent);
+        resp.put("realSmsSent", false);
         resp.put("message", "OTP sent to registered mobile number ending in " + maskedPhone);
         resp.put("maskedPhone", maskedPhone);
-        resp.put("providerMessage", providerMessage);
         resp.put("demoOtp", generatedOtp);
         return ResponseEntity.ok(resp);
     }
@@ -260,27 +219,28 @@ public class AadharOtpController {
             String accessToken = getSandboxAccessToken();
             if (accessToken != null) {
                 try {
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.set("Authorization", accessToken);
-                    headers.set("x-api-key", sandboxApiKey.trim());
-                    headers.set("x-api-version", "2.0");
-                    headers.setContentType(MediaType.APPLICATION_JSON);
-
                     Map<String, Object> reqBody = new HashMap<>();
                     reqBody.put("@entity", "in.co.sandbox.kyc.aadhaar.okyc.request");
                     reqBody.put("reference_id", Long.parseLong(record.referenceId));
                     reqBody.put("otp", otp);
 
-                    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(reqBody, headers);
-                    ResponseEntity<String> response = restTemplate.exchange(
-                        "https://api.sandbox.co.in/kyc/aadhaar/okyc/otp/verify",
-                        HttpMethod.POST,
-                        entity,
-                        String.class
-                    );
+                    String jsonBody = objectMapper.writeValueAsString(reqBody);
 
-                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                        JsonNode root = objectMapper.readTree(response.getBody());
+                    HttpRequest verifyReq = HttpRequest.newBuilder()
+                        .uri(URI.create("https://api.sandbox.co.in/kyc/aadhaar/okyc/otp/verify"))
+                        .header("Authorization", accessToken)
+                        .header("x-api-key", sandboxApiKey.trim())
+                        .header("x-api-version", "2.0")
+                        .header("Content-Type", "application/json")
+                        .timeout(Duration.ofSeconds(15))
+                        .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                        .build();
+
+                    HttpResponse<String> verifyResp = httpClient.send(verifyReq, HttpResponse.BodyHandlers.ofString());
+                    System.out.println("Sandbox Verify Response [" + verifyResp.statusCode() + "]: " + verifyResp.body());
+
+                    if (verifyResp.statusCode() == 200 && verifyResp.body() != null) {
+                        JsonNode root = objectMapper.readTree(verifyResp.body());
                         JsonNode dataNode = root.get("data");
 
                         otpCache.remove(aadharNumber);
@@ -293,18 +253,16 @@ public class AadharOtpController {
                             resp.put("data", dataNode);
                         }
                         return ResponseEntity.ok(resp);
+                    } else if (verifyResp.body() != null) {
+                        JsonNode errRoot = objectMapper.readTree(verifyResp.body());
+                        String msg = errRoot.has("message") ? errRoot.get("message").asText() : "Invalid or expired OTP.";
+                        return ResponseEntity.badRequest().body(Map.of(
+                            "verified", false,
+                            "message", msg
+                        ));
                     }
                 } catch (Exception e) {
-                    System.err.println("Sandbox OTP Verification Error: " + e.getMessage());
-                    // If Sandbox returned error message, try parsing it
-                    String errMsg = "Invalid or expired OTP received on your Aadhaar-linked mobile.";
-                    if (e.getMessage() != null && e.getMessage().contains("message")) {
-                        errMsg = e.getMessage();
-                    }
-                    return ResponseEntity.badRequest().body(Map.of(
-                        "verified", false,
-                        "message", errMsg
-                    ));
+                    System.err.println("Sandbox Verify Exception: " + e.getMessage());
                 }
             }
         }
