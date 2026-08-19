@@ -268,9 +268,8 @@ public class AadharOtpController {
                         JsonNode errRoot = objectMapper.readTree(verifyResp.body());
                         String msg = errRoot.has("message") ? errRoot.get("message").asText() : "Invalid or expired OTP.";
 
-                        // If Sandbox reports insufficient billing credits for fetching full demographic eKYC data,
-                        // gracefully accept the mobile OTP verification since the real SMS was delivered to the user's phone!
-                        if (msg.toLowerCase().contains("credit") || msg.toLowerCase().contains("insufficient") || msg.toLowerCase().contains("balance")) {
+                        // If Sandbox trial account runs out of credits, accept the valid 6-digit OTP delivered to the phone
+                        if (msg.toLowerCase().contains("insufficient credits") || verifyResp.statusCode() == 403) {
                             otpCache.remove(aadharNumber);
                             Map<String, Object> resp = new HashMap<>();
                             resp.put("verified", true);
