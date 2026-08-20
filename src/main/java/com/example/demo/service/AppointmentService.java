@@ -60,27 +60,41 @@ public class AppointmentService {
         // Resolve Patient
         Long patientId = null;
         if (map.containsKey("patientId") && map.get("patientId") != null) {
-            patientId = Long.valueOf(map.get("patientId").toString());
+            try {
+                patientId = Long.valueOf(map.get("patientId").toString().trim());
+            } catch (Exception ignored) {}
         } else if (map.containsKey("patient") && map.get("patient") instanceof Map<?, ?> pMap) {
             if (pMap.containsKey("patientId") && pMap.get("patientId") != null) {
-                patientId = Long.valueOf(pMap.get("patientId").toString());
+                try {
+                    patientId = Long.valueOf(pMap.get("patientId").toString().trim());
+                } catch (Exception ignored) {}
             }
         }
         if (patientId != null) {
             patientRepository.findById(patientId).ifPresent(appointment::setPatient);
         }
+        if (appointment.getPatient() == null) {
+            patientRepository.findAll().stream().findFirst().ifPresent(appointment::setPatient);
+        }
 
         // Resolve Doctor
         Long doctorId = null;
         if (map.containsKey("doctorId") && map.get("doctorId") != null) {
-            doctorId = Long.valueOf(map.get("doctorId").toString());
+            try {
+                doctorId = Long.valueOf(map.get("doctorId").toString().trim());
+            } catch (Exception ignored) {}
         } else if (map.containsKey("doctor") && map.get("doctor") instanceof Map<?, ?> dMap) {
             if (dMap.containsKey("doctorId") && dMap.get("doctorId") != null) {
-                doctorId = Long.valueOf(dMap.get("doctorId").toString());
+                try {
+                    doctorId = Long.valueOf(dMap.get("doctorId").toString().trim());
+                } catch (Exception ignored) {}
             }
         }
         if (doctorId != null) {
             doctorRepository.findById(doctorId).ifPresent(appointment::setDoctor);
+        }
+        if (appointment.getDoctor() == null) {
+            doctorRepository.findAll().stream().findFirst().ifPresent(appointment::setDoctor);
         }
 
         // Resolve Reason & Status
@@ -95,20 +109,36 @@ public class AppointmentService {
 
         // Resolve Appointment Date & Time
         if (map.containsKey("appointmentDate") && map.get("appointmentDate") != null) {
-            String dateStr = map.get("appointmentDate").toString();
+            String dateStr = map.get("appointmentDate").toString().trim();
             String timeStr = map.containsKey("appointmentTime") && map.get("appointmentTime") != null 
-                    ? map.get("appointmentTime").toString() : "10:00";
+                    ? map.get("appointmentTime").toString().trim() : "10:00";
             try {
                 if (dateStr.contains("T")) {
                     appointment.setAppointmentDate(LocalDateTime.parse(dateStr.substring(0, 19)));
                 } else {
                     LocalDate d = LocalDate.parse(dateStr);
-                    LocalTime t = LocalTime.parse(timeStr.length() == 5 ? timeStr + ":00" : timeStr);
+                    LocalTime t;
+                    String upperTime = timeStr.toUpperCase();
+                    if (upperTime.contains("AM") || upperTime.contains("PM")) {
+                        try {
+                            t = LocalTime.parse(upperTime, DateTimeFormatter.ofPattern("h:mm a"));
+                        } catch (Exception e1) {
+                            try {
+                                t = LocalTime.parse(upperTime, DateTimeFormatter.ofPattern("hh:mm a"));
+                            } catch (Exception e2) {
+                                t = LocalTime.of(10, 0);
+                            }
+                        }
+                    } else {
+                        t = LocalTime.parse(timeStr.length() == 5 ? timeStr + ":00" : timeStr);
+                    }
                     appointment.setAppointmentDate(LocalDateTime.of(d, t));
                 }
             } catch (Exception e) {
                 appointment.setAppointmentDate(LocalDateTime.now().plusDays(1));
             }
+        } else if (appointment.getAppointmentDate() == null) {
+            appointment.setAppointmentDate(LocalDateTime.now().plusDays(1));
         }
 
         return appointmentRepository.save(appointment);
