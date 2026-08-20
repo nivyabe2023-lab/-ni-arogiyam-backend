@@ -175,6 +175,10 @@ public class BillService {
                 updatedBill.getStatus()
         );
 
+        existingBill.setMedicationDetails(
+                updatedBill.getMedicationDetails()
+        );
+
 
         if (updatedBill.getPatient() != null &&
                 updatedBill.getPatient().getPatientId() != null) {

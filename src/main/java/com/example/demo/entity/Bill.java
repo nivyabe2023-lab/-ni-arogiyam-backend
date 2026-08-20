@@ -42,6 +42,9 @@ public class Bill {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "medication_details", columnDefinition = "TEXT")
+    private String medicationDetails;
+
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
@@ -93,6 +96,10 @@ public class Bill {
         return status;
     }
 
+    public String getMedicationDetails() {
+        return medicationDetails;
+    }
+
     public Patient getPatient() {
         return patient;
     }
@@ -142,6 +149,10 @@ public class Bill {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setMedicationDetails(String medicationDetails) {
+        this.medicationDetails = medicationDetails;
     }
 
     public void setPatient(Patient patient) {
