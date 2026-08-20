@@ -69,35 +69,73 @@ public class DashboardController {
         long totalBills = billRepository.count();
 
 
-        dashboard.put(
-                "totalPatients",
-                totalPatients
-        );
+        dashboard.put("totalPatients", totalPatients);
+        dashboard.put("patients", totalPatients);
 
-        dashboard.put(
-                "totalDoctors",
-                totalDoctors
-        );
+        dashboard.put("totalDoctors", totalDoctors);
+        dashboard.put("doctors", totalDoctors);
 
-        dashboard.put(
-                "totalAppointments",
-                totalAppointments
-        );
+        dashboard.put("totalAppointments", totalAppointments);
+        dashboard.put("appointments", totalAppointments);
 
-        dashboard.put(
-                "totalPrescriptions",
-                totalPrescriptions
-        );
+        dashboard.put("totalPrescriptions", totalPrescriptions);
+        dashboard.put("prescriptions", totalPrescriptions);
 
-        dashboard.put(
-                "totalMedicines",
-                totalMedicines
-        );
+        dashboard.put("totalMedicines", totalMedicines);
+        dashboard.put("medicines", totalMedicines);
 
-        dashboard.put(
-                "totalBills",
-                totalBills
-        );
+        dashboard.put("totalBills", totalBills);
+        dashboard.put("bills", totalBills);
+
+        // Recent Appointments with Doctor domain & Patient info
+        List<Map<String, Object>> recentAppointments = appointmentRepository.findAll().stream()
+                .sorted((a, b) -> Long.compare(
+                        b.getAppointmentId() != null ? b.getAppointmentId() : 0L,
+                        a.getAppointmentId() != null ? a.getAppointmentId() : 0L
+                ))
+                .limit(8)
+                .map(a -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("appointmentId", a.getAppointmentId());
+                    map.put("patientName", a.getPatient() != null ? a.getPatient().getFirstName() + " " + a.getPatient().getLastName() : "Unknown");
+                    map.put("doctorName", a.getDoctor() != null ? "Dr. " + a.getDoctor().getFirstName() + " " + a.getDoctor().getLastName() : "Unassigned");
+                    map.put("specialization", a.getDoctor() != null && a.getDoctor().getSpecialization() != null ? a.getDoctor().getSpecialization() : "General");
+                    map.put("appointmentDate", a.getAppointmentDate() != null ? a.getAppointmentDate().toString() : "");
+                    map.put("reason", a.getReason() != null ? a.getReason() : "");
+                    map.put("status", a.getStatus() != null ? a.getStatus() : "SCHEDULED");
+                    return map;
+                })
+                .toList();
+        dashboard.put("recentAppointments", recentAppointments);
+
+        // Recent Patients
+        List<Map<String, Object>> recentPatients = patientRepository.findAll().stream()
+                .sorted((a, b) -> Long.compare(
+                        b.getPatientId() != null ? b.getPatientId() : 0L,
+                        a.getPatientId() != null ? a.getPatientId() : 0L
+                ))
+                .limit(6)
+                .map(p -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("patientId", p.getPatientId());
+                    map.put("fullName", p.getFirstName() + " " + p.getLastName());
+                    map.put("age", p.getAge());
+                    map.put("gender", p.getGender());
+                    map.put("bloodGroup", p.getBloodGroup());
+                    map.put("disease", p.getDisease());
+                    map.put("phoneNumber", p.getPhoneNumber());
+                    return map;
+                })
+                .toList();
+        dashboard.put("recentPatients", recentPatients);
+
+        // Doctor Specialization Breakdown
+        Map<String, Long> specialtiesCount = new HashMap<>();
+        doctorRepository.findAll().forEach(d -> {
+            String spec = (d.getSpecialization() != null && !d.getSpecialization().isBlank()) ? d.getSpecialization().trim() : "General";
+            specialtiesCount.put(spec, specialtiesCount.getOrDefault(spec, 0L) + 1);
+        });
+        dashboard.put("specialties", specialtiesCount);
 
 
         // =====================================================

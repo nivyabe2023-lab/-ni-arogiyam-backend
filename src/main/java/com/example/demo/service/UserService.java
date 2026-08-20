@@ -70,6 +70,26 @@ public class UserService {
             );
         }
 
+        // =====================================================
+        // ROLE VALIDATION FOR ADMINISTRATOR PORTAL
+        // =====================================================
+        String loginType = request.getLoginType();
+        boolean isAdminUser = user.getRole() != null && "ADMIN".equalsIgnoreCase(user.getRole().trim());
+
+        if (loginType != null && "ADMIN".equalsIgnoreCase(loginType.trim())) {
+            if (!isAdminUser) {
+                return new LoginResponse(
+                        false,
+                        "Access Denied: Admins only can access this portal. Please use User Login.",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            }
+        }
+
         return new LoginResponse(
                 true,
                 "Login successful.",

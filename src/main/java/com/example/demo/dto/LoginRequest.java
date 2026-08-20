@@ -4,6 +4,7 @@ public class LoginRequest {
 
     private String username;
     private String password;
+    private String loginType; // "ADMIN" or "USER"
 
     public LoginRequest() {
     }
@@ -22,5 +23,13 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(String loginType) {
+        this.loginType = loginType;
     }
 }

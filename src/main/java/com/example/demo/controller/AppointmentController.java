@@ -26,10 +26,10 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<Appointment> createAppointment(
-            @RequestBody Appointment appointment) {
+            @RequestBody Map<String, Object> payload) {
 
         Appointment savedAppointment =
-                appointmentService.createAppointment(appointment);
+                appointmentService.saveFromMap(payload, null);
 
         return ResponseEntity.ok(savedAppointment);
     }
@@ -72,13 +72,10 @@ public class AppointmentController {
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(
             @PathVariable Long id,
-            @RequestBody Appointment appointment) {
+            @RequestBody Map<String, Object> payload) {
 
         Appointment updatedAppointment =
-                appointmentService.updateAppointment(
-                        id,
-                        appointment
-                );
+                appointmentService.saveFromMap(payload, id);
 
         if (updatedAppointment == null) {
             return ResponseEntity.notFound().build();

@@ -35,12 +35,11 @@ public class AuthController {
 
 
         if (!response.isSuccess()) {
-
+            int status = (response.getMessage() != null && response.getMessage().contains("Access Denied")) ? 403 : 401;
             return ResponseEntity
-                    .status(401)
+                    .status(status)
                     .body(response);
         }
-
 
         return ResponseEntity.ok(response);
     }
