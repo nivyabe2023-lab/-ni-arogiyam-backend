@@ -53,7 +53,7 @@ public class DataInitializer {
             // =========================================================
             // 2. DOCTORS ACROSS MULTIPLE SPECIALTIES / DOMAINS
             // =========================================================
-            if (doctorRepository.count() == 0) {
+            if (doctorRepository.count() < 5) {
                 Doctor d1 = new Doctor();
                 d1.setFirstName("Rajesh");
                 d1.setLastName("Sharma");
@@ -124,19 +124,53 @@ public class DataInitializer {
                 d7.setAvailability("Mon, Wed, Fri (10:00 AM - 03:00 PM)");
                 doctorRepository.save(d7);
 
-                System.out.println("✅ Seeded 7 Doctors across Cardiology, Neurology, Orthopedics, Pediatrics, Dermatology, General Medicine, Oncology.");
+                Doctor d8 = new Doctor();
+                d8.setFirstName("Vivek");
+                d8.setLastName("Murthy");
+                d8.setSpecialization("Nephrologist");
+                d8.setPhoneNumber("9876543217");
+                d8.setEmail("dr.vivek.m@ni-arogiyam.com");
+                d8.setExperience(13);
+                d8.setAvailability("Mon - Fri (09:00 AM - 01:00 PM)");
+                doctorRepository.save(d8);
+
+                Doctor d9 = new Doctor();
+                d9.setFirstName("Saranya");
+                d9.setLastName("Devi");
+                d9.setSpecialization("Gynecologist & Obstetrician");
+                d9.setPhoneNumber("9876543218");
+                d9.setEmail("dr.saranya.d@ni-arogiyam.com");
+                d9.setExperience(11);
+                d9.setAvailability("Mon - Sat (10:00 AM - 03:00 PM)");
+                doctorRepository.save(d9);
+
+                Doctor d10 = new Doctor();
+                d10.setFirstName("Harish");
+                d10.setLastName("Balaji");
+                d10.setSpecialization("ENT Specialist");
+                d10.setPhoneNumber("9876543219");
+                d10.setEmail("dr.harish.b@ni-arogiyam.com");
+                d10.setExperience(9);
+                d10.setAvailability("Tue - Sun (09:30 AM - 02:30 PM)");
+                doctorRepository.save(d10);
+
+                System.out.println("✅ Seeded 10 Doctors across Cardiology, Neurology, Orthopedics, Pediatrics, Dermatology, General Medicine, Oncology, Nephrology, Gynecology, ENT.");
             }
 
             // =========================================================
             // 3. REALISTIC PATIENT RECORDS
             // =========================================================
-            if (patientRepository.count() == 0) {
+            if (patientRepository.count() < 5) {
                 Patient p1 = new Patient(null, "Rajesh", "Kumar", 52, "Male", "9840123456", "O+", "Coronary Artery Disease (CAD)", "12, 4th Main Road, Anna Nagar, Chennai", "541278902341");
                 Patient p2 = new Patient(null, "Meera", "Krishnan", 45, "Female", "9840234567", "B+", "Chronic Migraine & Cervical Spondylosis", "45, Usman Road, T. Nagar, Chennai", "892345617890");
                 Patient p3 = new Patient(null, "Suresh", "Raman", 61, "Male", "9840345678", "A+", "Type 2 Diabetes Mellitus with Hypertension", "78, 100 Feet Road, Velachery, Chennai", "345678901234");
                 Patient p4 = new Patient(null, "Kavitha", "Sundar", 28, "Female", "9840456789", "AB+", "Acute Bronchial Asthma", "23, Gandhi Nagar, Adyar, Chennai", "678901234567");
                 Patient p5 = new Patient(null, "Arunachalam", "Pillai", 68, "Male", "9840567890", "O-", "Bilateral Knee Osteoarthritis", "89, GST Road, Tambaram, Chennai", "901234567890");
                 Patient p6 = new Patient(null, "Deepa", "Natarajan", 34, "Female", "9840678901", "A-", "Atopic Dermatitis & Eczema", "56, Luz Church Road, Mylapore, Chennai", "432187650987");
+                Patient p7 = new Patient(null, "Vigneshwaran", "Karthik", 39, "Male", "9840789012", "B-", "Chronic Kidney Disease Stage 2", "77, North Usman Road, T. Nagar, Chennai", "789012345678");
+                Patient p8 = new Patient(null, "Radhika", "Parthasarathy", 31, "Female", "9840890123", "O+", "First Trimester Antenatal Care & Thyroid Screening", "34, Sardar Patel Road, Guindy, Chennai", "234567890123");
+                Patient p9 = new Patient(null, "Murugesan", "Thevar", 58, "Male", "9840901234", "AB-", "Chronic Sinusitis & DNS", "19, Rajaji Salai, George Town, Chennai", "901234567123");
+                Patient p10 = new Patient(null, "Aarthi", "Sridharan", 26, "Female", "9840012345", "A+", "Generalized Anxiety & Insomnia", "88, Santhome High Road, Mylapore, Chennai", "456789012345");
 
                 patientRepository.save(p1);
                 patientRepository.save(p2);
@@ -144,14 +178,18 @@ public class DataInitializer {
                 patientRepository.save(p4);
                 patientRepository.save(p5);
                 patientRepository.save(p6);
+                patientRepository.save(p7);
+                patientRepository.save(p8);
+                patientRepository.save(p9);
+                patientRepository.save(p10);
 
-                System.out.println("✅ Seeded 6 comprehensive Patient records with Aadhaar numbers and conditions.");
+                System.out.println("✅ Seeded 10 comprehensive Patient records with Aadhaar numbers and conditions.");
             }
 
             // =========================================================
-            // 4. APPOINTMENTS (LINKED TO CARDIOLOGIST, PHYSICIAN, ETC.)
+            // 4. APPOINTMENTS (LINKED TO SPECIALISTS)
             // =========================================================
-            if (appointmentRepository.count() == 0) {
+            if (appointmentRepository.count() < 5) {
                 var patientsList = patientRepository.findAll();
                 var doctorsList = doctorRepository.findAll();
 
@@ -161,12 +199,18 @@ public class DataInitializer {
                     Patient pSuresh = patientsList.size() > 2 ? patientsList.get(2) : pRajesh;
                     Patient pKavitha = patientsList.size() > 3 ? patientsList.get(3) : pRajesh;
                     Patient pArunachalam = patientsList.size() > 4 ? patientsList.get(4) : pRajesh;
+                    Patient pDeepa = patientsList.size() > 5 ? patientsList.get(5) : pRajesh;
+                    Patient pVignesh = patientsList.size() > 6 ? patientsList.get(6) : pRajesh;
+                    Patient pRadhika = patientsList.size() > 7 ? patientsList.get(7) : pRajesh;
 
                     Doctor dCardio = doctorsList.stream().filter(d -> d.getSpecialization().contains("Cardio")).findFirst().orElse(doctorsList.get(0));
                     Doctor dNeuro = doctorsList.stream().filter(d -> d.getSpecialization().contains("Neuro")).findFirst().orElse(doctorsList.get(0));
                     Doctor dPhysician = doctorsList.stream().filter(d -> d.getSpecialization().contains("Physician")).findFirst().orElse(doctorsList.get(0));
                     Doctor dOrtho = doctorsList.stream().filter(d -> d.getSpecialization().contains("Ortho")).findFirst().orElse(doctorsList.get(0));
                     Doctor dPediatric = doctorsList.stream().filter(d -> d.getSpecialization().contains("Pedia")).findFirst().orElse(doctorsList.get(0));
+                    Doctor dDerma = doctorsList.stream().filter(d -> d.getSpecialization().contains("Derma")).findFirst().orElse(doctorsList.get(0));
+                    Doctor dNephro = doctorsList.stream().filter(d -> d.getSpecialization().contains("Nephro")).findFirst().orElse(doctorsList.get(0));
+                    Doctor dGyneco = doctorsList.stream().filter(d -> d.getSpecialization().contains("Gyneco")).findFirst().orElse(doctorsList.get(0));
 
                     Appointment a1 = new Appointment();
                     a1.setPatient(pRajesh);
@@ -208,14 +252,38 @@ public class DataInitializer {
                     a5.setStatus("SCHEDULED");
                     appointmentRepository.save(a5);
 
-                    System.out.println("✅ Seeded scheduled Appointments with Cardiologist, Neurologist, and other specialists.");
+                    Appointment a6 = new Appointment();
+                    a6.setPatient(pDeepa);
+                    a6.setDoctor(dDerma);
+                    a6.setAppointmentDate(LocalDateTime.now().plusDays(2).withHour(15).withMinute(0));
+                    a6.setReason("Atopic Dermatitis patch test review");
+                    a6.setStatus("SCHEDULED");
+                    appointmentRepository.save(a6);
+
+                    Appointment a7 = new Appointment();
+                    a7.setPatient(pVignesh);
+                    a7.setDoctor(dNephro);
+                    a7.setAppointmentDate(LocalDateTime.now().plusDays(2).withHour(10).withMinute(0));
+                    a7.setReason("Renal Function & Serum Creatinine Review");
+                    a7.setStatus("SCHEDULED");
+                    appointmentRepository.save(a7);
+
+                    Appointment a8 = new Appointment();
+                    a8.setPatient(pRadhika);
+                    a8.setDoctor(dGyneco);
+                    a8.setAppointmentDate(LocalDateTime.now().plusDays(3).withHour(11).withMinute(0));
+                    a8.setReason("Obstetric Ultrasound & Routine Antenatal Checkup");
+                    a8.setStatus("CONFIRMED");
+                    appointmentRepository.save(a8);
+
+                    System.out.println("✅ Seeded 8 scheduled Appointments with Cardiologist, Neurologist, Nephrologist, Gynecologist, etc.");
                 }
             }
 
             // =========================================================
             // 5. PHARMACY MEDICINES
             // =========================================================
-            if (medicineRepository.count() == 0) {
+            if (medicineRepository.count() < 5) {
                 Medicine m1 = new Medicine();
                 m1.setMedicineName("Atorvastatin 20mg");
                 m1.setCategory("Cardiovascular");
@@ -272,13 +340,37 @@ public class DataInitializer {
                 m7.setManufacturer("Micro Labs");
                 medicineRepository.save(m7);
 
+                Medicine m8 = new Medicine();
+                m8.setMedicineName("Amoxicillin + Clavulanic Acid 625mg");
+                m8.setCategory("Antibiotic");
+                m8.setQuantity(350);
+                m8.setPrice(190.0);
+                m8.setManufacturer("Alkem Laboratories");
+                medicineRepository.save(m8);
+
+                Medicine m9 = new Medicine();
+                m9.setMedicineName("Pantoprazole 40mg");
+                m9.setCategory("Gastrointestinal / Antacid");
+                m9.setQuantity(700);
+                m9.setPrice(95.0);
+                m9.setManufacturer("Aristo Pharma");
+                medicineRepository.save(m9);
+
+                Medicine m10 = new Medicine();
+                m10.setMedicineName("Methylcobalamin + Pregabalin 75mg");
+                m10.setCategory("Neurology / Nerve Health");
+                m10.setQuantity(300);
+                m10.setPrice(260.0);
+                m10.setManufacturer("Torrent Pharma");
+                medicineRepository.save(m10);
+
                 System.out.println("✅ Seeded essential Pharmacy Medicines.");
             }
 
             // =========================================================
             // 6. LABORATORY INVESTIGATIONS
             // =========================================================
-            if (laboratoryRepository.count() == 0) {
+            if (laboratoryRepository.count() < 4) {
                 var patientsList = patientRepository.findAll();
                 if (!patientsList.isEmpty()) {
                     Laboratory l1 = new Laboratory();
@@ -315,6 +407,30 @@ public class DataInitializer {
                         laboratoryRepository.save(l3);
                     }
 
+                    if (patientsList.size() > 6) {
+                        Laboratory l4 = new Laboratory();
+                        l4.setPatient(patientsList.get(6));
+                        l4.setTestName("Renal Function Test & Serum Creatinine");
+                        l4.setTestType("Nephrology Panel");
+                        l4.setTestDate(LocalDateTime.now().minusDays(1));
+                        l4.setResult("Serum Creatinine: 1.6 mg/dL, eGFR: 55 mL/min/1.73m²");
+                        l4.setStatus("COMPLETED");
+                        l4.setRemarks("CKD Stage 2 stable. Maintain hydration and low-sodium diet.");
+                        laboratoryRepository.save(l4);
+                    }
+
+                    if (patientsList.size() > 7) {
+                        Laboratory l5 = new Laboratory();
+                        l5.setPatient(patientsList.get(7));
+                        l5.setTestName("Complete Blood Count & Thyroid Panel (TSH)");
+                        l5.setTestType("Endocrine & Hematology");
+                        l5.setTestDate(LocalDateTime.now());
+                        l5.setResult("Hemoglobin: 12.2 g/dL, TSH: 2.1 mIU/L (Euthyroid)");
+                        l5.setStatus("COMPLETED");
+                        l5.setRemarks("Normal maternal parameters.");
+                        laboratoryRepository.save(l5);
+                    }
+
                     System.out.println("✅ Seeded Laboratory Investigation records.");
                 }
             }
@@ -322,7 +438,7 @@ public class DataInitializer {
             // =========================================================
             // 7. HOSPITAL BEDS & OCCUPANCY
             // =========================================================
-            if (bedRepository.count() == 0) {
+            if (bedRepository.count() < 5) {
                 Bed b1 = new Bed();
                 b1.setBedNumber("CCU-101");
                 b1.setWard("Cardiology Critical Unit");
@@ -369,13 +485,27 @@ public class DataInitializer {
                 b6.setStatus("AVAILABLE");
                 bedRepository.save(b6);
 
+                Bed b7 = new Bed();
+                b7.setBedNumber("PED-201");
+                b7.setWard("Pediatric Ward");
+                b7.setBedType("Pediatric Bed");
+                b7.setStatus("AVAILABLE");
+                bedRepository.save(b7);
+
+                Bed b8 = new Bed();
+                b8.setBedNumber("MAT-102");
+                b8.setWard("Maternity Ward");
+                b8.setBedType("Deluxe Room");
+                b8.setStatus("AVAILABLE");
+                bedRepository.save(b8);
+
                 System.out.println("✅ Seeded Hospital Beds & Ward allocation.");
             }
 
             // =========================================================
             // 8. BILLING & INVOICES
             // =========================================================
-            if (billRepository.count() == 0) {
+            if (billRepository.count() < 4) {
                 var patientsList = patientRepository.findAll();
                 if (!patientsList.isEmpty()) {
                     Bill bill1 = new Bill();
@@ -440,6 +570,22 @@ public class DataInitializer {
                         billRepository.save(bill4);
                     }
 
+                    if (patientsList.size() > 6) {
+                        Bill bill5 = new Bill();
+                        bill5.setPatient(patientsList.get(6));
+                        bill5.setBillDate(LocalDate.now());
+                        bill5.setConsultationFee(900.0);
+                        bill5.setLaboratoryFee(1500.0);
+                        bill5.setMedicineFee(800.0);
+                        bill5.setRoomFee(0.0);
+                        bill5.setOtherCharges(0.0);
+                        bill5.setTotalAmount(3200.0);
+                        bill5.setPaymentMethod("UPI");
+                        bill5.setPaymentStatus("PAID");
+                        bill5.setStatus("PAID");
+                        billRepository.save(bill5);
+                    }
+
                     System.out.println("✅ Seeded Billing & Payment records.");
                 }
             }
@@ -447,7 +593,7 @@ public class DataInitializer {
             // =========================================================
             // 9. HOSPITAL REPORTS
             // =========================================================
-            if (reportRepository.count() == 0) {
+            if (reportRepository.count() < 4) {
                 Report r1 = new Report();
                 r1.setReportTitle("Cardiology Department Clinical & Patient Flow Report");
                 r1.setReportType("Clinical Department Report");
@@ -460,7 +606,7 @@ public class DataInitializer {
                 Report r2 = new Report();
                 r2.setReportTitle("Hospital Resource Utilization & Bed Occupancy Report");
                 r2.setReportType("Operations Report");
-                r2.setDescription("Real-time bed utilization across CCU, ICU, Neuro and General wards.");
+                r2.setDescription("Real-time bed utilization across CCU, ICU, Neuro, Ortho, and General wards.");
                 r2.setGeneratedBy("Hospital Administrator");
                 r2.setGeneratedDate(LocalDateTime.now());
                 r2.setStatus("Generated");
@@ -469,11 +615,29 @@ public class DataInitializer {
                 Report r3 = new Report();
                 r3.setReportTitle("Monthly Pharmacy Dispensation & Inventory Audit");
                 r3.setReportType("Pharmacy Report");
-                r3.setDescription("Dispensation volumes and stock levels for critical cardiac, diabetic, and respiratory medicines.");
+                r3.setDescription("Dispensation volumes and stock levels for critical cardiac, diabetic, antibiotic, and respiratory medicines.");
                 r3.setGeneratedBy("Chief Pharmacist");
                 r3.setGeneratedDate(LocalDateTime.now().minusDays(3));
                 r3.setStatus("Generated");
                 reportRepository.save(r3);
+
+                Report r4 = new Report();
+                r4.setReportTitle("Monthly Revenue, Invoices & Accounts Audit");
+                r4.setReportType("Financial Report");
+                r4.setDescription("Summary of collections across OPD consultations, IPD room admissions, Diagnostic investigations, and Pharmacy.");
+                r4.setGeneratedBy("Finance Department");
+                r4.setGeneratedDate(LocalDateTime.now().minusDays(1));
+                r4.setStatus("Generated");
+                reportRepository.save(r4);
+
+                Report r5 = new Report();
+                r5.setReportTitle("Laboratory Diagnostic Turnaround & Quality Assurance");
+                r5.setReportType("Laboratory Report");
+                r5.setDescription("Average test completion times for Troponin I, Lipid Profile, HbA1c, Renal panels, and MRI scans.");
+                r5.setGeneratedBy("Chief Pathologist");
+                r5.setGeneratedDate(LocalDateTime.now());
+                r5.setStatus("Generated");
+                reportRepository.save(r5);
 
                 System.out.println("✅ Seeded Hospital Reports.");
             }
