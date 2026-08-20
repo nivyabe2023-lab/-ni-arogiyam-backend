@@ -45,6 +45,12 @@ public class Bill {
     @Column(name = "medication_details", columnDefinition = "TEXT")
     private String medicationDetails;
 
+    @Column(name = "doctor_name")
+    private String doctorName;
+
+    @Column(name = "verified_by")
+    private String verifiedBy;
+
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
@@ -153,6 +159,22 @@ public class Bill {
 
     public void setMedicationDetails(String medicationDetails) {
         this.medicationDetails = medicationDetails;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
+    public String getVerifiedBy() {
+        return verifiedBy;
+    }
+
+    public void setVerifiedBy(String verifiedBy) {
+        this.verifiedBy = verifiedBy;
     }
 
     public void setPatient(Patient patient) {

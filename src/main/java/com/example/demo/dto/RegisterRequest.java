@@ -7,8 +7,17 @@ public class RegisterRequest {
     private String confirmPassword;
     private String fullName;
     private String email;
+    private String role;
 
     public RegisterRequest() {
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getUsername() {

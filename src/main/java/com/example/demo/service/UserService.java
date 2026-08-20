@@ -41,7 +41,7 @@ public class UserService {
         String password = request.getPassword();
 
         User user = userRepository
-                .findByUsername(username)
+                .findByUsernameIgnoreCase(username)
                 .orElse(null);
 
         if (user == null) {
@@ -56,10 +56,13 @@ public class UserService {
             );
         }
 
-        // Match password (support standard passwords and common admin variants)
-        boolean passwordMatches = user.getPassword().equals(password);
-        if (!passwordMatches && "admin".equalsIgnoreCase(username)) {
-            passwordMatches = "Admin@123".equals(password) || "admin123".equals(password) || "Admin123".equals(password);
+        // Match password
+        boolean passwordMatches;
+        if ("admin".equalsIgnoreCase(username) || "ADMIN".equalsIgnoreCase(user.getRole())) {
+            // Strictly enforce Admin@123 as the only valid password for Administrator
+            passwordMatches = "Admin@123".equals(password);
+        } else {
+            passwordMatches = user.getPassword() != null && user.getPassword().equals(password);
         }
 
         if (!passwordMatches) {
@@ -221,12 +224,28 @@ public class UserService {
         String fullName =
                 request.getFullName().trim();
 
+        // -----------------------------------------------------
+        // PROHIBIT ADMIN CREATION VIA REGISTRATION
+        // -----------------------------------------------------
+        if ("admin".equalsIgnoreCase(username) ||
+                (request.getRole() != null && "ADMIN".equalsIgnoreCase(request.getRole().trim()))) {
+
+            return new LoginResponse(
+                    false,
+                    "Creation of Administrator account is not permitted. The Administrator account is system-managed. Only Staff and User accounts can be created.",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
 
         // -----------------------------------------------------
-        // CHECK USERNAME ALREADY EXISTS
+        // CHECK USERNAME ALREADY EXISTS (CASE-INSENSITIVE)
         // -----------------------------------------------------
 
-        if (userRepository.existsByUsername(username)) {
+        if (userRepository.existsByUsernameIgnoreCase(username)) {
 
             return new LoginResponse(
                     false,
@@ -259,7 +278,7 @@ public class UserService {
 
 
         // -----------------------------------------------------
-        // CREATE NEW USER
+        // CREATE NEW USER (STAFF OR USER ONLY)
         // -----------------------------------------------------
 
         User user = new User();
@@ -274,15 +293,11 @@ public class UserService {
 
         user.setEmail(email);
 
-        /*
-         * Normal registered users will have USER role.
-         *
-         * Your existing admin remains:
-         *
-         * ADMIN
-         */
-
-        user.setRole("USER");
+        String assignedRole = "USER";
+        if (request.getRole() != null && "STAFF".equalsIgnoreCase(request.getRole().trim())) {
+            assignedRole = "STAFF";
+        }
+        user.setRole(assignedRole);
 
 
         // -----------------------------------------------------

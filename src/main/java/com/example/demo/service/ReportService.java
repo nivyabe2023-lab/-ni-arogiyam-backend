@@ -102,6 +102,18 @@ public class ReportService {
                 report.getStatus()
         );
 
+        if (report.getPatientName() != null) {
+            existing.setPatientName(report.getPatientName());
+        }
+
+        if (report.getDoctorName() != null) {
+            existing.setDoctorName(report.getDoctorName());
+        }
+
+        if (report.getVerifiedBy() != null) {
+            existing.setVerifiedBy(report.getVerifiedBy());
+        }
+
         return reportRepository.save(existing);
     }
 

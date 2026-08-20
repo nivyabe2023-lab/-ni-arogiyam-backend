@@ -26,28 +26,37 @@ public class DataInitializer {
     ) {
         return args -> {
             // =========================================================
-            // 1. DEFAULT USERS (ADMIN & USER)
+            // 1. DEFAULT USERS (ADMIN & STAFF USER)
             // =========================================================
-            if (userRepository.findByUsername("admin").isEmpty()) {
+            var existingAdmin = userRepository.findByUsernameIgnoreCase("admin");
+            if (existingAdmin.isEmpty()) {
                 User admin = new User();
-                admin.setUsername("admin");
-                admin.setPassword("admin123");
+                admin.setUsername("Admin");
+                admin.setPassword("Admin@123");
                 admin.setFullName("Hospital Administrator");
                 admin.setEmail("admin@ni-arogiyam.com");
                 admin.setRole("ADMIN");
                 userRepository.save(admin);
-                System.out.println("✅ Default Admin created: username=admin, password=admin123, role=ADMIN");
+                System.out.println("✅ Default Admin created: username=Admin, password=Admin@123, role=ADMIN");
+            } else {
+                User admin = existingAdmin.get();
+                admin.setUsername("Admin");
+                admin.setPassword("Admin@123");
+                admin.setRole("ADMIN");
+                userRepository.save(admin);
+                System.out.println("✅ Existing Admin synchronized: username=Admin, password=Admin@123, role=ADMIN");
             }
 
-            if (userRepository.findByUsername("user").isEmpty()) {
+            var existingUser = userRepository.findByUsernameIgnoreCase("user");
+            if (existingUser.isEmpty()) {
                 User staffUser = new User();
                 staffUser.setUsername("user");
                 staffUser.setPassword("user123");
                 staffUser.setFullName("Hospital Staff User");
                 staffUser.setEmail("staff@ni-arogiyam.com");
-                staffUser.setRole("USER");
+                staffUser.setRole("STAFF");
                 userRepository.save(staffUser);
-                System.out.println("✅ Default User created: username=user, password=user123, role=USER");
+                System.out.println("✅ Default Staff User created: username=user, password=user123, role=STAFF");
             }
 
             // =========================================================

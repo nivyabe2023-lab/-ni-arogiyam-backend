@@ -26,6 +26,15 @@ public class Report {
 
     private String status;
 
+    @Column(name = "patient_name")
+    private String patientName;
+
+    @Column(name = "doctor_name")
+    private String doctorName;
+
+    @Column(name = "verified_by")
+    private String verifiedBy;
+
     // =========================================================
     // CONSTRUCTOR
     // =========================================================
@@ -91,5 +100,29 @@ public class Report {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
+    public String getVerifiedBy() {
+        return verifiedBy;
+    }
+
+    public void setVerifiedBy(String verifiedBy) {
+        this.verifiedBy = verifiedBy;
     }
 }

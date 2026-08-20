@@ -179,6 +179,13 @@ public class BillService {
                 updatedBill.getMedicationDetails()
         );
 
+        if (updatedBill.getDoctorName() != null) {
+            existingBill.setDoctorName(updatedBill.getDoctorName());
+        }
+
+        if (updatedBill.getVerifiedBy() != null) {
+            existingBill.setVerifiedBy(updatedBill.getVerifiedBy());
+        }
 
         if (updatedBill.getPatient() != null &&
                 updatedBill.getPatient().getPatientId() != null) {
