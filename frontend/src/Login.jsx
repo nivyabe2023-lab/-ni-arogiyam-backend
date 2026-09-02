@@ -256,6 +256,50 @@ function Login({ onLogin }) {
 
       <div className="login-overlay"></div>
 
+      <div className="login-top-nav" style={{
+        position: "relative",
+        zIndex: 10,
+        maxWidth: "1200px",
+        width: "92%",
+        margin: "0 auto 16px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: "12px"
+      }}>
+        <Link
+          to="/"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            background: "rgba(255, 255, 255, 0.18)",
+            backdropFilter: "blur(8px)",
+            color: "#ffffff",
+            textDecoration: "none",
+            padding: "8px 18px",
+            borderRadius: "30px",
+            fontWeight: "700",
+            fontSize: "13.5px",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+          }}
+        >
+          ← Back to Hospital Home & Services
+        </Link>
+        <span style={{
+          color: "#fef08a",
+          fontSize: "13px",
+          fontWeight: "700",
+          background: "rgba(0,0,0,0.25)",
+          padding: "6px 14px",
+          borderRadius: "20px"
+        }}>
+          🚨 24/7 Emergency Helpline: 080-22065000 / 108
+        </span>
+      </div>
+
       <div className="login-container">
 
         {/* =================================================

@@ -61,6 +61,7 @@ class ErrorBoundary extends Component {
 import "./App.css";
 import "./Dashboard.css";
 
+import HospitalLanding from "./HospitalLanding";
 import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
@@ -101,9 +102,20 @@ function Dashboard() {
     return <Navigate to="/appointments" replace />;
   }
 
-  const [dashboard, setDashboard] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const DEFAULT_FALLBACK_DASHBOARD = {
+    patients: 124,
+    doctors: 48,
+    appointments: 36,
+    prescriptions: 92,
+    medicines: 250,
+    totalBills: 64,
+    paidBills: 51,
+    pendingBills: 13,
+  };
+
+  const [dashboard, setDashboard] = useState(DEFAULT_FALLBACK_DASHBOARD);
+  const [loading, setLoading] = useState(false);
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
   const [searchText, setSearchText] = useState("");
 
   const navigate = useNavigate();
@@ -111,7 +123,6 @@ function Dashboard() {
   const loadDashboard = async () => {
     try {
       setLoading(true);
-      setError("");
 
       const response = await fetch(
         `${API_BASE_URL}/api/dashboard`
@@ -126,9 +137,11 @@ function Dashboard() {
       console.log("Dashboard data:", data);
 
       setDashboard(data);
+      setIsOfflineMode(false);
     } catch (err) {
-      console.error("Dashboard error:", err);
-      setError("Unable to connect to Spring Boot backend.");
+      console.warn("Dashboard offline mode:", err);
+      setDashboard((prev) => prev || DEFAULT_FALLBACK_DASHBOARD);
+      setIsOfflineMode(true);
     } finally {
       setLoading(false);
     }
@@ -224,41 +237,6 @@ function Dashboard() {
 
   const userName =
     localStorage.getItem("loggedInUser") || "Administrator";
-
-  if (loading) {
-    return (
-      <div className="dashboard-page">
-        <div className="status-message">
-          <div className="loading-spinner"></div>
-
-          <h2>Loading Dashboard...</h2>
-
-          <p>Please wait while hospital data is loading.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="dashboard-page">
-        <div className="status-message error">
-          <div className="error-icon">!</div>
-
-          <h2>Dashboard Connection Error</h2>
-
-          <p>{error}</p>
-
-          <button
-            className="dashboard-retry-button"
-            onClick={loadDashboard}
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   const patients = dashboard?.patients ?? 0;
   const doctors = dashboard?.doctors ?? 0;
@@ -369,6 +347,46 @@ function Dashboard() {
           ===================================================== */}
 
       <div className="dashboard-content">
+
+        {isOfflineMode && (
+          <div style={{
+            background: "#fef3c7",
+            border: "1px solid #fde68a",
+            padding: "12px 20px",
+            borderRadius: "12px",
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            color: "#92400e",
+            fontSize: "13.5px",
+            fontWeight: 600,
+            gap: "14px",
+            flexWrap: "wrap",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.04)"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span style={{ fontSize: "18px" }}>⚡</span>
+              <span><strong>Demo & Simulation Mode:</strong> Spring Boot backend (port 8080) is not connected. Showing simulated hospital operations telemetry.</span>
+            </div>
+            <button
+              type="button"
+              onClick={loadDashboard}
+              style={{
+                background: "#d97706",
+                color: "#ffffff",
+                border: "none",
+                padding: "6px 16px",
+                borderRadius: "6px",
+                fontWeight: 700,
+                fontSize: "12.5px",
+                cursor: "pointer"
+              }}
+            >
+              ↻ Retry Spring Boot
+            </button>
+          </div>
+        )}
 
         {/* TOOLBAR */}
 
@@ -1057,6 +1075,21 @@ function Sidebar({ isOpen, onClose }) {
           {/* ADMINISTRATOR & GENERAL USERS: FULL NAVIGATION */}
           {!isWarden && !isDoctor && (
             <>
+              <NavLink
+                to="/"
+                onClick={handleNavClick}
+                className="sidebar-link public-portal-link"
+                style={{
+                  background: "rgba(16, 185, 129, 0.15)",
+                  color: "#6ee7b7",
+                  border: "1px dashed rgba(52, 211, 153, 0.4)",
+                  marginBottom: "12px"
+                }}
+              >
+                <span className="nav-icon">🌐</span>
+                <span className="nav-text">View Public Showcase</span>
+              </NavLink>
+
               {/* SECTION 1: EMERGENCY & SPECIALITIES */}
               <div className="sidebar-section-label">
                 <span>🚨 EMERGENCY & SERVICES</span>
@@ -1124,7 +1157,7 @@ function Sidebar({ isOpen, onClose }) {
               </div>
 
               <NavLink
-                to="/"
+                to="/dashboard"
                 end
                 onClick={handleNavClick}
                 className={({ isActive }) =>
@@ -1393,6 +1426,21 @@ function ApplicationLayout() {
 
           <button
             type="button"
+            className="top-quick-btn view-site"
+            onClick={() => navigate("/")}
+            title="View Public Hospital Website & Services"
+            style={{
+              background: "#047857",
+              color: "#ffffff",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
+              fontWeight: "700"
+            }}
+          >
+            🌐 Public Showcase
+          </button>
+
+          <button
+            type="button"
             className="top-quick-btn ambulance"
             onClick={() => navigate("/emergency")}
           >
@@ -1454,7 +1502,21 @@ function App() {
     <BrowserRouter>
       <ErrorBoundary>
         <Routes>
-          {/* LOGIN & REGISTER ARE OUTSIDE APPLICATION LAYOUT */}
+          {/* PUBLIC HOSPITAL ADVERTISEMENT & SHOWCASE PORTAL (BEFORE LOGIN) */}
+          <Route
+            path="/"
+            element={<HospitalLanding />}
+          />
+          <Route
+            path="/home"
+            element={<HospitalLanding />}
+          />
+          <Route
+            path="/landing"
+            element={<HospitalLanding />}
+          />
+
+          {/* LOGIN & REGISTER */}
           <Route
             path="/login"
             element={<Login />}
@@ -1465,7 +1527,7 @@ function App() {
             element={<Register />}
           />
 
-          {/* APPLICATION LAYOUT (PROTECTED) */}
+          {/* APPLICATION LAYOUT (PROTECTED MANAGEMENT PORTAL) */}
           <Route
             element={
               <ProtectedRoute>
@@ -1473,10 +1535,6 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route
-              path="/"
-              element={<Dashboard />}
-            />
             <Route
               path="/dashboard"
               element={<Dashboard />}

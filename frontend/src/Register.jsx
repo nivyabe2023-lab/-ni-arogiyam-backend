@@ -319,6 +319,50 @@ function Register() {
 
     <div className="register-page">
 
+      <div style={{
+        maxWidth: "1000px",
+        width: "92%",
+        margin: "0 auto 16px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: "12px",
+        position: "relative",
+        zIndex: 10
+      }}>
+        <Link
+          to="/"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            background: "rgba(255, 255, 255, 0.18)",
+            backdropFilter: "blur(8px)",
+            color: "#ffffff",
+            textDecoration: "none",
+            padding: "8px 18px",
+            borderRadius: "30px",
+            fontWeight: "700",
+            fontSize: "13.5px",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+          }}
+        >
+          ← Back to Hospital Home & Services
+        </Link>
+        <span style={{
+          color: "#fef08a",
+          fontSize: "13px",
+          fontWeight: "700",
+          background: "rgba(0,0,0,0.25)",
+          padding: "6px 14px",
+          borderRadius: "20px"
+        }}>
+          🚨 24/7 Emergency: 080-22065000
+        </span>
+      </div>
+
       <div className="register-card">
 
 
