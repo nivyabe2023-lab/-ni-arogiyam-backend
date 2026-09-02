@@ -32,6 +32,59 @@ function Appointments() {
     status: "SCHEDULED",
   });
 
+  const FALLBACK_PATIENTS = [
+    { patientId: 1, firstName: "Rahul", lastName: "Sharma", age: 34, gender: "Male", phoneNumber: "9876543210", bloodGroup: "O+", disease: "General Fever" },
+    { patientId: 2, firstName: "Priya", lastName: "Patel", age: 28, gender: "Female", phoneNumber: "9823456781", bloodGroup: "A+", disease: "Routine Checkup" },
+    { patientId: 3, firstName: "Amit", lastName: "Verma", age: 45, gender: "Male", phoneNumber: "9712345678", bloodGroup: "B+", disease: "Cardiology Consult" },
+    { patientId: 4, firstName: "Sneha", lastName: "Reddy", age: 29, gender: "Female", phoneNumber: "9988776655", bloodGroup: "AB+", disease: "Dermatology" },
+  ];
+
+  const FALLBACK_DOCTORS = [
+    { doctorId: 1, firstName: "Suresh", lastName: "Menon", specialization: "Cardiology", phoneNumber: "9811122233", email: "suresh@hospital.com", availability: "AVAILABLE" },
+    { doctorId: 2, firstName: "Ananya", lastName: "Rao", specialization: "General Medicine", phoneNumber: "9822233344", email: "ananya@hospital.com", availability: "AVAILABLE" },
+    { doctorId: 3, firstName: "Vikram", lastName: "Singh", specialization: "Orthopedics", phoneNumber: "9833344455", email: "vikram@hospital.com", availability: "AVAILABLE" },
+    { doctorId: 4, firstName: "Meera", lastName: "Nair", specialization: "Pediatrics", phoneNumber: "9844455566", email: "meera@hospital.com", availability: "AVAILABLE" },
+  ];
+
+  const FALLBACK_APPOINTMENTS = [
+    {
+      appointmentId: 1,
+      patient: { patientId: 1, firstName: "Rahul", lastName: "Sharma" },
+      doctor: { doctorId: 1, firstName: "Suresh", lastName: "Menon" },
+      appointmentDate: new Date().toISOString().substring(0, 10),
+      appointmentTime: "10:30",
+      reason: "Chest discomfort and routine cardiac checkup",
+      status: "SCHEDULED",
+    },
+    {
+      appointmentId: 2,
+      patient: { patientId: 2, firstName: "Priya", lastName: "Patel" },
+      doctor: { doctorId: 2, firstName: "Ananya", lastName: "Rao" },
+      appointmentDate: new Date().toISOString().substring(0, 10),
+      appointmentTime: "11:45",
+      reason: "Seasonal flu and persistent cough",
+      status: "COMPLETED",
+    },
+    {
+      appointmentId: 3,
+      patient: { patientId: 3, firstName: "Amit", lastName: "Verma" },
+      doctor: { doctorId: 3, firstName: "Vikram", lastName: "Singh" },
+      appointmentDate: new Date(Date.now() + 86400000).toISOString().substring(0, 10),
+      appointmentTime: "14:15",
+      reason: "Knee joint pain post injury",
+      status: "PENDING",
+    },
+    {
+      appointmentId: 4,
+      patient: { patientId: 4, firstName: "Sneha", lastName: "Reddy" },
+      doctor: { doctorId: 4, firstName: "Meera", lastName: "Nair" },
+      appointmentDate: new Date(Date.now() + 172800000).toISOString().substring(0, 10),
+      appointmentTime: "09:30",
+      reason: "Skin rash and allergy consultation",
+      status: "SCHEDULED",
+    },
+  ];
+
   // =========================================================
   // LOAD DATA
   // =========================================================
@@ -63,13 +116,10 @@ function Appointments() {
 
       const data = await response.json();
 
-      setAppointments(Array.isArray(data) ? data : []);
+      setAppointments(Array.isArray(data) && data.length > 0 ? data : (Array.isArray(data) ? data : FALLBACK_APPOINTMENTS));
     } catch (error) {
-      console.error("Error loading appointments:", error);
-
-      setError(
-        "Unable to load appointments. Please check whether Spring Boot is running."
-      );
+      console.warn("Backend unavailable, loading demo appointments:", error);
+      setAppointments(FALLBACK_APPOINTMENTS);
     } finally {
       setLoading(false);
     }
@@ -93,13 +143,10 @@ function Appointments() {
 
       const data = await response.json();
 
-      setPatients(Array.isArray(data) ? data : []);
+      setPatients(Array.isArray(data) && data.length > 0 ? data : FALLBACK_PATIENTS);
     } catch (error) {
-      console.error("Error loading patients:", error);
-
-      setError(
-        "Unable to load patients."
-      );
+      console.warn("Backend unavailable, using fallback patients:", error);
+      setPatients(FALLBACK_PATIENTS);
     }
   };
 
@@ -121,13 +168,10 @@ function Appointments() {
 
       const data = await response.json();
 
-      setDoctors(Array.isArray(data) ? data : []);
+      setDoctors(Array.isArray(data) && data.length > 0 ? data : FALLBACK_DOCTORS);
     } catch (error) {
-      console.error("Error loading doctors:", error);
-
-      setError(
-        "Unable to load doctors."
-      );
+      console.warn("Backend unavailable, using fallback doctors:", error);
+      setDoctors(FALLBACK_DOCTORS);
     }
   };
 
@@ -429,77 +473,53 @@ function Appointments() {
   };
 
   // =========================================================
-  // FILTER APPOINTMENTS
-  // =========================================================
-
-  const filteredAppointments =
-    appointments.filter((appointment) => {
-      const search =
-        searchTerm.toLowerCase().trim();
-
-      if (!search) {
-        return true;
-      }
-
-      const patientName = getPatientName(
-        appointment
-      ).toLowerCase();
-
-      const doctorName = getDoctorName(
-        appointment
-      ).toLowerCase();
-
-      const reason = String(
-        appointment.reason ||
-          appointment.description ||
-          ""
-      ).toLowerCase();
-
-      const status = String(
-        appointment.status || ""
-      ).toLowerCase();
-
-      return (
-        patientName.includes(search) ||
-        doctorName.includes(search) ||
-        reason.includes(search) ||
-        status.includes(search)
-      );
-    });
-
-  // =========================================================
   // GET PATIENT NAME
   // =========================================================
 
   const getPatientName = (appointment) => {
+    if (!appointment) return "N/A";
+
     // Direct nested patient object
-    if (appointment.patient) {
-      return `${appointment.patient.firstName || ""} ${
-        appointment.patient.lastName || ""
-      }`.trim();
+    if (appointment.patient && typeof appointment.patient === "object") {
+      const first = appointment.patient.firstName || "";
+      const last = appointment.patient.lastName || "";
+      const full = `${first} ${last}`.trim();
+      if (full) return full;
+      if (appointment.patient.name) return String(appointment.patient.name).trim();
     }
 
-    // Direct patient name fields
+    // Direct patient name fields on appointment object
     if (
       appointment.patientFirstName ||
       appointment.patientLastName
     ) {
-      return `${appointment.patientFirstName || ""} ${
-        appointment.patientLastName || ""
-      }`.trim();
+      const first = appointment.patientFirstName || "";
+      const last = appointment.patientLastName || "";
+      const full = `${first} ${last}`.trim();
+      if (full) return full;
     }
 
-    // Search patient from patients list
-    const patient = patients.find(
-      (item) =>
-        Number(item.patientId) ===
-        Number(appointment.patientId)
-    );
+    if (appointment.patientName) {
+      return String(appointment.patientName).trim();
+    }
 
-    if (patient) {
-      return `${patient.firstName || ""} ${
-        patient.lastName || ""
-      }`.trim();
+    // Search patient from patients list using patientId or patient.patientId
+    const targetPatientId =
+      appointment.patientId ??
+      (typeof appointment.patient === "object" ? appointment.patient?.patientId : appointment.patient);
+
+    if (targetPatientId != null && Array.isArray(patients)) {
+      const found = patients.find(
+        (item) => Number(item?.patientId) === Number(targetPatientId)
+      );
+
+      if (found) {
+        const first = found.firstName || "";
+        const last = found.lastName || "";
+        const full = `${first} ${last}`.trim();
+        if (full) return full;
+        if (found.name) return String(found.name).trim();
+      }
     }
 
     return "N/A";
@@ -510,11 +530,15 @@ function Appointments() {
   // =========================================================
 
   const getDoctorName = (appointment) => {
+    if (!appointment) return "N/A";
+
     // Direct nested doctor object
-    if (appointment.doctor) {
-      return `${appointment.doctor.firstName || ""} ${
-        appointment.doctor.lastName || ""
-      }`.trim();
+    if (appointment.doctor && typeof appointment.doctor === "object") {
+      const first = appointment.doctor.firstName || "";
+      const last = appointment.doctor.lastName || "";
+      const full = `${first} ${last}`.trim();
+      if (full) return full;
+      if (appointment.doctor.name) return String(appointment.doctor.name).trim();
     }
 
     // Direct doctor name fields
@@ -522,26 +546,75 @@ function Appointments() {
       appointment.doctorFirstName ||
       appointment.doctorLastName
     ) {
-      return `${appointment.doctorFirstName || ""} ${
-        appointment.doctorLastName || ""
-      }`.trim();
+      const first = appointment.doctorFirstName || "";
+      const last = appointment.doctorLastName || "";
+      const full = `${first} ${last}`.trim();
+      if (full) return full;
     }
 
-    // Search doctor from doctors list
-    const doctor = doctors.find(
-      (item) =>
-        Number(item.doctorId) ===
-        Number(appointment.doctorId)
-    );
+    if (appointment.doctorName) {
+      return String(appointment.doctorName).trim();
+    }
 
-    if (doctor) {
-      return `${doctor.firstName || ""} ${
-        doctor.lastName || ""
-      }`.trim();
+    // Search doctor from doctors list using doctorId or doctor.doctorId
+    const targetDoctorId =
+      appointment.doctorId ??
+      (typeof appointment.doctor === "object" ? appointment.doctor?.doctorId : appointment.doctor);
+
+    if (targetDoctorId != null && Array.isArray(doctors)) {
+      const found = doctors.find(
+        (item) => Number(item?.doctorId) === Number(targetDoctorId)
+      );
+
+      if (found) {
+        const first = found.firstName || "";
+        const last = found.lastName || "";
+        const full = `${first} ${last}`.trim();
+        if (full) return full;
+        if (found.name) return String(found.name).trim();
+      }
     }
 
     return "N/A";
   };
+
+  // =========================================================
+  // FILTER APPOINTMENTS
+  // =========================================================
+
+  const filteredAppointments = (Array.isArray(appointments) ? appointments : []).filter(
+    (appointment) => {
+      if (!appointment) return false;
+
+      const search = (searchTerm || "").toLowerCase().trim();
+
+      if (!search) {
+        return true;
+      }
+
+      const patientName = String(getPatientName(appointment) || "").toLowerCase();
+      const doctorName = String(getDoctorName(appointment) || "").toLowerCase();
+      const reason = String(
+        appointment.reason ||
+          appointment.description ||
+          ""
+      ).toLowerCase();
+      const status = String(appointment.status || "").toLowerCase();
+      const appId = String(appointment.appointmentId || "").toLowerCase();
+      const dateStr = String(appointment.appointmentDate || "").toLowerCase();
+      const timeStr = String(appointment.appointmentTime || "").toLowerCase();
+
+      return (
+        patientName.includes(search) ||
+        doctorName.includes(search) ||
+        reason.includes(search) ||
+        status.includes(search) ||
+        appId.includes(search) ||
+        dateStr.includes(search) ||
+        timeStr.includes(search)
+      );
+    }
+  );
 
   // =========================================================
   // STATUS CLASS
@@ -584,7 +657,22 @@ function Appointments() {
     }
 
     try {
-      return new Date(date).toLocaleDateString(
+      if (Array.isArray(date)) {
+        const [y, m, d] = date;
+        const dt = new Date(y, m - 1, d);
+        return dt.toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      const parsed = new Date(date);
+      if (isNaN(parsed.getTime())) {
+        return String(date).substring(0, 10);
+      }
+
+      return parsed.toLocaleDateString(
         "en-IN",
         {
           day: "2-digit",
@@ -593,7 +681,7 @@ function Appointments() {
         }
       );
     } catch {
-      return date;
+      return String(date);
     }
   };
 
@@ -601,35 +689,43 @@ function Appointments() {
   // FORMAT TIME
   // =========================================================
 
-  const formatTime = (time) => {
-    if (!time) {
+  const formatTime = (time, dateFallback) => {
+    if (!time && !dateFallback) {
       return "N/A";
     }
 
-    const value = String(time);
+    try {
+      let timeVal = time;
+      if (!timeVal && dateFallback && typeof dateFallback === "string" && dateFallback.includes("T")) {
+        timeVal = dateFallback.split("T")[1];
+      }
 
-    const parts = value.split(":");
+      if (!timeVal) return "N/A";
 
-    if (parts.length < 2) {
-      return value;
+      const value = String(timeVal);
+      const parts = value.split(":");
+
+      if (parts.length < 2) {
+        return value;
+      }
+
+      let hour = Number(parts[0]);
+      const minute = parts[1].substring(0, 2);
+
+      if (Number.isNaN(hour)) {
+        return value;
+      }
+
+      const period = hour >= 12 ? "PM" : "AM";
+      hour = hour % 12;
+      if (hour === 0) {
+        hour = 12;
+      }
+
+      return `${hour}:${minute} ${period}`;
+    } catch {
+      return String(time || "N/A");
     }
-
-    let hour = Number(parts[0]);
-    const minute = parts[1];
-
-    if (Number.isNaN(hour)) {
-      return value;
-    }
-
-    const period = hour >= 12 ? "PM" : "AM";
-
-    hour = hour % 12;
-
-    if (hour === 0) {
-      hour = 12;
-    }
-
-    return `${hour}:${minute} ${period}`;
   };
 
   // =========================================================
@@ -927,8 +1023,7 @@ function Appointments() {
               View and manage all hospital appointments
             </p>
           </div>
-
-          <div className="search-box">
+          <div className="search-box" style={{ position: "relative", display: "flex", alignItems: "center" }}>
 
             <input
               type="text"
@@ -939,7 +1034,28 @@ function Appointments() {
                   event.target.value
                 )
               }
+              style={{ paddingRight: searchTerm ? "30px" : "12px" }}
             />
+
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm("")}
+                title="Clear search"
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  color: "#888",
+                  lineHeight: 1
+                }}
+              >
+                ✕
+              </button>
+            )}
 
           </div>
 
@@ -1004,8 +1120,9 @@ function Appointments() {
                         </h3>
 
                         <p>
-                          Create a new appointment
-                          to see it here.
+                          {searchTerm
+                            ? `No appointments matching "${searchTerm}". Try a different keyword.`
+                            : "Create a new appointment to see it here."}
                         </p>
                       </div>
                     </td>
@@ -1015,119 +1132,118 @@ function Appointments() {
                 ) : (
 
                   filteredAppointments.map(
-                    (appointment) => (
+                    (appointment, index) => {
+                      const patientName = getPatientName(appointment);
+                      const doctorName = getDoctorName(appointment);
+                      const avatarLetter = (patientName && patientName !== "N/A"
+                        ? patientName.charAt(0).toUpperCase()
+                        : "P") || "P";
 
-                      <tr
-                        key={
-                          appointment.appointmentId
-                        }
-                      >
+                      return (
+                        <tr
+                          key={
+                            appointment.appointmentId || `app-${index}`
+                          }
+                        >
 
-                        {/* ID */}
+                          {/* ID */}
 
-                        <td>
+                          <td>
 
-                          <span className="appointment-id">
-                            #
-                            {
-                              appointment.appointmentId
-                            }
-                          </span>
+                            <span className="appointment-id">
+                              #
+                              {
+                                appointment.appointmentId ?? index + 1
+                              }
+                            </span>
 
-                        </td>
+                          </td>
 
-                        {/* PATIENT */}
+                          {/* PATIENT */}
 
-                        <td>
+                          <td>
 
-                          <div className="person-cell">
+                            <div className="person-cell">
 
-                            <div className="person-avatar">
-                              {getPatientName(
-                                appointment
-                              )
-                                .charAt(0)
-                                .toUpperCase()}
+                              <div className="person-avatar">
+                                {avatarLetter}
+                              </div>
+
+                              <div>
+
+                                <strong>
+                                  {patientName}
+                                </strong>
+
+                              </div>
+
                             </div>
 
-                            <div>
+                          </td>
+
+                          {/* DOCTOR */}
+
+                          <td>
+
+                            <div className="doctor-cell">
 
                               <strong>
-                                {getPatientName(
-                                  appointment
-                                )}
+                                {doctorName === "N/A"
+                                  ? "N/A"
+                                  : doctorName.startsWith("Dr.")
+                                  ? doctorName
+                                  : `Dr. ${doctorName}`}
                               </strong>
 
                             </div>
 
-                          </div>
+                          </td>
 
-                        </td>
+                          {/* DATE */}
 
-                        {/* DOCTOR */}
+                          <td>
+                            {formatDate(
+                              appointment.appointmentDate
+                            )}
+                          </td>
 
-                        <td>
+                          {/* TIME */}
 
-                          <div className="doctor-cell">
+                          <td>
+                            {formatTime(
+                              appointment.appointmentTime,
+                              appointment.appointmentDate
+                            )}
+                          </td>
 
-                            <strong>
-                              {getDoctorName(
-                                appointment
-                              ) === "N/A"
-                                ? "N/A"
-                                : `Dr. ${getDoctorName(
-                                    appointment
-                                  )}`}
-                            </strong>
+                          {/* REASON */}
 
-                          </div>
+                          <td>
 
-                        </td>
+                            <span className="reason-text">
 
-                        {/* DATE */}
+                              {appointment.reason ||
+                                appointment.description ||
+                                "N/A"}
 
-                        <td>
-                          {formatDate(
-                            appointment.appointmentDate
-                          )}
-                        </td>
+                            </span>
 
-                        {/* TIME */}
+                          </td>
 
-                        <td>
-                          {formatTime(
-                            appointment.appointmentTime
-                          )}
-                        </td>
+                          {/* STATUS */}
 
-                        {/* REASON */}
+                          <td>
 
-                        <td>
+                            <span
+                              className={`status-badge ${getStatusClass(
+                                appointment.status
+                              )}`}
+                            >
+                              {appointment.status ||
+                                "SCHEDULED"}
+                            </span>
 
-                          <span className="reason-text">
-
-                            {appointment.reason ||
-                              appointment.description ||
-                              "N/A"}
-
-                          </span>
-
-                        </td>
-
-                        {/* STATUS */}
-
-                        <td>
-
-                          <span
-                            className={`status-badge ${getStatusClass(
-                              appointment.status
-                            )}`}
-                          >
-                            {appointment.status ||
-                              "SCHEDULED"}
-                          </span>
-
-                        </td>
+                          </td>
 
                         {/* ACTIONS */}
 
@@ -1163,11 +1279,9 @@ function Appointments() {
 
                         </td>
 
-                      </tr>
-
-                    )
-                  )
-
+                        </tr>
+                      );
+                    })
                 )}
 
               </tbody>

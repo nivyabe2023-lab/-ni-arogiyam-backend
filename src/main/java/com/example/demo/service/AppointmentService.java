@@ -207,4 +207,15 @@ public class AppointmentService {
     public void deleteAppointment(Long appointmentId) {
         appointmentRepository.deleteById(appointmentId);
     }
+
+    // ==========================================
+    // SEARCH APPOINTMENTS
+    // ==========================================
+
+    public List<Appointment> searchAppointments(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return appointmentRepository.findAll();
+        }
+        return appointmentRepository.searchAppointments(keyword.trim());
+    }
 }

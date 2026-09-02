@@ -98,4 +98,18 @@ public class AppointmentController {
 
         return ResponseEntity.noContent().build();
     }
+
+    // =========================================================
+    // SEARCH APPOINTMENTS
+    // GET /api/appointments/search?keyword=...
+    // =========================================================
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Appointment>> searchAppointments(
+            @RequestParam(value = "keyword", required = false) String keyword) {
+
+        return ResponseEntity.ok(
+                appointmentService.searchAppointments(keyword)
+        );
+    }
 }
