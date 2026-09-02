@@ -1306,16 +1306,19 @@ function ApplicationLayout() {
         </div>
       </header>
 
-      <Sidebar
-        isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
-      />
+      {/* BODY LAYOUT: SIDEBAR ON LEFT, CONTENT ON RIGHT */}
+      <div className="app-container">
+        <Sidebar
+          isOpen={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+        />
 
-      <main className="main-content">
-        <ErrorBoundary>
-          <Outlet />
-        </ErrorBoundary>
-      </main>
+        <main className="main-content">
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
+        </main>
+      </div>
 
     </div>
   );
