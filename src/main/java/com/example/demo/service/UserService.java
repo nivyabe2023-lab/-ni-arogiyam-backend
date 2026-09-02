@@ -39,9 +39,55 @@ public class UserService {
 
         String username = request.getUsername().trim();
         String password = request.getPassword();
+        String normalizedUser = username.replaceAll("\\s+", "").toLowerCase();
+
+        // -----------------------------------------------------
+        // FIXED SYSTEM ROLE: CHIEF BED WARDEN
+        // -----------------------------------------------------
+        if ("chiefwarden".equals(normalizedUser) || "chief warden".equalsIgnoreCase(username)) {
+            if ("Chiefwarden@123".equals(password)) {
+                // Ensure user exists in repository if possible
+                User wardenUser = userRepository.findByUsernameIgnoreCase("chief warden")
+                        .or(() -> userRepository.findByUsernameIgnoreCase("chiefwarden"))
+                        .orElseGet(() -> {
+                            User u = new User();
+                            u.setUsername("chief warden");
+                            u.setPassword("Chiefwarden@123");
+                            u.setFullName("Chief Bed Warden");
+                            u.setEmail("chiefwarden@hospital.com");
+                            u.setRole("CHIEF_WARDEN");
+                            try {
+                                return userRepository.save(u);
+                            } catch (Exception e) {
+                                return u;
+                            }
+                        });
+
+                return new LoginResponse(
+                        true,
+                        "Login successful as Chief Bed Warden.",
+                        wardenUser.getId() != null ? wardenUser.getId() : 999L,
+                        "chief warden",
+                        "CHIEF_WARDEN",
+                        "Chief Bed Warden",
+                        "chiefwarden@hospital.com"
+                );
+            } else {
+                return new LoginResponse(
+                        false,
+                        "Invalid password for Chief Bed Warden.",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            }
+        }
 
         User user = userRepository
                 .findByUsernameIgnoreCase(username)
+                .or(() -> userRepository.findByEmail(username))
                 .orElse(null);
 
         if (user == null) {
@@ -61,6 +107,8 @@ public class UserService {
         if ("admin".equalsIgnoreCase(username) || "ADMIN".equalsIgnoreCase(user.getRole())) {
             // Strictly enforce Admin@123 as the only valid password for Administrator
             passwordMatches = "Admin@123".equals(password);
+        } else if ("CHIEF_WARDEN".equalsIgnoreCase(user.getRole())) {
+            passwordMatches = "Chiefwarden@123".equals(password) || (user.getPassword() != null && user.getPassword().equals(password));
         } else {
             passwordMatches = user.getPassword() != null && user.getPassword().equals(password);
         }
@@ -77,12 +125,14 @@ public class UserService {
             );
         }
 
+        String role = user.getRole() != null ? user.getRole().toUpperCase() : "USER";
+
         return new LoginResponse(
                 true,
                 "Login successful.",
                 user.getId(),
                 user.getUsername(),
-                user.getRole() != null ? user.getRole() : "USER",
+                role,
                 user.getFullName(),
                 user.getEmail()
         );
@@ -225,14 +275,17 @@ public class UserService {
                 request.getFullName().trim();
 
         // -----------------------------------------------------
-        // PROHIBIT ADMIN CREATION VIA REGISTRATION
+        // PROHIBIT ADMIN AND CHIEF WARDEN CREATION VIA REGISTRATION
         // -----------------------------------------------------
+        String normUser = username.replaceAll("\\s+", "").toLowerCase();
         if ("admin".equalsIgnoreCase(username) ||
-                (request.getRole() != null && "ADMIN".equalsIgnoreCase(request.getRole().trim()))) {
+                "chiefwarden".equals(normUser) ||
+                "chief warden".equalsIgnoreCase(username) ||
+                (request.getRole() != null && ("ADMIN".equalsIgnoreCase(request.getRole().trim()) || "CHIEF_WARDEN".equalsIgnoreCase(request.getRole().trim())))) {
 
             return new LoginResponse(
                     false,
-                    "Creation of Administrator account is not permitted. The Administrator account is system-managed. Only Staff and User accounts can be created.",
+                    "Administrator and Chief Bed Warden accounts are system-managed. You may only register Doctor, Staff, or User accounts.",
                     null,
                     null,
                     null,
@@ -245,7 +298,7 @@ public class UserService {
         // CHECK USERNAME ALREADY EXISTS (CASE-INSENSITIVE)
         // -----------------------------------------------------
 
-        if (userRepository.existsByUsernameIgnoreCase(username)) {
+        if (userRepository.existsByUsernameIgnoreCase(username) || "chief warden".equalsIgnoreCase(username) || "chiefwarden".equals(normUser)) {
 
             return new LoginResponse(
                     false,
@@ -278,7 +331,7 @@ public class UserService {
 
 
         // -----------------------------------------------------
-        // CREATE NEW USER (STAFF OR USER ONLY)
+        // CREATE NEW USER (DOCTOR, STAFF OR USER)
         // -----------------------------------------------------
 
         User user = new User();
@@ -294,8 +347,13 @@ public class UserService {
         user.setEmail(email);
 
         String assignedRole = "USER";
-        if (request.getRole() != null && "STAFF".equalsIgnoreCase(request.getRole().trim())) {
-            assignedRole = "STAFF";
+        if (request.getRole() != null) {
+            String requestedRole = request.getRole().trim().toUpperCase();
+            if ("DOCTOR".equals(requestedRole)) {
+                assignedRole = "DOCTOR";
+            } else if ("STAFF".equals(requestedRole)) {
+                assignedRole = "STAFF";
+            }
         }
         user.setRole(assignedRole);
 

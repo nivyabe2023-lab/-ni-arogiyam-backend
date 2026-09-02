@@ -74,10 +74,16 @@ function Register() {
       return;
     }
 
-    // Prohibit Admin account registration
-    if (formData.username.trim().toLowerCase() === "admin" || formData.role === "ADMIN") {
+    // Prohibit Admin and Chief Warden account registration
+    const normUser = formData.username.trim().replaceAll(/\s+/g, "").toLowerCase();
+    if (
+      normUser === "admin" ||
+      normUser === "chiefwarden" ||
+      formData.role === "ADMIN" ||
+      formData.role === "CHIEF_WARDEN"
+    ) {
       setError(
-        "Creation of Administrator account is prohibited. The Administrator account (Admin) is system-managed. You may only register Staff or User accounts."
+        "Administrator and Chief Bed Warden accounts are system-managed. You may only register Doctor, Staff, or User accounts."
       );
       return;
     }
@@ -440,7 +446,7 @@ function Register() {
               }}>
                 <span>🛡️</span>
                 <span>
-                  <strong>Notice:</strong> Administrator account (<code>Admin</code>) is system-managed. You can create <strong>Staff</strong> or <strong>User / Patient</strong> accounts below.
+                  <strong>Notice:</strong> Administrator and Chief Bed Warden accounts are system-managed. You can create <strong>Doctor</strong>, <strong>Staff</strong>, or <strong>User / Patient</strong> accounts below.
                 </span>
               </div>
 
@@ -467,7 +473,8 @@ function Register() {
                     outline: "none"
                   }}
                 >
-                  <option value="STAFF">👨‍⚕️ Hospital Staff (Doctor / Nurse / Frontdesk)</option>
+                  <option value="DOCTOR">👨‍⚕️ Doctor (Medical Consultant / Physician)</option>
+                  <option value="STAFF">🏥 Hospital Staff (Nurse / Frontdesk / Admin Assistant)</option>
                   <option value="USER">👤 Patient / General Hospital User</option>
                 </select>
               </div>

@@ -90,6 +90,17 @@ import API_BASE_URL from "./config";
    ========================================================= */
 
 function Dashboard() {
+  const userRole = (localStorage.getItem("userRole") || "ADMIN").toUpperCase();
+  const isWarden = userRole === "CHIEF_WARDEN" || userRole === "WARDEN";
+  const isDoctor = userRole === "DOCTOR";
+
+  if (isWarden) {
+    return <Navigate to="/beds" replace />;
+  }
+  if (isDoctor) {
+    return <Navigate to="/appointments" replace />;
+  }
+
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -903,13 +914,19 @@ function Dashboard() {
 function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
 
+  const userRole = (localStorage.getItem("userRole") || "ADMIN").toUpperCase();
+  const isWarden = userRole === "CHIEF_WARDEN" || userRole === "WARDEN";
+  const isDoctor = userRole === "DOCTOR";
+
   const userName =
     localStorage.getItem("loggedInUser") ||
-    "Administrator";
+    (isWarden ? "Chief Bed Warden" : isDoctor ? "Doctor" : "Administrator");
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("username");
     localStorage.removeItem("user");
 
     if (onClose) onClose();
@@ -922,6 +939,24 @@ function Sidebar({ isOpen, onClose }) {
   const handleNavClick = () => {
     if (onClose) onClose();
   };
+
+  const roleSubtitle = isWarden
+    ? "Chief Bed Warden"
+    : isDoctor
+    ? "Medical Doctor"
+    : userRole === "STAFF"
+    ? "Hospital Staff"
+    : userRole === "USER"
+    ? "Patient / User"
+    : "Administrator";
+
+  const avatarChar = isWarden
+    ? "W"
+    : isDoctor
+    ? "D"
+    : typeof userName === "string" && userName.trim()
+    ? userName.trim().charAt(0).toUpperCase()
+    : "A";
 
   return (
     <>
@@ -938,12 +973,18 @@ function Sidebar({ isOpen, onClose }) {
         <div className="sidebar-brand">
 
           <div className="sidebar-logo">
-            N
+            {isWarden ? "🛏️" : isDoctor ? "🩺" : "N"}
           </div>
 
           <div>
             <h2>NI AROGIYAM</h2>
-            <span>Hospital Management</span>
+            <span>
+              {isWarden
+                ? "Bed Warden Desk"
+                : isDoctor
+                ? "Doctor Clinical Desk"
+                : "Hospital Management"}
+            </span>
           </div>
 
           <button
@@ -960,198 +1001,256 @@ function Sidebar({ isOpen, onClose }) {
 
         <nav className="sidebar-nav">
 
-          {/* SECTION 1: EMERGENCY & SPECIALITIES */}
-          <div className="sidebar-section-label">
-            <span>🚨 EMERGENCY & SERVICES</span>
-          </div>
+          {/* CHIEF BED WARDEN EXCLUSIVE ACCESS: BED MODULE ALONE */}
+          {isWarden && (
+            <>
+              <div className="sidebar-section-label">
+                <span>🛏️ BED & WARD OPERATIONS</span>
+              </div>
 
-          <NavLink
-            to="/emergency"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link emergency-nav-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">🚨</span>
-            <span className="nav-text">24/7 Emergency & Blood</span>
-            <span className="nav-badge live">Live</span>
-          </NavLink>
+              <NavLink
+                to="/beds"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">🛏️</span>
+                <span className="nav-text">Bed Management & Routines</span>
+                <span className="nav-badge live">Live Ward</span>
+              </NavLink>
+            </>
+          )}
 
-          <NavLink
-            to="/specialities"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">🩺</span>
-            <span className="nav-text">Clinical Specialities</span>
-          </NavLink>
+          {/* DOCTOR EXCLUSIVE ACCESS: DOCTORS & APPOINTMENTS ALONE */}
+          {isDoctor && (
+            <>
+              <div className="sidebar-section-label">
+                <span>🩺 CLINICAL OPERATIONS</span>
+              </div>
 
-          <NavLink
-            to="/health-packages"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">📦</span>
-            <span className="nav-text">Health Packages</span>
-          </NavLink>
+              <NavLink
+                to="/appointments"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">📅</span>
+                <span className="nav-text">Appointments & Patient History</span>
+                <span className="nav-badge live">Live</span>
+              </NavLink>
 
-          <NavLink
-            to="/insurance-tpa"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">💳</span>
-            <span className="nav-text">Insurance & TPA Desk</span>
-          </NavLink>
+              <NavLink
+                to="/doctors"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">👨‍⚕️</span>
+                <span className="nav-text">Doctors Directory</span>
+              </NavLink>
+            </>
+          )}
 
-          <NavLink
-            to="/patient-guide"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">ℹ️</span>
-            <span className="nav-text">Patient & Visitor Guide</span>
-          </NavLink>
+          {/* ADMINISTRATOR & GENERAL USERS: FULL NAVIGATION */}
+          {!isWarden && !isDoctor && (
+            <>
+              {/* SECTION 1: EMERGENCY & SPECIALITIES */}
+              <div className="sidebar-section-label">
+                <span>🚨 EMERGENCY & SERVICES</span>
+              </div>
 
-          {/* SECTION 2: CLINICAL OPERATIONS */}
-          <div className="sidebar-section-label">
-            <span>🏥 CLINICAL OPERATIONS</span>
-          </div>
+              <NavLink
+                to="/emergency"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link emergency-nav-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">🚨</span>
+                <span className="nav-text">24/7 Emergency & Blood</span>
+                <span className="nav-badge live">Live</span>
+              </NavLink>
 
-          <NavLink
-            to="/"
-            end
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">🏠</span>
-            <span className="nav-text">Dashboard</span>
-          </NavLink>
+              <NavLink
+                to="/specialities"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">🩺</span>
+                <span className="nav-text">Clinical Specialities</span>
+              </NavLink>
 
-          <NavLink
-            to="/patients"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">👤</span>
-            <span className="nav-text">Patients</span>
-          </NavLink>
+              <NavLink
+                to="/health-packages"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">📦</span>
+                <span className="nav-text">Health Packages</span>
+              </NavLink>
 
-          <NavLink
-            to="/doctors"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">👨‍⚕️</span>
-            <span className="nav-text">Doctors</span>
-          </NavLink>
+              <NavLink
+                to="/insurance-tpa"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">💳</span>
+                <span className="nav-text">Insurance & TPA Desk</span>
+              </NavLink>
 
-          <NavLink
-            to="/appointments"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">📅</span>
-            <span className="nav-text">Appointments</span>
-          </NavLink>
+              <NavLink
+                to="/patient-guide"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">ℹ️</span>
+                <span className="nav-text">Patient & Visitor Guide</span>
+              </NavLink>
 
-          <NavLink
-            to="/laboratory"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">🧪</span>
-            <span className="nav-text">Laboratory</span>
-          </NavLink>
+              {/* SECTION 2: CLINICAL OPERATIONS */}
+              <div className="sidebar-section-label">
+                <span>🏥 CLINICAL OPERATIONS</span>
+              </div>
 
-          <NavLink
-            to="/pharmacy"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">💊</span>
-            <span className="nav-text">Pharmacy</span>
-          </NavLink>
+              <NavLink
+                to="/"
+                end
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">🏠</span>
+                <span className="nav-text">Dashboard</span>
+              </NavLink>
 
-          <NavLink
-            to="/beds"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">🛏️</span>
-            <span className="nav-text">Beds</span>
-          </NavLink>
+              <NavLink
+                to="/patients"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">👤</span>
+                <span className="nav-text">Patients</span>
+              </NavLink>
 
-          <NavLink
-            to="/billing"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">🧾</span>
-            <span className="nav-text">Billing & Invoices</span>
-          </NavLink>
+              <NavLink
+                to="/doctors"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">👨‍⚕️</span>
+                <span className="nav-text">Doctors</span>
+              </NavLink>
 
-          <NavLink
-            to="/ai-prediction"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">🤖</span>
-            <span className="nav-text">AI Prediction</span>
-          </NavLink>
+              <NavLink
+                to="/appointments"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">📅</span>
+                <span className="nav-text">Appointments</span>
+              </NavLink>
 
-          <NavLink
-            to="/reports"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">📊</span>
-            <span className="nav-text">Reports</span>
-          </NavLink>
+              <NavLink
+                to="/laboratory"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">🧪</span>
+                <span className="nav-text">Laboratory</span>
+              </NavLink>
 
-          {/* SECTION 3: SYSTEM ADMINISTRATION */}
-          <div className="sidebar-section-label">
-            <span>⚙️ SYSTEM CONFIGURATION</span>
-          </div>
+              <NavLink
+                to="/pharmacy"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">💊</span>
+                <span className="nav-text">Pharmacy</span>
+              </NavLink>
 
-          <NavLink
-            to="/settings"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <span className="nav-icon">⚙️</span>
-            <span className="nav-text">Settings & DB</span>
-          </NavLink>
+              <NavLink
+                to="/beds"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">🛏️</span>
+                <span className="nav-text">Beds</span>
+              </NavLink>
+
+              <NavLink
+                to="/billing"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">🧾</span>
+                <span className="nav-text">Billing & Invoices</span>
+              </NavLink>
+
+              <NavLink
+                to="/ai-prediction"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">🤖</span>
+                <span className="nav-text">AI Prediction</span>
+              </NavLink>
+
+              <NavLink
+                to="/reports"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">📊</span>
+                <span className="nav-text">Reports</span>
+              </NavLink>
+
+              {/* SECTION 3: SYSTEM ADMINISTRATION */}
+              <div className="sidebar-section-label">
+                <span>⚙️ SYSTEM CONFIGURATION</span>
+              </div>
+
+              <NavLink
+                to="/settings"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">⚙️</span>
+                <span className="nav-text">Settings & DB</span>
+              </NavLink>
+            </>
+          )}
 
         </nav>
 
@@ -1163,12 +1262,14 @@ function Sidebar({ isOpen, onClose }) {
           <div className="sidebar-user-card">
 
             <div className="sidebar-user-avatar">
-              {(typeof userName === "string" && userName.trim() ? userName.trim().charAt(0).toUpperCase() : "A") || "A"}
+              {avatarChar}
             </div>
 
             <div className="sidebar-user-details">
-              <strong title={typeof userName === "string" ? userName : "Administrator"}>{typeof userName === "string" && userName.trim() ? userName.trim() : "Administrator"}</strong>
-              <small>Administrator</small>
+              <strong title={typeof userName === "string" ? userName : "User"}>
+                {typeof userName === "string" && userName.trim() ? userName.trim() : "User"}
+              </strong>
+              <small>{roleSubtitle}</small>
             </div>
 
           </div>
@@ -1187,6 +1288,25 @@ function Sidebar({ isOpen, onClose }) {
       </aside>
     </>
   );
+}
+
+
+/* =========================================================
+   ROLE ROUTE GUARD
+   ========================================================= */
+
+function RoleRoute({ allowedRoles, children }) {
+  const userRole = (localStorage.getItem("userRole") || "ADMIN").toUpperCase();
+  const isWarden = userRole === "CHIEF_WARDEN" || userRole === "WARDEN";
+  const isDoctor = userRole === "DOCTOR";
+
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    if (isWarden) return <Navigate to="/beds" replace />;
+    if (isDoctor) return <Navigate to="/appointments" replace />;
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
 }
 
 
@@ -1363,63 +1483,123 @@ function App() {
             />
             <Route
               path="/emergency"
-              element={<EmergencyServices />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <EmergencyServices />
+                </RoleRoute>
+              }
             />
             <Route
               path="/specialities"
-              element={<Specialities />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <Specialities />
+                </RoleRoute>
+              }
             />
             <Route
               path="/health-packages"
-              element={<HealthPackages />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <HealthPackages />
+                </RoleRoute>
+              }
             />
             <Route
               path="/insurance-tpa"
-              element={<InsuranceTPA />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <InsuranceTPA />
+                </RoleRoute>
+              }
             />
             <Route
               path="/patient-guide"
-              element={<PatientGuide />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <PatientGuide />
+                </RoleRoute>
+              }
             />
             <Route
               path="/patients"
-              element={<Patients />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <Patients />
+                </RoleRoute>
+              }
             />
             <Route
               path="/doctors"
-              element={<Doctors />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "DOCTOR", "STAFF", "USER"]}>
+                  <Doctors />
+                </RoleRoute>
+              }
             />
             <Route
               path="/appointments"
-              element={<Appointments />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "DOCTOR", "STAFF", "USER"]}>
+                  <Appointments />
+                </RoleRoute>
+              }
             />
             <Route
               path="/laboratory"
-              element={<Laboratory />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <Laboratory />
+                </RoleRoute>
+              }
             />
             <Route
               path="/pharmacy"
-              element={<Pharmacy />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <Pharmacy />
+                </RoleRoute>
+              }
             />
             <Route
               path="/beds"
-              element={<Beds />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "CHIEF_WARDEN", "WARDEN", "STAFF", "USER"]}>
+                  <Beds />
+                </RoleRoute>
+              }
             />
             <Route
               path="/billing"
-              element={<Billing />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <Billing />
+                </RoleRoute>
+              }
             />
             <Route
               path="/ai-prediction"
-              element={<AIPrediction />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <AIPrediction />
+                </RoleRoute>
+              }
             />
             <Route
               path="/reports"
-              element={<Reports />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <Reports />
+                </RoleRoute>
+              }
             />
             <Route
               path="/settings"
-              element={<Settings />}
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <Settings />
+                </RoleRoute>
+              }
             />
             <Route
               path="*"

@@ -417,11 +417,132 @@
   margin: 0;
 }
 
+.login-mode-tabs.four-tabs {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.login-mode-tabs.four-tabs .mode-tab {
+  font-size: 11.5px;
+  padding: 8px 4px;
+  white-space: nowrap;
+}
+
+.role-notice-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.role-notice-banner .banner-icon {
+  font-size: 20px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.role-notice-banner .banner-content {
+  flex: 1;
+}
+
+.role-notice-banner .banner-content strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.role-notice-banner .banner-content p {
+  margin: 0 0 6px 0;
+}
+
+.role-notice-banner.warden {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.role-notice-banner.doctor {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  color: #9d174d;
+}
+
+.role-notice-banner.admin {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.credential-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.credential-chips code {
+  background: rgba(255, 255, 255, 0.85);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.quick-fill-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.role-notice-banner.admin .quick-fill-btn {
+  background: #059669;
+}
+
+.quick-fill-btn:hover {
+  filter: brightness(0.9);
+}
+
+.quick-docs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.quick-doc-chip {
+  background: #db2777;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-doc-chip:hover {
+  background: #be185d;
+}
+
 @media (max-width: 860px) {
   .login-container {
     grid-template-columns: 1fr;
   }
   .login-info {
     display: none;
+  }
+  .login-mode-tabs.four-tabs {
+    grid-template-columns: 1fr 1fr;
   }
 }

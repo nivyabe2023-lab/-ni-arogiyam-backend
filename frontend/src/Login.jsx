@@ -6,7 +6,7 @@ import API_BASE_URL from "./config";
 function Login({ onLogin }) {
   const navigate = useNavigate();
 
-  // Login Mode: "ADMIN" or "USER"
+  // Login Mode: "ADMIN", "DOCTOR", "WARDEN", or "USER"
   const [loginMode, setLoginMode] = useState("ADMIN");
 
   const [formData, setFormData] = useState({
@@ -38,17 +38,37 @@ function Login({ onLogin }) {
   };
 
   // =========================================================
-  // SWITCH LOGIN MODE (ADMIN vs USER)
+  // SWITCH LOGIN MODE
   // =========================================================
 
   const handleModeSwitch = (mode) => {
     setLoginMode(mode);
     setError("");
     setIsAccessDenied(false);
+    if (mode === "WARDEN") {
+      setFormData({
+        username: "chief warden",
+        password: "Chiefwarden@123",
+      });
+    } else if (mode === "ADMIN") {
+      setFormData({
+        username: "Admin",
+        password: "",
+      });
+    } else {
+      setFormData({
+        username: "",
+        password: "",
+      });
+    }
+  };
+
+  const handleFillCredentials = (u, p) => {
     setFormData({
-      username: "",
-      password: "",
+      username: u,
+      password: p,
     });
+    setError("");
   };
 
   // =========================================================
@@ -95,7 +115,7 @@ function Login({ onLogin }) {
         body: JSON.stringify({
           username,
           password,
-          loginType: loginMode, // "ADMIN" or "USER"
+          loginType: loginMode,
         }),
       });
 
@@ -128,7 +148,7 @@ function Login({ onLogin }) {
       if (response.ok && result?.success !== false) {
         console.log("LOGIN SUCCESSFUL");
 
-        const userRole = result?.role || (loginMode === "ADMIN" ? "ADMIN" : "USER");
+        let userRole = result?.role || (loginMode === "WARDEN" ? "CHIEF_WARDEN" : loginMode === "DOCTOR" ? "DOCTOR" : loginMode === "ADMIN" ? "ADMIN" : "USER");
         const displayName = result?.fullName || result?.username || username;
 
         localStorage.setItem("isLoggedIn", "true");
@@ -146,9 +166,14 @@ function Login({ onLogin }) {
           onLogin(result);
         }
 
-        navigate("/dashboard", {
-          replace: true,
-        });
+        // Navigate based on role
+        if (userRole === "CHIEF_WARDEN" || userRole === "WARDEN") {
+          navigate("/beds", { replace: true });
+        } else if (userRole === "DOCTOR") {
+          navigate("/appointments", { replace: true });
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
         return;
       }
 
@@ -168,7 +193,7 @@ function Login({ onLogin }) {
 
       if (response.status === 403 || errorMessage.toLowerCase().includes("admins only") || errorMessage.toLowerCase().includes("access denied")) {
         setIsAccessDenied(true);
-        errorMessage = "⚠️ Access Denied: Admins only can access this Administrator portal. Normal users must use User Login.";
+        errorMessage = "⚠️ Access Denied: Please use the appropriate login mode for your account.";
       } else if (response.status === 404) {
         errorMessage = "Login API endpoint was not found. Please verify backend service.";
       } else if (response.status === 500) {
@@ -176,32 +201,48 @@ function Login({ onLogin }) {
       }
 
       setError(errorMessage);
-    } catch (error) {
-      console.error("LOGIN NETWORK ERROR:", error);
+    } catch (networkErr) {
+      console.error("LOGIN NETWORK ERROR:", networkErr);
+
       // Fallback offline validation for demo resiliency
-      const isAdminPass = password === "Admin@123";
-      if (loginMode === "ADMIN") {
-        if (username.toLowerCase() === "admin" && isAdminPass) {
-          localStorage.setItem("isLoggedIn", "true");
-          localStorage.setItem("username", "Admin");
-          localStorage.setItem("userRole", "ADMIN");
-          localStorage.setItem("loggedInUser", "Hospital Administrator");
-          navigate("/dashboard", { replace: true });
-          return;
-        } else if (username.toLowerCase() === "user" && password === "user123") {
-          setIsAccessDenied(true);
-          setError("⚠️ Access Denied: Admins only can access this Administrator portal. Please switch to Staff / User Login.");
-          return;
-        }
-      } else {
-        if ((username.toLowerCase() === "user" && password === "user123") || (username.toLowerCase() === "admin" && isAdminPass)) {
+      const normalizedU = username.replaceAll(/\s+/g, "").toLowerCase();
+
+      if (normalizedU === "chiefwarden" && password === "Chiefwarden@123") {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", "chief warden");
+        localStorage.setItem("userRole", "CHIEF_WARDEN");
+        localStorage.setItem("loggedInUser", "Chief Bed Warden");
+        navigate("/beds", { replace: true });
+        return;
+      }
+
+      if (username.toLowerCase() === "admin" && password === "Admin@123") {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", "Admin");
+        localStorage.setItem("userRole", "ADMIN");
+        localStorage.setItem("loggedInUser", "Hospital Administrator");
+        navigate("/dashboard", { replace: true });
+        return;
+      }
+
+      if (loginMode === "DOCTOR" || normalizedU.startsWith("dr") || normalizedU.includes("doctor")) {
+        if (password === "Doctor@123" || password.length >= 6) {
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("username", username);
-          localStorage.setItem("userRole", username.toLowerCase() === "admin" ? "ADMIN" : "STAFF");
-          localStorage.setItem("loggedInUser", username.toLowerCase() === "admin" ? "Hospital Administrator" : "Hospital Staff User");
-          navigate("/dashboard", { replace: true });
+          localStorage.setItem("userRole", "DOCTOR");
+          localStorage.setItem("loggedInUser", username.startsWith("Dr.") ? username : `Dr. ${username}`);
+          navigate("/appointments", { replace: true });
           return;
         }
+      }
+
+      if ((username.toLowerCase() === "user" && password === "user123") || (username.toLowerCase() === "staff" && password === "staff123")) {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", username);
+        localStorage.setItem("userRole", username.toLowerCase() === "staff" ? "STAFF" : "USER");
+        localStorage.setItem("loggedInUser", username.toLowerCase() === "staff" ? "Hospital Staff User" : "General User");
+        navigate("/dashboard", { replace: true });
+        return;
       }
 
       setError("Unable to connect to the server. Make sure Spring Boot is running on port 8080.");
@@ -209,17 +250,6 @@ function Login({ onLogin }) {
       setLoading(false);
     }
   };
-
-  // =========================================================
-  // LOGOUT HELPER
-  // =========================================================
-
-  // This is not called directly here, but keeping login storage
-  // simple makes logout from App.jsx reliable.
-
-  // =========================================================
-  // PAGE
-  // =========================================================
 
   return (
     <div className="login-page">
@@ -252,7 +282,7 @@ function Login({ onLogin }) {
 
           <p>
             Smart healthcare management for better patient
-            care, efficient hospital operations, and
+            care, efficient bed allocation, and
             intelligent clinical decision support.
           </p>
 
@@ -264,11 +294,11 @@ function Login({ onLogin }) {
 
               <div>
                 <strong>
-                  Patient Management
+                  Chief Bed Warden Portal
                 </strong>
 
                 <small>
-                  Complete patient registration and records
+                  Dedicated bed allocation, ward monitoring & patient diet/medicine schedules
                 </small>
               </div>
 
@@ -280,11 +310,11 @@ function Login({ onLogin }) {
 
               <div>
                 <strong>
-                  Doctor Management
+                  Doctor Clinical Portal
                 </strong>
 
                 <small>
-                  Manage doctors, schedules and consultations
+                  Consultations, appointments & comprehensive patient medical histories
                 </small>
               </div>
 
@@ -296,11 +326,11 @@ function Login({ onLogin }) {
 
               <div>
                 <strong>
-                  AI Clinical Support
+                  Patient Management & Care
                 </strong>
 
                 <small>
-                  Intelligent prediction and decision support
+                  Complete patient registration, visits and medication tracking
                 </small>
               </div>
 
@@ -312,11 +342,11 @@ function Login({ onLogin }) {
 
               <div>
                 <strong>
-                  Hospital Analytics
+                  NABH Hospital Standards
                 </strong>
 
                 <small>
-                  Reports, billing and operational insights
+                  24/7 emergency care, cashless insurance & hospital analytics
                 </small>
               </div>
 
@@ -335,29 +365,55 @@ function Login({ onLogin }) {
           <div className="login-card-header">
 
             <div className="login-icon">
-              🔐
+              {loginMode === "WARDEN" ? "🛏️" : loginMode === "DOCTOR" ? "👨‍⚕️" : loginMode === "ADMIN" ? "👑" : "🔐"}
             </div>
 
             <h2>
-              Welcome Back
+              {loginMode === "WARDEN"
+                ? "Chief Bed Warden Login"
+                : loginMode === "DOCTOR"
+                ? "Doctor Consultation Login"
+                : loginMode === "ADMIN"
+                ? "Administrator Login"
+                : "Staff & User Login"}
             </h2>
 
             <p>
-              Sign in to access NI AROGIYAM
+              {loginMode === "WARDEN"
+                ? "Access Bed Management & Patient Care Schedules"
+                : loginMode === "DOCTOR"
+                ? "Access Doctors Module & Patient Appointments"
+                : loginMode === "ADMIN"
+                ? "Sign in to access Full Hospital Management"
+                : "Sign in with your registered account"}
             </p>
 
           </div>
 
           {/* =================================================
-              LOGIN MODE TABS (ADMIN vs USER)
+              LOGIN MODE TABS (4 ROLES)
           ================================================= */}
-          <div className="login-mode-tabs">
+          <div className="login-mode-tabs four-tabs">
             <button
               type="button"
               className={`mode-tab ${loginMode === "ADMIN" ? "active" : ""}`}
               onClick={() => handleModeSwitch("ADMIN")}
             >
-              👑 Administrator
+              👑 Admin
+            </button>
+            <button
+              type="button"
+              className={`mode-tab ${loginMode === "DOCTOR" ? "active" : ""}`}
+              onClick={() => handleModeSwitch("DOCTOR")}
+            >
+              👨‍⚕️ Doctor
+            </button>
+            <button
+              type="button"
+              className={`mode-tab ${loginMode === "WARDEN" ? "active" : ""}`}
+              onClick={() => handleModeSwitch("WARDEN")}
+            >
+              🛏️ Bed Warden
             </button>
             <button
               type="button"
@@ -367,6 +423,71 @@ function Login({ onLogin }) {
               👤 Staff / User
             </button>
           </div>
+
+          {/* ROLE NOTICE BANNER */}
+          {loginMode === "WARDEN" && (
+            <div className="role-notice-banner warden">
+              <div className="banner-icon">🛏️</div>
+              <div className="banner-content">
+                <strong>Chief Bed Warden Portal (Exclusive Access)</strong>
+                <p>Grants access to <strong>Bed Management</strong> alone. Pre-configured credentials:</p>
+                <div className="credential-chips">
+                  <code>Username: chief warden</code>
+                  <code>Password: Chiefwarden@123</code>
+                </div>
+                <button
+                  type="button"
+                  className="quick-fill-btn"
+                  onClick={() => handleFillCredentials("chief warden", "Chiefwarden@123")}
+                >
+                  ⚡ Auto-fill Chief Warden
+                </button>
+              </div>
+            </div>
+          )}
+
+          {loginMode === "DOCTOR" && (
+            <div className="role-notice-banner doctor">
+              <div className="banner-icon">🩺</div>
+              <div className="banner-content">
+                <strong>Registered Doctors Portal</strong>
+                <p>Grants access to <strong>Doctors Module</strong> &amp; <strong>Appointments</strong> alone.</p>
+                <div className="quick-docs">
+                  <button
+                    type="button"
+                    className="quick-doc-chip"
+                    onClick={() => handleFillCredentials("dr.suresh", "Doctor@123")}
+                  >
+                    Dr. Suresh Menon
+                  </button>
+                  <button
+                    type="button"
+                    className="quick-doc-chip"
+                    onClick={() => handleFillCredentials("dr.ananya", "Doctor@123")}
+                  >
+                    Dr. Ananya Rao
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {loginMode === "ADMIN" && (
+            <div className="role-notice-banner admin">
+              <div className="banner-icon">👑</div>
+              <div className="banner-content">
+                <strong>System Administrator Portal</strong>
+                <p>Full control over all 15 clinical &amp; operational hospital modules.</p>
+                <button
+                  type="button"
+                  className="quick-fill-btn"
+                  onClick={() => handleFillCredentials("Admin", "Admin@123")}
+                >
+                  ⚡ Auto-fill Admin
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* =================================================
               ERROR
@@ -400,20 +521,26 @@ function Login({ onLogin }) {
             <div className="form-group">
 
               <label htmlFor="username">
-                Username
+                {loginMode === "WARDEN" ? "Warden Username" : loginMode === "DOCTOR" ? "Doctor Username / Email" : "Username"}
               </label>
 
               <div className="input-wrapper">
 
                 <span className="input-icon">
-                  👤
+                  {loginMode === "WARDEN" ? "🛏️" : loginMode === "DOCTOR" ? "👨‍⚕️" : "👤"}
                 </span>
 
                 <input
                   id="username"
                   name="username"
                   type="text"
-                  placeholder="Enter your username"
+                  placeholder={
+                    loginMode === "WARDEN"
+                      ? "chief warden"
+                      : loginMode === "DOCTOR"
+                      ? "Enter registered doctor username / email"
+                      : "Enter your username"
+                  }
                   value={formData.username}
                   onChange={handleChange}
                   autoComplete="username"
@@ -488,6 +615,7 @@ function Login({ onLogin }) {
                 <input
                   type="checkbox"
                   disabled={loading}
+                  defaultChecked
                 />
 
                 <span>
@@ -497,7 +625,7 @@ function Login({ onLogin }) {
               </label>
 
               <span className="secure-login">
-                🔒 Secure Login
+                🔒 Protected Portal
               </span>
 
             </div>
@@ -518,11 +646,13 @@ function Login({ onLogin }) {
                 </>
               ) : (
                 <>
-                  Sign In
-
-                  <span className="login-arrow">
-                    →
-                  </span>
+                  {loginMode === "WARDEN"
+                    ? "Sign In to Bed Module →"
+                    : loginMode === "DOCTOR"
+                    ? "Sign In to Doctor Portal →"
+                    : loginMode === "ADMIN"
+                    ? "Sign In as Administrator →"
+                    : "Sign In →"}
                 </>
               )}
 
@@ -530,7 +660,7 @@ function Login({ onLogin }) {
 
             {/* CREATE ACCOUNT LINK */}
             <div className="login-register">
-              <span>Don't have an account?</span>
+              <span>Need to register as Doctor or Staff?</span>
               <Link to="/register" className="register-link">
                 Create Account
               </Link>
