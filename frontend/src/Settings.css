@@ -1,0 +1,967 @@
+/* =========================================================
+   SETTINGS MODULE - PROFESSIONAL GREEN THEME
+   Same style as Doctors Module
+   ========================================================= */
+
+.settings-page {
+  min-height: 100vh;
+  padding: 30px;
+
+  background: linear-gradient(
+    135deg,
+    #e3f6ec 0%,
+    #f8fcf9 48%,
+    #d3efdf 100%
+  );
+
+  color: #173b2b;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.settings-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 24px 28px;
+  margin-bottom: 22px;
+
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    #064e3b,
+    #087f5b,
+    #12a36f
+  );
+
+  color: white;
+
+  box-shadow:
+    0 10px 25px rgba(6, 78, 59, 0.20);
+}
+
+
+.settings-breadcrumb {
+  display: flex;
+
+  align-items: center;
+  gap: 9px;
+
+  margin-bottom: 7px;
+
+  color: #bdebd2;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+.settings-breadcrumb span {
+  color: #d8f5e8;
+}
+
+
+.settings-header h1 {
+  margin: 0;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  color: white;
+}
+
+
+.settings-header p {
+  margin: 7px 0 0;
+
+  color: #d8f5e8;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   HEADER ICON
+   ========================================================= */
+
+.settings-header-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  color: white;
+
+  font-size: 25px;
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+   ========================================================= */
+
+.settings-success {
+  display: flex;
+
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 18px;
+
+  margin-bottom: 20px;
+
+  border-radius: 10px;
+
+  background: #dcf7e8;
+
+  border: 1px solid #a8ddc0;
+
+  color: #087f5b;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  box-shadow:
+    0 5px 15px rgba(6, 78, 59, 0.08);
+}
+
+
+.settings-success span {
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #087f5b;
+
+  color: white;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   SETTINGS CARD
+   ========================================================= */
+
+.settings-card {
+  padding: 28px;
+
+  margin-bottom: 22px;
+
+  border-radius: 18px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #eefaf4
+  );
+
+  border: 1px solid #b8dfcc;
+
+  box-shadow:
+    0 12px 30px rgba(6, 78, 59, 0.14);
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.settings-card-header {
+  display: flex;
+
+  align-items: center;
+  gap: 14px;
+
+  padding: 18px 20px;
+
+  margin-bottom: 25px;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #075e46,
+    #098661,
+    #13a874
+  );
+
+  color: white;
+}
+
+
+.settings-card-header h2 {
+  margin: 0;
+
+  color: white;
+
+  font-size: 21px;
+}
+
+
+.settings-card-header p {
+  margin: 5px 0 0;
+
+  color: #d8f5e8;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   SECTION ICON
+   ========================================================= */
+
+.settings-section-icon {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: rgba(255, 255, 255, 0.17);
+
+  border: 1px solid rgba(255, 255, 255, 0.30);
+
+  color: white;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+
+
+.settings-section-icon.hospital {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+
+.settings-section-icon.system {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+
+.settings-section-icon.notification {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+
+.settings-section-icon.admin {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.settings-form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+/* =========================================================
+   FORM FIELD
+   ========================================================= */
+
+.settings-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  min-width: 0;
+}
+
+
+.settings-field label {
+  color: #245442;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+
+.settings-field input,
+.settings-field select {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  min-height: 44px;
+
+  padding: 12px 13px;
+
+  border: 1px solid #afd8c2;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  background: white;
+
+  color: #173b2b;
+
+  font-size: 14px;
+
+  transition: 0.2s;
+}
+
+
+.settings-field input::placeholder {
+  color: #9aa9a1;
+}
+
+
+.settings-field input:focus,
+.settings-field select:focus {
+  border-color: #087f5b;
+
+  box-shadow:
+    0 0 0 3px rgba(8, 127, 91, 0.12);
+}
+
+
+/* =========================================================
+   NOTIFICATION OPTIONS
+   ========================================================= */
+
+.settings-options {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0;
+}
+
+
+.settings-option {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 18px 5px;
+
+  border-bottom: 1px solid #cfe7d9;
+}
+
+
+.settings-option:first-child {
+  padding-top: 0;
+}
+
+
+.settings-option:last-child {
+  border-bottom: none;
+
+  padding-bottom: 0;
+}
+
+
+.settings-option strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #173b2b;
+
+  font-size: 14px;
+}
+
+
+.settings-option p {
+  margin: 0;
+
+  color: #71847a;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   TOGGLE SWITCH
+   ========================================================= */
+
+.settings-switch {
+  position: relative;
+
+  display: inline-block;
+
+  width: 48px;
+  height: 26px;
+
+  flex-shrink: 0;
+}
+
+
+.settings-switch input {
+  opacity: 0;
+
+  width: 0;
+  height: 0;
+}
+
+
+.settings-switch span {
+  position: absolute;
+
+  inset: 0;
+
+  cursor: pointer;
+
+  border-radius: 20px;
+
+  background: #b8c9c0;
+
+  transition: 0.25s;
+}
+
+
+.settings-switch span::before {
+  content: "";
+
+  position: absolute;
+
+  width: 20px;
+  height: 20px;
+
+  left: 3px;
+  top: 3px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.15);
+
+  transition: 0.25s;
+}
+
+
+.settings-switch input:checked + span {
+  background: linear-gradient(
+    135deg,
+    #087f5b,
+    #13a874
+  );
+}
+
+
+.settings-switch input:checked + span::before {
+  transform: translateX(22px);
+}
+
+
+/* =========================================================
+   ADMIN PROFILE
+   ========================================================= */
+
+.admin-settings-profile {
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 18px;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #e8f8ef,
+    #ffffff
+  );
+
+  border: 1px solid #b8dfcc;
+}
+
+
+.admin-settings-avatar {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #087f5b,
+    #13a874
+  );
+
+  color: white;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  box-shadow:
+    0 5px 12px rgba(8, 127, 91, 0.20);
+}
+
+
+.admin-settings-profile strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #173b2b;
+
+  font-size: 16px;
+}
+
+
+.admin-settings-profile span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #087f5b;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+
+.admin-settings-profile small {
+  display: block;
+
+  color: #71847a;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.settings-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  margin-top: 25px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid #cfe7d9;
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+   ========================================================= */
+
+.settings-cancel {
+  padding: 11px 20px;
+
+  border: 1px solid #a9d2ba;
+
+  border-radius: 8px;
+
+  background: white;
+
+  color: #315344;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.settings-cancel:hover {
+  background: #f0f8f4;
+
+  border-color: #087f5b;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+   ========================================================= */
+
+.settings-save {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 11px 22px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: linear-gradient(
+    135deg,
+    #087f5b,
+    #13a874
+  );
+
+  color: white;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 15px rgba(8, 127, 91, 0.20);
+
+  transition: 0.2s;
+}
+
+
+.settings-save:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 18px rgba(8, 127, 91, 0.25);
+}
+
+
+.settings-save span {
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .settings-page {
+    padding: 20px;
+  }
+
+  .settings-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .settings-page {
+    padding: 15px;
+  }
+
+  .settings-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .settings-header-icon {
+    width: 45px;
+    height: 45px;
+  }
+
+  .settings-card {
+    padding: 18px;
+  }
+
+  .settings-card-header {
+    padding: 15px;
+  }
+
+  .settings-card-header h2 {
+    font-size: 18px;
+  }
+
+  .settings-option {
+    align-items: flex-start;
+  }
+
+  .settings-actions {
+    flex-direction: column;
+  }
+
+  .settings-cancel,
+  .settings-save {
+    width: 100%;
+  }
+
+  .admin-settings-profile {
+    padding: 15px;
+  }
+}
+
+/* =========================================================
+   ADMIN DATABASE & BACKEND INSPECTOR STYLES
+   ========================================================= */
+
+.db-inspector-card {
+  border: 2px solid #a7f3d0 !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 30px rgba(6, 78, 59, 0.08) !important;
+}
+
+.db-header {
+  background: linear-gradient(135deg, #064e3b, #047857) !important;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.settings-section-icon.database {
+  background: #022c22;
+  font-size: 20px;
+}
+
+.db-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.db-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.db-status-dot.online {
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+}
+
+.db-status-dot.offline {
+  background: #f87171;
+  box-shadow: 0 0 8px #f87171;
+}
+
+.db-refresh-btn {
+  background: #ffffff;
+  color: #064e3b;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 6px;
+  transition: 0.2s;
+}
+
+.db-refresh-btn:hover {
+  background: #ecfdf5;
+}
+
+.db-inspector-body {
+  padding: 20px 0 0 0;
+}
+
+.db-endpoint-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.db-endpoint-bar code {
+  background: #0f172a;
+  color: #38bdf8;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.db-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.db-tab {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.db-tab:hover {
+  background: #f1f5f9;
+}
+
+.db-tab.active {
+  background: #065f46;
+  color: #ffffff;
+  border-color: #065f46;
+}
+
+.db-table-viewer {
+  background: #fafdfc;
+  border: 1px solid #d1fae5;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.db-viewer-info {
+  margin-bottom: 12px;
+}
+
+.db-viewer-info h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  color: #064e3b;
+}
+
+.db-viewer-info p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #64748b;
+}
+
+.db-raw-table-wrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.db-raw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.db-raw-table th {
+  background: #064e3b;
+  color: white;
+  padding: 10px 12px;
+  font-weight: 700;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.db-raw-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.db-raw-table tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.db-json-code {
+  display: block;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.db-badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.db-badge.paid {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.db-badge.pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.db-type-pill {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.db-no-data {
+  padding: 20px;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}

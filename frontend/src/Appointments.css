@@ -1,0 +1,217 @@
+/* ============================================================
+   NI AROGIYAM - APPOINTMENTS MODULE
+   ============================================================ */
+.appointments-page {
+  width: 100%;
+}
+
+.appointments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.appointments-header h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #064e3b;
+}
+
+.appointments-header p {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.appointment-count {
+  background: #ffffff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.appointment-count span {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.appointment-count strong {
+  font-size: 18px;
+  color: #065f46;
+  font-weight: 700;
+  background: #d1fae5;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+/* Alerts */
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+/* Form Card */
+.appointment-form-card,
+.appointments-table-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #064e3b;
+}
+
+.card-header p {
+  margin: 4px 0 20px 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.appointment-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 24px;
+}
+
+.appointment-form-grid .full-row,
+.appointment-form-grid .form-group:nth-child(5),
+.appointment-form-grid .form-group:nth-child(6) {
+  grid-column: 1 / -1;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.appointment-form-card textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Form Buttons */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.form-actions button[type="submit"],
+.create-appointment-btn {
+  background: #065f46;
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.form-actions button[type="submit"]:hover,
+.create-appointment-btn:hover {
+  background: #047857;
+}
+
+.form-actions button[type="button"] {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Table Card Action Buttons */
+.appointments-table-card h2 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #064e3b;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-scheduled {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn-action {
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: opacity 0.2s;
+}
+
+.btn-action.edit {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.btn-action.delete {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.btn-action:hover {
+  opacity: 0.9;
+}

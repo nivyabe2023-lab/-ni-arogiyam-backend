@@ -1,0 +1,406 @@
+/* =========================================================
+   PATIENT & VISITOR GUIDE CSS (ST. JOHN'S HOSPITAL THEME)
+   ========================================================= */
+
+.guide-page {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.guide-hero {
+  background: linear-gradient(135deg, #0f2b5c 0%, #1e3a8a 50%, #2563eb 100%);
+  border-radius: 16px;
+  padding: 36px 32px;
+  color: #ffffff;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.25);
+}
+
+.guide-hero-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #e0f2fe;
+  margin-bottom: 12px;
+}
+
+.guide-hero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+}
+
+.guide-hero p {
+  color: #bfdbfe;
+  font-size: 1rem;
+  max-width: 850px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.guide-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 26px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+}
+
+.guide-card-header h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.card-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0 0 20px 0;
+}
+
+/* CALCULATOR */
+.calculator-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+}
+
+.calc-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 10px;
+}
+
+.ward-select-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ward-option-btn {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.ward-option-btn:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.ward-option-btn.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.ward-opt-icon {
+  font-size: 1.6rem;
+}
+
+.ward-opt-text strong {
+  display: block;
+  font-size: 0.84rem;
+  color: #0f172a;
+}
+
+.ward-opt-text small {
+  font-size: 0.76rem;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.calc-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 18px;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.mt-24 {
+  margin-top: 24px;
+}
+
+.calc-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.addon-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.checkbox-item input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* SUMMARY CARD */
+.calc-summary-card {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.calc-summary-card h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 14px 0;
+}
+
+.ward-badge-selected {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  color: #0369a1;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+.summary-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.summary-total-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 12px;
+  margin-top: 6px;
+  border-top: 2px solid #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.total-amount {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #1d4ed8;
+}
+
+.ward-features-box {
+  margin-top: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.ward-features-box small {
+  display: block;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.ward-features-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ward-features-box li {
+  font-size: 0.78rem;
+  color: #475569;
+  margin-bottom: 2px;
+}
+
+/* VISITING HOURS */
+.guide-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.visiting-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-item {
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.sched-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.sched-badge.green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.sched-badge.red {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.sched-badge.blue {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.sched-times strong {
+  display: block;
+  font-size: 0.88rem;
+  color: #0f172a;
+}
+
+.sched-times p {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* PROCESS STEPS */
+.process-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.process-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.step-num {
+  background: #1e3a8a;
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.process-step strong {
+  display: block;
+  font-size: 0.88rem;
+  color: #0f172a;
+}
+
+.process-step p {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* AMENITIES */
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.amenity-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.amenity-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.amenity-item strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.amenity-item p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .calculator-grid,
+  .guide-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .calc-row-2 {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,675 @@
+/* =========================================================
+   LABORATORY - GREEN HOSPITAL THEME
+   ========================================================= */
+
+.laboratory-page {
+  min-height: 100vh;
+  padding: 30px;
+  background: linear-gradient(
+    135deg,
+    #dff5e8 0%,
+    #f5fbf7 45%,
+    #cdeedb 100%
+  );
+  color: #173b2b;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.laboratory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 24px 28px;
+  margin-bottom: 22px;
+
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    #075e35,
+    #12834d,
+    #20a764
+  );
+
+  color: white;
+
+  box-shadow:
+    0 10px 25px rgba(7, 94, 53, 0.20);
+}
+
+.laboratory-header h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  color: white;
+}
+
+.laboratory-header p {
+  margin: 7px 0 0;
+  color: #d9f5e5;
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+   ========================================================= */
+
+.add-laboratory-button {
+  padding: 12px 20px;
+
+  border: 2px solid rgba(255,255,255,0.7);
+  border-radius: 10px;
+
+  background: white;
+  color: #08703e;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.add-laboratory-button:hover {
+  background: #e8f8ef;
+  transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.laboratory-search {
+  padding: 16px;
+  margin-bottom: 22px;
+
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #eaf8f0
+  );
+
+  border: 1px solid #b9dfc8;
+
+  box-shadow:
+    0 7px 20px rgba(7, 94, 53, 0.10);
+}
+
+.laboratory-search input {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 14px 17px;
+
+  border: 2px solid #b8dbc7;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: white;
+  color: #174a34;
+
+  font-size: 14px;
+}
+
+.laboratory-search input:focus {
+  border-color: #159957;
+
+  box-shadow:
+    0 0 0 3px rgba(21, 153, 87, 0.15);
+}
+
+
+/* =========================================================
+   TABLE CONTAINER
+   ========================================================= */
+
+.laboratory-table-container {
+  background: white;
+
+  border-radius: 16px;
+
+  overflow-x: auto;
+
+  border: 1px solid #b9dfc8;
+
+  box-shadow:
+    0 10px 25px rgba(7, 94, 53, 0.12);
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.laboratory-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  min-width: 950px;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.laboratory-table thead {
+  background: linear-gradient(
+    135deg,
+    #075e35,
+    #10834c,
+    #159957
+  );
+}
+
+.laboratory-table th {
+  padding: 16px 14px;
+
+  color: white;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.laboratory-table td {
+  padding: 15px 14px;
+
+  border-bottom: 1px solid #dceee4;
+
+  color: #315344;
+
+  font-size: 13px;
+
+  background: white;
+}
+
+.laboratory-table tbody tr:nth-child(even) td {
+  background: #f0faf4;
+}
+
+.laboratory-table tbody tr:hover td {
+  background: #dff5e8;
+}
+
+
+/* =========================================================
+   ID
+   ========================================================= */
+
+.laboratory-table td:first-child {
+  color: #08703e;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.laboratory-status {
+  display: inline-block;
+
+  padding: 6px 12px;
+
+  border-radius: 20px;
+
+  background: #d9f5e5;
+  color: #08703e;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.laboratory-status.pending {
+  background: #fff2c7;
+  color: #916500;
+}
+
+.laboratory-status.completed {
+  background: #d8f5e3;
+  color: #08703e;
+}
+
+.laboratory-status.cancelled {
+  background: #ffe0e0;
+  color: #b42323;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.laboratory-action-buttons {
+  display: flex;
+  gap: 7px;
+}
+
+.laboratory-view-button,
+.laboratory-edit-button,
+.laboratory-delete-button {
+  padding: 7px 11px;
+
+  border: none;
+  border-radius: 7px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.laboratory-view-button {
+  background: #d9f5e5;
+  color: #08703e;
+}
+
+.laboratory-view-button:hover {
+  background: #bce8cd;
+}
+
+.laboratory-edit-button {
+  background: #dff0ff;
+  color: #1769aa;
+}
+
+.laboratory-edit-button:hover {
+  background: #c7e5fb;
+}
+
+.laboratory-delete-button {
+  background: #ffe5e5;
+  color: #b42323;
+}
+
+.laboratory-delete-button:hover {
+  background: #ffd0d0;
+}
+
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.laboratory-form-card {
+  padding: 28px;
+
+  border-radius: 18px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #eefaf3
+  );
+
+  border: 1px solid #b9dfc8;
+
+  box-shadow:
+    0 12px 30px rgba(7, 94, 53, 0.14);
+}
+
+
+/* =========================================================
+   FORM HEADER
+   ========================================================= */
+
+.laboratory-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 18px 20px;
+  margin-bottom: 25px;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #08703e,
+    #159957
+  );
+
+  color: white;
+}
+
+.laboratory-form-header h2 {
+  margin: 0;
+  color: white;
+}
+
+.laboratory-form-header p {
+  margin: 5px 0 0;
+  color: #d9f5e5;
+  font-size: 13px;
+}
+
+.laboratory-close-button {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: white;
+  color: #08703e;
+
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.laboratory-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 20px;
+}
+
+.laboratory-form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.laboratory-form-group label {
+  color: #24543e;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.laboratory-form-group input,
+.laboratory-form-group select,
+.laboratory-form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 12px 13px;
+
+  border: 1px solid #afd7bf;
+  border-radius: 8px;
+
+  outline: none;
+
+  background: white;
+
+  color: #173b2b;
+
+  font-size: 14px;
+}
+
+.laboratory-form-group input:focus,
+.laboratory-form-group select:focus,
+.laboratory-form-group textarea:focus {
+  border-color: #159957;
+
+  box-shadow:
+    0 0 0 3px rgba(21, 153, 87, 0.13);
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.laboratory-form-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  margin-top: 25px;
+  padding-top: 20px;
+
+  border-top: 1px solid #cfe7d8;
+}
+
+.laboratory-cancel-button {
+  padding: 11px 20px;
+
+  border: 1px solid #a9d2b8;
+  border-radius: 8px;
+
+  background: white;
+  color: #315344;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.laboratory-save-button {
+  padding: 11px 22px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: linear-gradient(
+    135deg,
+    #08703e,
+    #20a764
+  );
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 15px rgba(8, 112, 62, 0.20);
+}
+
+.laboratory-save-button:hover {
+  transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   DETAILS
+   ========================================================= */
+
+.laboratory-details-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 16px;
+}
+
+.laboratory-detail-item {
+  padding: 18px;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #e9f8ef,
+    #ffffff
+  );
+
+  border: 1px solid #b9dfc8;
+}
+
+.laboratory-detail-item span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #6b8175;
+
+  font-size: 12px;
+}
+
+.laboratory-detail-item strong {
+  color: #08703e;
+
+  font-size: 15px;
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+   ========================================================= */
+
+.laboratory-page .success-message {
+  padding: 14px 18px;
+  margin-bottom: 18px;
+
+  border-radius: 10px;
+
+  background: #dff5e8;
+
+  border: 1px solid #a9d7b9;
+
+  color: #08703e;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.laboratory-page .error-message {
+  padding: 14px 18px;
+  margin-bottom: 18px;
+
+  border-radius: 10px;
+
+  background: #ffe8e8;
+
+  border: 1px solid #f2baba;
+
+  color: #b42323;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.laboratory-empty {
+  padding: 55px !important;
+
+  text-align: center;
+
+  color: #6d8276 !important;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.laboratory-loading {
+  min-height: 350px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  color: #08703e;
+}
+
+.laboratory-loading-spinner {
+  width: 38px;
+  height: 38px;
+
+  border: 4px solid #ccebd8;
+  border-top-color: #08703e;
+
+  border-radius: 50%;
+
+  animation: laboratorySpin 0.8s linear infinite;
+
+  margin-bottom: 15px;
+}
+
+@keyframes laboratorySpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .laboratory-page {
+    padding: 20px;
+  }
+
+  .laboratory-form-grid,
+  .laboratory-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .laboratory-page {
+    padding: 15px;
+  }
+
+  .laboratory-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .add-laboratory-button {
+    width: 100%;
+  }
+
+  .laboratory-form-card {
+    padding: 18px;
+  }
+
+  .laboratory-form-actions {
+    flex-direction: column;
+  }
+
+  .laboratory-cancel-button,
+  .laboratory-save-button {
+    width: 100%;
+  }
+}

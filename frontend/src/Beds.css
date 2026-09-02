@@ -1,0 +1,110 @@
+/* ============================================================
+   NI AROGIYAM - BED MANAGEMENT MODULE
+   ============================================================ */
+.beds-page {
+  width: 100%;
+}
+
+.bed-form-card,
+.beds-table-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.bed-form-card h2,
+.beds-table-card h2 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #064e3b;
+}
+
+.bed-form-card .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 24px;
+}
+
+@media (max-width: 768px) {
+  .bed-form-card .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bed-form-card .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bed-form-card .form-group label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.bed-form-card .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.bed-form-card .form-actions button[type="submit"] {
+  background: #065f46;
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bed-form-card .form-actions button[type="submit"]:hover {
+  background: #047857;
+}
+
+.bed-form-card .form-actions button[type="button"] {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Beds Table Action Buttons */
+.beds-table-card button {
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: opacity 0.2s;
+}
+
+.beds-table-card button:first-child {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.beds-table-card button:last-child {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.beds-table-card button:hover {
+  opacity: 0.9;
+}

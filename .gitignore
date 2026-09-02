@@ -31,21 +31,18 @@ build/
 
 ### VS Code ###
 .vscode/
-# Frontend is deployed separately on Vercel
-frontend/
+# Frontend node modules and build artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.vercel/
 
 # Node dependencies
 node_modules/
+
 # Local Spring Boot configuration - DO NOT UPLOAD
 
 # Local JDK - DO NOT UPLOAD
 .jdk/
-
-# Frontend deployed separately
-frontend/
-
-# Node dependencies
-node_modules/
 
 # Local database files
 data/

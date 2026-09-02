@@ -1,0 +1,478 @@
+/* =========================================================
+   INSURANCE & TPA CSS (ST. JOHN'S HOSPITAL THEME)
+   ========================================================= */
+
+.insurance-page {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.insurance-hero {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+  border-radius: 16px;
+  padding: 36px 32px 20px 32px;
+  color: #ffffff;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.25);
+}
+
+.insurance-hero-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #e0e7ff;
+  margin-bottom: 12px;
+}
+
+.insurance-hero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+}
+
+.insurance-hero p {
+  color: #c7d2fe;
+  font-size: 1rem;
+  max-width: 850px;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.insurance-nav-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tab-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.tab-btn.active {
+  background: #ffffff;
+  color: #1e1b4b;
+  border-color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.claim-alert-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.claim-alert-bar strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.claim-alert-bar p {
+  margin: 2px 0 0 0;
+  font-size: 0.88rem;
+}
+
+.close-alert {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 16px 0;
+}
+
+.mt-32 {
+  margin-top: 32px;
+}
+
+.mt-24 {
+  margin-top: 24px;
+}
+
+/* GOVT SCHEMES GRID */
+.govt-schemes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.scheme-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.scheme-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.scheme-icon {
+  font-size: 2rem;
+}
+
+.scheme-badge {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.scheme-card h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+}
+
+.scheme-details p {
+  font-size: 0.84rem;
+  color: #475569;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.scheme-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.cashless-tag {
+  color: #15803d;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* TPA GRID */
+.tpa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.tpa-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tpa-icon {
+  font-size: 1.8rem;
+  background: #eff6ff;
+  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpa-info strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.tpa-type {
+  display: block;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.tpa-sla {
+  display: block;
+  font-size: 0.75rem;
+  color: #2563eb;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* PREAUTH FORM */
+.preauth-form-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+}
+
+.card-header h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.card-header p {
+  color: #64748b;
+  font-size: 0.88rem;
+  margin: 0 0 24px 0;
+}
+
+.preauth-form .form-group {
+  margin-bottom: 18px;
+}
+
+.preauth-form label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.preauth-form input,
+.preauth-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.preauth-form input:focus,
+.preauth-form select:focus {
+  outline: none;
+  border-color: #4338ca;
+  box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.15);
+}
+
+.btn-submit-preauth {
+  background: #4338ca;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-submit-preauth:hover {
+  background: #3730a3;
+}
+
+/* TRACKER */
+.search-claim-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.search-claim-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 14px 0;
+}
+
+.search-claim-form {
+  display: flex;
+  gap: 12px;
+}
+
+.search-claim-form input {
+  flex-grow: 1;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.btn-search-claim {
+  background: #1e1b4b;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.claim-search-result {
+  margin-top: 18px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.claim-search-result h4 {
+  margin: 0 0 10px 0;
+  color: #0f172a;
+}
+
+.claim-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.claim-not-found {
+  margin-top: 14px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+/* CLAIMS TABLE */
+.claims-table-wrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+}
+
+.claims-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.claims-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.claims-table td {
+  padding: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.text-green {
+  color: #15803d;
+}
+
+.text-muted {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.claim-status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.claim-status-pill.approved {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.claim-status-pill.settled {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.claim-status-pill.query {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.claim-status-pill.pending {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* DOCUMENTS GUIDE */
+.documents-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 22px;
+}
+
+.doc-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+}
+
+.doc-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.doc-card h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+}
+
+.doc-card ul {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.doc-card li {
+  font-size: 0.84rem;
+  color: #475569;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}

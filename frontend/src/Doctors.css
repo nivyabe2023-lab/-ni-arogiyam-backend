@@ -1,0 +1,791 @@
+/* =========================================================
+   DOCTORS MODULE - PROFESSIONAL GREEN THEME
+   ========================================================= */
+
+.doctors-page {
+  min-height: 100vh;
+  padding: 30px;
+  background: linear-gradient(
+    135deg,
+    #e3f6ec 0%,
+    #f8fcf9 48%,
+    #d3efdf 100%
+  );
+  color: #173b2b;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.doctors-page .patients-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 24px 28px;
+  margin-bottom: 22px;
+
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    #064e3b,
+    #087f5b,
+    #12a36f
+  );
+
+  color: white;
+
+  box-shadow:
+    0 10px 25px rgba(6, 78, 59, 0.20);
+}
+
+.doctors-page .patients-header h1 {
+  margin: 0;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  color: white;
+}
+
+.doctors-page .patients-header p {
+  margin: 7px 0 0;
+
+  color: #d8f5e8;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   ADD DOCTOR BUTTON
+   ========================================================= */
+
+.doctors-page .add-patient-button {
+  padding: 12px 20px;
+
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+
+  background: white;
+  color: #087f5b;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.doctors-page .add-patient-button:hover {
+  background: #e6f7ef;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 15px rgba(6, 78, 59, 0.15);
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+   ========================================================= */
+
+.doctors-page .success-message {
+  padding: 14px 18px;
+
+  margin-bottom: 18px;
+
+  border-radius: 10px;
+
+  background: #dcf7e8;
+  border: 1px solid #a8ddc0;
+
+  color: #087f5b;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.doctors-page .error-message {
+  padding: 14px 18px;
+
+  margin-bottom: 18px;
+
+  border-radius: 10px;
+
+  background: #ffe8e8;
+  border: 1px solid #efb4b4;
+
+  color: #b42323;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.doctors-page .patient-search {
+  padding: 16px;
+
+  margin-bottom: 22px;
+
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #edf9f3
+  );
+
+  border: 1px solid #b8dfcc;
+
+  box-shadow:
+    0 7px 20px rgba(6, 78, 59, 0.10);
+}
+
+.doctors-page .patient-search input {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 14px 17px;
+
+  border: 2px solid #b8dbc9;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: white;
+
+  color: #173b2b;
+
+  font-size: 14px;
+
+  transition: 0.2s;
+}
+
+.doctors-page .patient-search input::placeholder {
+  color: #8a9d93;
+}
+
+.doctors-page .patient-search input:focus {
+  border-color: #087f5b;
+
+  box-shadow:
+    0 0 0 3px rgba(8, 127, 91, 0.13);
+}
+
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.doctors-page .patient-form-card {
+  padding: 28px;
+
+  margin-bottom: 22px;
+
+  border-radius: 18px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #eefaf4
+  );
+
+  border: 1px solid #b8dfcc;
+
+  box-shadow:
+    0 12px 30px rgba(6, 78, 59, 0.14);
+}
+
+
+/* =========================================================
+   FORM HEADER
+   ========================================================= */
+
+.doctors-page .form-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 18px 20px;
+
+  margin-bottom: 25px;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #075e46,
+    #098661,
+    #13a874
+  );
+
+  color: white;
+}
+
+.doctors-page .form-header h2 {
+  margin: 0;
+
+  color: white;
+
+  font-size: 21px;
+}
+
+.doctors-page .form-header p {
+  margin: 5px 0 0;
+
+  color: #d8f5e8;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.doctors-page .close-button {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: white;
+
+  color: #087f5b;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.doctors-page .close-button:hover {
+  background: #dff5e9;
+
+  transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.doctors-page .form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.doctors-page .form-group {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  min-width: 0;
+}
+
+.doctors-page .form-group label {
+  color: #245442;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+.doctors-page .form-group input,
+.doctors-page .form-group select {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  min-height: 44px;
+
+  padding: 12px 13px;
+
+  border: 1px solid #afd8c2;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  background: white;
+
+  color: #173b2b;
+
+  font-size: 14px;
+
+  transition: 0.2s;
+}
+
+.doctors-page .form-group input::placeholder {
+  color: #9aa9a1;
+}
+
+.doctors-page .form-group input:focus,
+.doctors-page .form-group select:focus {
+  border-color: #087f5b;
+
+  box-shadow:
+    0 0 0 3px rgba(8, 127, 91, 0.12);
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.doctors-page .form-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  margin-top: 25px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid #cfe7d9;
+}
+
+
+/* CANCEL BUTTON */
+
+.doctors-page .cancel-button {
+  padding: 11px 20px;
+
+  border: 1px solid #a9d2ba;
+
+  border-radius: 8px;
+
+  background: white;
+
+  color: #315344;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.doctors-page .cancel-button:hover {
+  background: #f0f8f4;
+
+  border-color: #087f5b;
+}
+
+
+/* SAVE BUTTON */
+
+.doctors-page .save-patient-button {
+  padding: 11px 22px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: linear-gradient(
+    135deg,
+    #087f5b,
+    #13a874
+  );
+
+  color: white;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 15px rgba(8, 127, 91, 0.20);
+
+  transition: 0.2s;
+}
+
+.doctors-page .save-patient-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 18px rgba(8, 127, 91, 0.25);
+}
+
+
+/* =========================================================
+   DETAILS VIEW
+   ========================================================= */
+
+.doctors-page .patient-details-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+.doctors-page .patient-details-grid > div {
+  min-width: 0;
+
+  padding: 18px;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #e8f8ef,
+    #ffffff
+  );
+
+  border: 1px solid #b8dfcc;
+}
+
+.doctors-page .patient-details-grid span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #71847a;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+.doctors-page .patient-details-grid strong {
+  display: block;
+
+  color: #087f5b;
+
+  font-size: 15px;
+
+  word-break: break-word;
+}
+
+
+/* =========================================================
+   DOCTOR TABLE CONTAINER
+   ========================================================= */
+
+.doctors-page .patients-table-container {
+  width: 100%;
+
+  overflow-x: auto;
+
+  border-radius: 16px;
+
+  background: white;
+
+  border: 1px solid #b8dfcc;
+
+  box-shadow:
+    0 10px 25px rgba(6, 78, 59, 0.12);
+}
+
+
+/* =========================================================
+   DOCTOR TABLE
+   ========================================================= */
+
+.doctors-page .patients-table {
+  width: 100%;
+
+  min-width: 1000px;
+
+  border-collapse: collapse;
+
+  table-layout: auto;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.doctors-page .patients-table thead {
+  background: linear-gradient(
+    135deg,
+    #064e3b,
+    #087f5b,
+    #0da16d
+  );
+}
+
+.doctors-page .patients-table th {
+  padding: 16px 14px;
+
+  color: white;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.doctors-page .patients-table td {
+  padding: 15px 14px;
+
+  border-bottom: 1px solid #dceee4;
+
+  color: #315344;
+
+  font-size: 13px;
+
+  white-space: nowrap;
+
+  background: white;
+
+  vertical-align: middle;
+}
+
+.doctors-page .patients-table tbody tr:nth-child(even) td {
+  background: #f2faf6;
+}
+
+.doctors-page .patients-table tbody tr:hover td {
+  background: #e1f5ea;
+}
+
+
+/* =========================================================
+   ID
+   ========================================================= */
+
+.doctors-page .patients-table td:first-child {
+  color: #087f5b;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   DOCTOR NAME
+   ========================================================= */
+
+.doctors-page .patients-table td:nth-child(2) strong {
+  color: #173b2b;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   AVAILABILITY
+   ========================================================= */
+
+.doctors-page .patients-table td:nth-child(7) {
+  font-weight: 700;
+}
+
+
+/* Available */
+
+.doctors-page .patients-table td:nth-child(7) {
+  color: #087f5b;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.doctors-page .action-buttons {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  white-space: nowrap;
+}
+
+.doctors-page .view-button,
+.doctors-page .edit-button,
+.doctors-page .delete-button {
+  padding: 7px 11px;
+
+  border: none;
+
+  border-radius: 7px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+/* VIEW */
+
+.doctors-page .view-button {
+  background: #d9f5e6;
+
+  color: #087f5b;
+}
+
+.doctors-page .view-button:hover {
+  background: #bdebd2;
+
+  transform: translateY(-1px);
+}
+
+
+/* EDIT */
+
+.doctors-page .edit-button {
+  background: #e1f0ff;
+
+  color: #1769aa;
+}
+
+.doctors-page .edit-button:hover {
+  background: #c8e4fa;
+
+  transform: translateY(-1px);
+}
+
+
+/* DELETE */
+
+.doctors-page .delete-button {
+  background: #ffe5e5;
+
+  color: #b42323;
+}
+
+.doctors-page .delete-button:hover {
+  background: #ffd0d0;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   EMPTY TABLE
+   ========================================================= */
+
+.doctors-page .patients-table td[colspan] {
+  padding: 55px 20px;
+
+  text-align: center;
+
+  color: #71847a;
+
+  font-weight: 600;
+
+  background: #fbfdfc;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.doctors-page > p,
+.doctors-page > h1 + p {
+  color: #087f5b;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .doctors-page {
+    padding: 20px;
+  }
+
+  .doctors-page .form-grid,
+  .doctors-page .patient-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .doctors-page {
+    padding: 15px;
+  }
+
+  .doctors-page .patients-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .doctors-page .add-patient-button {
+    width: 100%;
+  }
+
+  .doctors-page .patient-form-card {
+    padding: 18px;
+  }
+
+  .doctors-page .form-actions {
+    flex-direction: column;
+  }
+
+  .doctors-page .cancel-button,
+  .doctors-page .save-patient-button {
+    width: 100%;
+  }
+
+  .doctors-page .form-header {
+    padding: 15px;
+  }
+
+  .doctors-page .patients-table-container {
+    border-radius: 12px;
+  }
+
+}
