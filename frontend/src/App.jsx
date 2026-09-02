@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Component } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -6,7 +6,57 @@ import {
   NavLink,
   Navigate,
   useNavigate,
+  Outlet,
 } from "react-router-dom";
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: "40px 20px", textAlign: "center", maxWidth: "600px", margin: "40px auto", background: "#fff", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
+          <div style={{ fontSize: "48px", marginBottom: "16px" }}>🏥</div>
+          <h2 style={{ color: "#064e3b", marginBottom: "12px" }}>NI AROGIYAM</h2>
+          <p style={{ color: "#64748b", marginBottom: "24px" }}>
+            Something went wrong while displaying this page.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              this.setState({ hasError: false, error: null });
+              window.location.href = "/";
+            }}
+            style={{
+              background: "#065f46",
+              color: "#fff",
+              border: "none",
+              padding: "10px 24px",
+              borderRadius: "8px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Return to Dashboard
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 import "./App.css";
 import "./Dashboard.css";
@@ -287,11 +337,11 @@ function Dashboard() {
           <div className="admin-profile">
 
             <div className="profile-avatar">
-              {userName.charAt(0).toUpperCase()}
+              {(typeof userName === "string" && userName.trim() ? userName.trim().charAt(0).toUpperCase() : "A") || "A"}
             </div>
 
             <div>
-              <strong>{userName}</strong>
+              <strong>{typeof userName === "string" && userName.trim() ? userName.trim() : "Administrator"}</strong>
 
               <small>Administrator</small>
             </div>
@@ -1113,11 +1163,11 @@ function Sidebar({ isOpen, onClose }) {
           <div className="sidebar-user-card">
 
             <div className="sidebar-user-avatar">
-              {userName.charAt(0).toUpperCase()}
+              {(typeof userName === "string" && userName.trim() ? userName.trim().charAt(0).toUpperCase() : "A") || "A"}
             </div>
 
             <div className="sidebar-user-details">
-              <strong title={userName}>{userName}</strong>
+              <strong title={typeof userName === "string" ? userName : "Administrator"}>{typeof userName === "string" && userName.trim() ? userName.trim() : "Administrator"}</strong>
               <small>Administrator</small>
             </div>
 
@@ -1262,96 +1312,9 @@ function ApplicationLayout() {
       />
 
       <main className="main-content">
-
-        <Routes>
-
-          <Route
-            path="/"
-            element={<Dashboard />}
-          />
-
-          <Route
-            path="/emergency"
-            element={<EmergencyServices />}
-          />
-
-          <Route
-            path="/specialities"
-            element={<Specialities />}
-          />
-
-          <Route
-            path="/health-packages"
-            element={<HealthPackages />}
-          />
-
-          <Route
-            path="/insurance-tpa"
-            element={<InsuranceTPA />}
-          />
-
-          <Route
-            path="/patient-guide"
-            element={<PatientGuide />}
-          />
-
-          <Route
-            path="/patients"
-            element={<Patients />}
-          />
-
-          <Route
-            path="/doctors"
-            element={<Doctors />}
-          />
-
-          <Route
-            path="/appointments"
-            element={<Appointments />}
-          />
-
-          <Route
-            path="/laboratory"
-            element={<Laboratory />}
-          />
-
-          <Route
-            path="/pharmacy"
-            element={<Pharmacy />}
-          />
-
-          <Route
-            path="/beds"
-            element={<Beds />}
-          />
-
-          <Route
-            path="/billing"
-            element={<Billing />}
-          />
-
-          <Route
-            path="/ai-prediction"
-            element={<AIPrediction />}
-          />
-
-          <Route
-            path="/reports"
-            element={<Reports />}
-          />
-
-          <Route
-            path="/settings"
-            element={<Settings />}
-          />
-
-          <Route
-            path="*"
-            element={<Navigate to="/" replace />}
-          />
-
-        </Routes>
-
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
 
     </div>
@@ -1366,35 +1329,102 @@ function ApplicationLayout() {
 function App() {
   return (
     <BrowserRouter>
+      <ErrorBoundary>
+        <Routes>
+          {/* LOGIN & REGISTER ARE OUTSIDE APPLICATION LAYOUT */}
+          <Route
+            path="/login"
+            element={<Login />}
+          />
 
-      <Routes>
+          <Route
+            path="/register"
+            element={<Register />}
+          />
 
-        {/* LOGIN & REGISTER ARE OUTSIDE APPLICATION LAYOUT */}
-
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-
-        <Route
-          path="/register"
-          element={<Register />}
-        />
-
-
-        {/* EVERYTHING ELSE IS PROTECTED */}
-
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoute>
-              <ApplicationLayout />
-            </ProtectedRoute>
-          }
-        />
-
-      </Routes>
-
+          {/* APPLICATION LAYOUT (PROTECTED) */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <ApplicationLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              path="/"
+              element={<Dashboard />}
+            />
+            <Route
+              path="/dashboard"
+              element={<Dashboard />}
+            />
+            <Route
+              path="/emergency"
+              element={<EmergencyServices />}
+            />
+            <Route
+              path="/specialities"
+              element={<Specialities />}
+            />
+            <Route
+              path="/health-packages"
+              element={<HealthPackages />}
+            />
+            <Route
+              path="/insurance-tpa"
+              element={<InsuranceTPA />}
+            />
+            <Route
+              path="/patient-guide"
+              element={<PatientGuide />}
+            />
+            <Route
+              path="/patients"
+              element={<Patients />}
+            />
+            <Route
+              path="/doctors"
+              element={<Doctors />}
+            />
+            <Route
+              path="/appointments"
+              element={<Appointments />}
+            />
+            <Route
+              path="/laboratory"
+              element={<Laboratory />}
+            />
+            <Route
+              path="/pharmacy"
+              element={<Pharmacy />}
+            />
+            <Route
+              path="/beds"
+              element={<Beds />}
+            />
+            <Route
+              path="/billing"
+              element={<Billing />}
+            />
+            <Route
+              path="/ai-prediction"
+              element={<AIPrediction />}
+            />
+            <Route
+              path="/reports"
+              element={<Reports />}
+            />
+            <Route
+              path="/settings"
+              element={<Settings />}
+            />
+            <Route
+              path="*"
+              element={<Navigate to="/" replace />}
+            />
+          </Route>
+        </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
