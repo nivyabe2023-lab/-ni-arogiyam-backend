@@ -16,6 +16,13 @@ import doctorArvindImg from "./assets/doctor_arvind.jpg";
 import doctorPriyaImg from "./assets/doctor_priya.jpg";
 import contactBgDoctor from "./assets/contact_bg_doctor_clean.jpg";
 import contactMapCardImg from "./assets/contact_map_card_ultra_hd.png";
+import pvHeroBannerImg from "./assets/pv_hero_banner.jpg";
+import avatarMeena from "./assets/avatar_meena.png";
+import avatarRamesh from "./assets/avatar_ramesh.png";
+import avatarLakshmi from "./assets/avatar_lakshmi.png";
+import avatarArun from "./assets/avatar_arun.png";
+import avatarPriya from "./assets/avatar_priya.png";
+import avatarKarthik from "./assets/avatar_karthik.png";
 
 // =========================================================
 // SPECIALTY DOCTORS DATA WITH FULL ACHIEVEMENTS & SLOTS
@@ -542,13 +549,14 @@ export default function HospitalLanding({ initialTab = "home" }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Active page tab: 'home' | 'about' | 'specialties' | 'facilities' | 'doctors' | 'contact'
+  // Active page tab: 'home' | 'about' | 'specialties' | 'facilities' | 'doctors' | 'contact' | 'patient-visitors'
   const [activeTab, setActiveTab] = useState(() => {
     if (initialTab === "about") return "about";
     if (initialTab === "specialties") return "specialties";
     if (initialTab === "facilities") return "facilities";
     if (initialTab === "doctors") return "doctors";
     if (initialTab === "contact") return "contact";
+    if (initialTab === "patient-visitors" || initialTab === "patients" || initialTab === "visitors") return "patient-visitors";
     if (typeof window !== "undefined") {
       const hash = window.location.hash.toLowerCase();
       const path = window.location.pathname.toLowerCase();
@@ -566,6 +574,17 @@ export default function HospitalLanding({ initialTab = "home" }) {
       }
       if (hash === "#contact" || hash === "#contact-us" || path.includes("/contact")) {
         return "contact";
+      }
+      if (
+        hash === "#patient-visitors" ||
+        hash === "#patients-visitors" ||
+        hash === "#patient-and-visitors" ||
+        hash === "#patients" ||
+        hash === "#visitors" ||
+        path.includes("/patient") ||
+        path.includes("/visitor")
+      ) {
+        return "patient-visitors";
       }
     }
     return "home";
@@ -646,6 +665,17 @@ export default function HospitalLanding({ initialTab = "home" }) {
         }
       } else if (hash === "#contact" || hash === "#contact-us" || path.includes("/contact")) {
         setActiveTab("contact");
+        setSelectedSpecialtyDetail(null);
+      } else if (
+        hash === "#patient-visitors" ||
+        hash === "#patients-visitors" ||
+        hash === "#patient-and-visitors" ||
+        hash === "#patients" ||
+        hash === "#visitors" ||
+        path.includes("/patient") ||
+        path.includes("/visitor")
+      ) {
+        setActiveTab("patient-visitors");
         setSelectedSpecialtyDetail(null);
       } else if (hash === "#home" || hash === "" || path === "/" || path === "/home") {
         setActiveTab("home");
@@ -785,6 +815,14 @@ export default function HospitalLanding({ initialTab = "home" }) {
     setActiveTab("contact");
     setSelectedSpecialtyDetail(null);
     window.history.pushState(null, "", "#contact");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleNavPatientVisitors = (e) => {
+    if (e) e.preventDefault();
+    setActiveTab("patient-visitors");
+    setSelectedSpecialtyDetail(null);
+    window.history.pushState(null, "", "#patient-visitors");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -949,18 +987,23 @@ export default function HospitalLanding({ initialTab = "home" }) {
             </div>
 
             <div
-              className="menu-item-wrap"
+              className={`menu-item-wrap ${activeTab === "patient-visitors" ? "active-wrap" : ""}`}
               onMouseEnter={() => setVisitorDropdown(true)}
               onMouseLeave={() => setVisitorDropdown(false)}
             >
-              <a href="#patients-visitors" className="menu-link">
+              <a
+                href="#patient-visitors"
+                className={`menu-link ${activeTab === "patient-visitors" ? "active" : ""}`}
+                onClick={handleNavPatientVisitors}
+              >
                 Patient &amp; Visitors <span className="caret-icon">⌄</span>
               </a>
+              {activeTab === "patient-visitors" && <div className="green-indicator-bar"></div>}
               {visitorDropdown && (
                 <div className="popover-dropdown">
-                  <a href="#facilities" onClick={() => setVisitorDropdown(false)}>Visitor Guidelines</a>
-                  <a href="#facilities" onClick={() => setVisitorDropdown(false)}>Room Categories</a>
-                  <a href="#facilities" onClick={() => setVisitorDropdown(false)}>Cashless Insurance</a>
+                  <a href="#patient-visitors" onClick={(e) => { setVisitorDropdown(false); handleNavPatientVisitors(e); }}>Visitor Guidelines</a>
+                  <a href="#patient-visitors" onClick={(e) => { setVisitorDropdown(false); handleNavPatientVisitors(e); }}>Room Categories</a>
+                  <a href="#patient-visitors" onClick={(e) => { setVisitorDropdown(false); handleNavPatientVisitors(e); }}>Cashless Insurance</a>
                 </div>
               )}
             </div>
@@ -2182,7 +2225,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
                   <li><a href="#about" onClick={handleNavAbout}>About Us</a></li>
                   <li><a href="#specialties" onClick={handleNavSpecialties}>Specialties</a></li>
                   <li><a href="#facilities" onClick={handleNavFacilities}>Facilities</a></li>
-                  <li><a href="#facilities" onClick={handleNavFacilities}>Patient &amp; Visitors</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Patient &amp; Visitors</a></li>
                   <li><a href="#doctors" onClick={handleNavDoctors}>Our Doctors</a></li>
                 </ul>
               </div>
@@ -2461,7 +2504,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
                   <li><a href="#about" onClick={handleNavAbout}>About Us</a></li>
                   <li><a href="#specialties" onClick={handleNavSpecialties}>Specialties</a></li>
                   <li><a href="#facilities" onClick={handleNavFacilities}>Facilities</a></li>
-                  <li><a href="#facilities" onClick={handleNavFacilities}>Patient &amp; Visitors</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Patient &amp; Visitors</a></li>
                   <li><a href="#doctors" onClick={handleNavDoctors}>Our Doctors</a></li>
                 </ul>
               </div>
@@ -2485,6 +2528,426 @@ export default function HospitalLanding({ initialTab = "home" }) {
                   <li><a href="#about" onClick={handleNavAbout}>FAQs</a></li>
                   <li><a href="#about" onClick={handleNavAbout}>Careers</a></li>
                   <li><a href="#contact" onClick={handleNavContact}>Contact Us</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="footer-four-col-bottom">
+              <div className="footer-bottom-inner">
+                <span>&copy; 2025 NI AROGIYAM Hospital. All Rights Reserved.</span>
+                <div className="footer-bottom-links">
+                  <a href="#privacy">Privacy Policy</a>
+                  <span className="footer-sep">|</span>
+                  <a href="#terms">Terms &amp; Conditions</a>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </main>
+      ) : activeTab === "patient-visitors" ? (
+        /* =======================================================
+            RENDER: PATIENT & VISITORS PAGE VIEW (EXACT MATCH TO DESIGN)
+            ======================================================= */
+        <main className="exact-patient-visitors-view">
+          {/* Top Hero Banner Section */}
+          <div className="pv-hero-banner-container">
+            <div className="pv-hero-banner-content">
+              {/* Breadcrumb */}
+              <div className="pv-breadcrumb">
+                <a href="#home" onClick={handleNavHome} className="breadcrumb-link">
+                  Home
+                </a>
+                <span className="breadcrumb-separator">&gt;</span>
+                <span className="breadcrumb-current">Patient &amp; Visitors</span>
+              </div>
+
+              {/* Main Headline */}
+              <h1 className="pv-hero-title">
+                Caring for You,<br />
+                <span className="pv-title-highlight">Every Step of the Way.</span>
+              </h1>
+
+              {/* Subtitle */}
+              <p className="pv-hero-subtitle">
+                We are committed to providing exceptional care and a comfortable experience for both our patients and visitors.
+              </p>
+            </div>
+
+            {/* Right Hero Image */}
+            <div className="pv-hero-image-wrapper">
+              <img
+                src={pvHeroBannerImg}
+                alt="Healthcare professional caring for patient and family"
+                className="pv-hero-img"
+              />
+              <div className="pv-hero-image-gradient-overlay"></div>
+            </div>
+          </div>
+
+          {/* Floating Highlights & Stats Bar */}
+          <div className="pv-stats-bar-wrapper">
+            <div className="pv-stats-bar">
+              <div className="pv-stat-item">
+                <div className="pv-stat-icon-wrap">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <div className="pv-stat-text">
+                  <strong className="pv-stat-number">10K+</strong>
+                  <span className="pv-stat-label">Happy Patients</span>
+                </div>
+              </div>
+
+              <div className="pv-stat-divider"></div>
+
+              <div className="pv-stat-item">
+                <div className="pv-stat-icon-wrap">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M12 8v8"></path>
+                    <path d="M8 12h8"></path>
+                  </svg>
+                </div>
+                <div className="pv-stat-text">
+                  <strong className="pv-stat-number">500+</strong>
+                  <span className="pv-stat-label">Expert Doctors</span>
+                </div>
+              </div>
+
+              <div className="pv-stat-divider"></div>
+
+              <div className="pv-stat-item">
+                <div className="pv-stat-icon-wrap">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                    <path d="M12 5v6"></path>
+                    <path d="M9 8h6"></path>
+                  </svg>
+                </div>
+                <div className="pv-stat-text">
+                  <strong className="pv-stat-number">15+</strong>
+                  <span className="pv-stat-label">Specialties</span>
+                </div>
+              </div>
+
+              <div className="pv-stat-divider"></div>
+
+              <div className="pv-stat-item">
+                <div className="pv-stat-icon-wrap">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="12" cy="15" r="2"></circle>
+                  </svg>
+                </div>
+                <div className="pv-stat-text">
+                  <strong className="pv-stat-number">24/7</strong>
+                  <span className="pv-stat-label">Patient Support</span>
+                </div>
+              </div>
+
+              <div className="pv-stat-divider"></div>
+
+              <div className="pv-stat-item">
+                <div className="pv-stat-icon-wrap">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                  </svg>
+                </div>
+                <div className="pv-stat-text">
+                  <strong className="pv-stat-number">Safe &amp; Secure</strong>
+                  <span className="pv-stat-label">Environment</span>
+                </div>
+              </div>
+
+              <div className="pv-stat-divider"></div>
+
+              <div className="pv-stat-item">
+                <div className="pv-stat-icon-wrap">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <div className="pv-stat-text">
+                  <strong className="pv-stat-number">Patient First</strong>
+                  <span className="pv-stat-label">Approach</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Dual Reviews Section: Patients Reviews & Visitors Reviews */}
+          <div className="pv-reviews-section-container">
+            <div className="pv-reviews-two-col-grid">
+              {/* Left Column: Patients Reviews */}
+              <div className="pv-review-column-block">
+                <div className="pv-column-header">
+                  <div className="pv-column-title-wrap">
+                    <svg className="pv-header-icon" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                    <h2 className="pv-column-title">Patients Reviews</h2>
+                  </div>
+                  <button type="button" className="pv-btn-view-all">
+                    View All
+                  </button>
+                </div>
+
+                <div className="pv-cards-row">
+                  {/* Card 1: Meena R. */}
+                  <div className="pv-review-card">
+                    <div className="pv-card-user-header">
+                      <img src={avatarMeena} alt="Meena R." className="pv-user-avatar" />
+                      <div className="pv-user-info">
+                        <h3 className="pv-user-name">Meena R.</h3>
+                        <span className="pv-user-tag">Cardiology Patient</span>
+                      </div>
+                    </div>
+                    <div className="pv-star-rating">
+                      {"★★★★★".split("").map((star, i) => (
+                        <span key={i} className="pv-star">★</span>
+                      ))}
+                    </div>
+                    <p className="pv-review-quote">
+                      Excellent care and support from the entire team. The doctors were very professional and explained everything clearly.
+                    </p>
+                    <span className="pv-quote-icon" aria-hidden="true">”</span>
+                  </div>
+
+                  {/* Card 2: Ramesh K. */}
+                  <div className="pv-review-card">
+                    <div className="pv-card-user-header">
+                      <img src={avatarRamesh} alt="Ramesh K." className="pv-user-avatar" />
+                      <div className="pv-user-info">
+                        <h3 className="pv-user-name">Ramesh K.</h3>
+                        <span className="pv-user-tag">Orthopedic Patient</span>
+                      </div>
+                    </div>
+                    <div className="pv-star-rating">
+                      {"★★★★★".split("").map((star, i) => (
+                        <span key={i} className="pv-star">★</span>
+                      ))}
+                    </div>
+                    <p className="pv-review-quote">
+                      The staff is very kind and helpful. My treatment and recovery experience has been wonderful so far.
+                    </p>
+                    <span className="pv-quote-icon" aria-hidden="true">”</span>
+                  </div>
+
+                  {/* Card 3: Lakshmi S. */}
+                  <div className="pv-review-card">
+                    <div className="pv-card-user-header">
+                      <img src={avatarLakshmi} alt="Lakshmi S." className="pv-user-avatar" />
+                      <div className="pv-user-info">
+                        <h3 className="pv-user-name">Lakshmi S.</h3>
+                        <span className="pv-user-tag">General Medicine Patient</span>
+                      </div>
+                    </div>
+                    <div className="pv-star-rating">
+                      {"★★★★★".split("").map((star, i) => (
+                        <span key={i} className="pv-star">★</span>
+                      ))}
+                    </div>
+                    <p className="pv-review-quote">
+                      Clean rooms, good facilities and timely treatment. I felt safe and well taken care of.
+                    </p>
+                    <span className="pv-quote-icon" aria-hidden="true">”</span>
+                  </div>
+                </div>
+
+                <div className="pv-pagination-dots" aria-hidden="true">
+                  <span className="pv-dot active"></span>
+                  <span className="pv-dot"></span>
+                  <span className="pv-dot"></span>
+                </div>
+              </div>
+
+              {/* Right Column: Visitors Reviews */}
+              <div className="pv-review-column-block">
+                <div className="pv-column-header">
+                  <div className="pv-column-title-wrap">
+                    <svg className="pv-header-icon" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <h2 className="pv-column-title">Visitors Reviews</h2>
+                  </div>
+                  <button type="button" className="pv-btn-view-all">
+                    View All
+                  </button>
+                </div>
+
+                <div className="pv-cards-row">
+                  {/* Card 1: Arun Kumar */}
+                  <div className="pv-review-card">
+                    <div className="pv-card-user-header">
+                      <img src={avatarArun} alt="Arun Kumar" className="pv-user-avatar" />
+                      <div className="pv-user-info">
+                        <h3 className="pv-user-name">Arun Kumar</h3>
+                        <span className="pv-user-tag">Visitor</span>
+                      </div>
+                    </div>
+                    <div className="pv-star-rating">
+                      {"★★★★★".split("").map((star, i) => (
+                        <span key={i} className="pv-star">★</span>
+                      ))}
+                    </div>
+                    <p className="pv-review-quote">
+                      Clean, well-maintained hospital with a calm environment. Staff were very helpful during our visit.
+                    </p>
+                    <span className="pv-quote-icon" aria-hidden="true">”</span>
+                  </div>
+
+                  {/* Card 2: Priya N. */}
+                  <div className="pv-review-card">
+                    <div className="pv-card-user-header">
+                      <img src={avatarPriya} alt="Priya N." className="pv-user-avatar" />
+                      <div className="pv-user-info">
+                        <h3 className="pv-user-name">Priya N.</h3>
+                        <span className="pv-user-tag">Visitor</span>
+                      </div>
+                    </div>
+                    <div className="pv-star-rating">
+                      {"★★★★★".split("").map((star, i) => (
+                        <span key={i} className="pv-star">★</span>
+                      ))}
+                    </div>
+                    <p className="pv-review-quote">
+                      The visiting areas are comfortable and well organized. Good guidance from the information desk.
+                    </p>
+                    <span className="pv-quote-icon" aria-hidden="true">”</span>
+                  </div>
+
+                  {/* Card 3: Karthik M. */}
+                  <div className="pv-review-card">
+                    <div className="pv-card-user-header">
+                      <img src={avatarKarthik} alt="Karthik M." className="pv-user-avatar" />
+                      <div className="pv-user-info">
+                        <h3 className="pv-user-name">Karthik M.</h3>
+                        <span className="pv-user-tag">Visitor</span>
+                      </div>
+                    </div>
+                    <div className="pv-star-rating">
+                      {"★★★★★".split("").map((star, i) => (
+                        <span key={i} className="pv-star">★</span>
+                      ))}
+                    </div>
+                    <p className="pv-review-quote">
+                      Great experience overall. Safety measures and hygiene are well maintained.
+                    </p>
+                    <span className="pv-quote-icon" aria-hidden="true">”</span>
+                  </div>
+                </div>
+
+                <div className="pv-pagination-dots" aria-hidden="true">
+                  <span className="pv-dot"></span>
+                  <span className="pv-dot active"></span>
+                  <span className="pv-dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 6-Column Hospital Footer (Exact Match to Reference Design) */}
+          <footer className="exact-hospital-footer-six-col">
+            <div className="footer-six-col-inner">
+              {/* Col 1: Brand */}
+              <div className="footer-brand-col">
+                <div className="footer-brand-logo-row">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                  </svg>
+                  <span className="footer-brand-name">NI AROGIYAM</span>
+                </div>
+                <span className="footer-brand-sub">HOSPITAL</span>
+                <p className="footer-brand-desc">
+                  Advanced medicine.<br />
+                  Compassionate healing.<br />
+                  World-class care.
+                </p>
+                <div className="footer-brand-socials">
+                  <a href="#facebook" aria-label="Facebook"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+                  <a href="#instagram" aria-label="Instagram"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                  <a href="#youtube" aria-label="YouTube"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                  <a href="#linkedin" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                </div>
+              </div>
+
+              {/* Col 2: Quick Links */}
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">Quick Links</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#home" onClick={handleNavHome}>Home</a></li>
+                  <li><a href="#about" onClick={handleNavAbout}>About Us</a></li>
+                  <li><a href="#specialties" onClick={handleNavSpecialties}>Specialties</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Facilities</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Patient &amp; Visitors</a></li>
+                  <li><a href="#doctors" onClick={handleNavDoctors}>Our Doctors</a></li>
+                </ul>
+              </div>
+
+              {/* Col 3: Our Services */}
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">Our Services</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Emergency Care</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>ICU &amp; Critical Care</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Diagnostics</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Pharmacy</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Robotic Surgery</a></li>
+                </ul>
+              </div>
+
+              {/* Col 4: For Patients */}
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">For Patients</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Patient Guide</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Payment Options</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Insurance &amp; TPA</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Medical Records</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Health Tips</a></li>
+                </ul>
+              </div>
+
+              {/* Col 5: For Visitors */}
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">For Visitors</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Visitor Guide</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Visiting Hours</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Facilities</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Safety Guidelines</a></li>
+                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Nearby Services</a></li>
+                </ul>
+              </div>
+
+              {/* Col 6: Contact Us */}
+              <div className="footer-links-col footer-contact-col">
+                <h4 className="footer-col-title">Contact Us</h4>
+                <ul className="footer-contact-list">
+                  <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <a href="tel:+914523005300">+91 452 300 5300</a>
+                  </li>
+                  <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <a href="mailto:info@niarogiyam.com">info@niarogiyam.com</a>
+                  </li>
+                  <li className="footer-address-item">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>Madurai Bypass Road,<br />Madurai, Tamil Nadu - 625020</span>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -2772,7 +3235,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
               <li><a href="#about" onClick={handleNavAbout}>About Us</a></li>
               <li><a href="#specialties" onClick={handleNavSpecialties}>Specialties</a></li>
               <li><a href="#facilities" onClick={handleNavFacilities}>Facilities</a></li>
-              <li><a href="#facilities" onClick={handleNavFacilities}>Patient &amp; Visitors</a></li>
+              <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Patient &amp; Visitors</a></li>
               <li><a href="#doctors" onClick={handleNavDoctors}>Our Doctors</a></li>
             </ul>
           </div>
