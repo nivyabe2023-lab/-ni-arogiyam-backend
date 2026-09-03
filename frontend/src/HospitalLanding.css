@@ -285,46 +285,55 @@
 }
 
 .hero-text-block {
-  max-width: 520px;
+  max-width: 530px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 26px 30px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 .hero-main-heading {
   display: flex;
   flex-direction: column;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   line-height: 1.15;
 }
 
 .heading-line-dark {
   font-size: 38px;
-  font-weight: 800;
-  color: #1e293b;
+  font-weight: 900;
+  color: #0f172a;
   letter-spacing: -0.5px;
 }
 
 .heading-line-green {
   font-size: 38px;
-  font-weight: 800;
+  font-weight: 900;
   color: #059669;
   letter-spacing: -0.5px;
 }
 
 .hero-intro-text {
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.65;
-  color: #334155;
-  margin: 0 0 28px;
+  color: #0f172a;
+  font-weight: 500;
+  margin: 0 0 24px;
 }
 
 .hero-intro-text strong {
-  color: #0f172a;
+  color: #064e3b;
+  font-weight: 800;
 }
 
 /* 4 STATS ROW */
 .hero-stats-row {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
@@ -333,7 +342,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  min-width: 78px;
+  min-width: 76px;
 }
 
 .stat-icon-circle {
@@ -341,31 +350,31 @@
   height: 46px;
   border-radius: 50%;
   background: #ffffff;
-  border: 1.5px solid #059669;
+  border: 2px solid #059669;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 6px;
-  box-shadow: 0 3px 10px rgba(5, 150, 105, 0.12);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .stat-circle-card:hover .stat-icon-circle {
   transform: translateY(-2px);
-  box-shadow: 0 5px 14px rgba(5, 150, 105, 0.2);
+  box-shadow: 0 6px 16px rgba(5, 150, 105, 0.25);
 }
 
 .stat-number {
-  font-size: 15px;
-  font-weight: 800;
-  color: #1e293b;
+  font-size: 16px;
+  font-weight: 900;
+  color: #0f172a;
   line-height: 1.1;
 }
 
 .stat-label {
-  font-size: 10.5px;
-  color: #64748b;
-  font-weight: 500;
+  font-size: 11px;
+  color: #334155;
+  font-weight: 600;
   margin-top: 2px;
 }
 
