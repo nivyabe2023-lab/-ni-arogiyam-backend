@@ -2,23 +2,31 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./HospitalLanding.css";
 import aboutHospitalReception from "./assets/about_hospital_reception_hd.jpg";
+import specialtiesStethoscopeBanner from "./assets/specialties_stethoscope_banner.jpg";
 
 export default function HospitalLanding({ initialTab = "home" }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Active page tab: 'home' | 'about'
+  // Active page tab: 'home' | 'about' | 'specialties'
   const [activeTab, setActiveTab] = useState(() => {
     if (initialTab === "about") return "about";
+    if (initialTab === "specialties") return "specialties";
     if (typeof window !== "undefined") {
       const hash = window.location.hash.toLowerCase();
       const path = window.location.pathname.toLowerCase();
       if (hash === "#about" || hash === "#about-us" || path.includes("/about")) {
         return "about";
       }
+      if (hash === "#specialties" || hash === "#specialists" || path.includes("/specialties") || path.includes("/specialists") || path.includes("/our-specialties")) {
+        return "specialties";
+      }
     }
     return "home";
   });
+
+  // State to toggle additional specialties when clicking "View All Specialties"
+  const [expandedSpecialties, setExpandedSpecialties] = useState(false);
 
   // Sync tab with URL hash or pathname changes
   useEffect(() => {
@@ -27,6 +35,8 @@ export default function HospitalLanding({ initialTab = "home" }) {
       const path = window.location.pathname.toLowerCase();
       if (hash === "#about" || hash === "#about-us" || path.includes("/about")) {
         setActiveTab("about");
+      } else if (hash === "#specialties" || hash === "#specialists" || path.includes("/specialties") || path.includes("/specialists") || path.includes("/our-specialties")) {
+        setActiveTab("specialties");
       } else if (hash === "#home" || hash === "" || path === "/" || path === "/home") {
         setActiveTab("home");
       }
@@ -74,7 +84,9 @@ export default function HospitalLanding({ initialTab = "home" }) {
 
   const handleSpecialtyClick = (name) => {
     if (name === "View All") {
-      setSpecialtiesDropdown(true);
+      setActiveTab("specialties");
+      setExpandedSpecialties(true);
+      window.history.pushState(null, "", "#specialties");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       setSelectedSpecialty(name);
@@ -97,18 +109,11 @@ export default function HospitalLanding({ initialTab = "home" }) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSpecialtiesNavClick = (e) => {
-    if (activeTab !== "home") {
-      setActiveTab("home");
-      window.history.pushState(null, "", "#home");
-      setTimeout(() => {
-        const el = document.getElementById("specialties");
-        if (el) el.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    } else {
-      const el = document.getElementById("specialties");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    }
+  const handleNavSpecialties = (e) => {
+    if (e) e.preventDefault();
+    setActiveTab("specialties");
+    window.history.pushState(null, "", "#specialties");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleFacilitiesNavClick = (e) => {
@@ -221,21 +226,26 @@ export default function HospitalLanding({ initialTab = "home" }) {
             </div>
 
             <div
-              className="menu-item-wrap"
+              className={`menu-item-wrap ${activeTab === "specialties" ? "active-wrap" : ""}`}
               onMouseEnter={() => setSpecialtiesDropdown(true)}
               onMouseLeave={() => setSpecialtiesDropdown(false)}
             >
-              <a href="#specialties" className="menu-link" onClick={handleSpecialtiesNavClick}>
+              <a
+                href="#specialties"
+                className={`menu-link ${activeTab === "specialties" ? "active" : ""}`}
+                onClick={handleNavSpecialties}
+              >
                 Specialties <span className="caret-icon">⌄</span>
               </a>
+              {activeTab === "specialties" && <div className="green-indicator-bar"></div>}
               {specialtiesDropdown && (
                 <div className="popover-dropdown">
-                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Cardiology</a>
-                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Neurology</a>
-                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Oncology</a>
-                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Orthopedics</a>
-                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Gastroenterology</a>
-                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Nephrology</a>
+                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Cardiology</a>
+                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Neurology</a>
+                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Oncology</a>
+                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Orthopedics</a>
+                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Gastroenterology</a>
+                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Nephrology</a>
                 </div>
               )}
             </div>
@@ -478,6 +488,345 @@ export default function HospitalLanding({ initialTab = "home" }) {
                 </div>
               </div>
             </section>
+          </div>
+        </main>
+      ) : activeTab === "specialties" ? (
+        /* =======================================================
+            RENDER: OUR SPECIALTIES PAGE VIEW (EXACT MATCH TO DESIGN)
+            ======================================================= */
+        <main className="exact-specialties-page-view">
+          {/* 1. Header Banner with Stethoscope Graphic */}
+          <div className="specialties-header-banner">
+            <div className="specialties-header-container">
+              <div className="specialties-header-text">
+                <h1 className="specialties-page-title">Our Specialties</h1>
+                <nav className="specialties-breadcrumb" aria-label="Breadcrumb">
+                  <a
+                    href="#home"
+                    className="breadcrumb-link"
+                    onClick={handleNavHome}
+                  >
+                    Home
+                  </a>
+                  <span className="breadcrumb-separator">›</span>
+                  <span className="breadcrumb-current">Specialties</span>
+                </nav>
+                <p className="specialties-intro-desc">
+                  Comprehensive care across a wide range of specialties to
+                  <br />
+                  to meet your healthcare needs.
+                </p>
+              </div>
+
+              <div className="specialties-banner-image-wrap">
+                <img
+                  src={specialtiesStethoscopeBanner}
+                  alt="Stethoscope Healthcare Background"
+                  className="specialties-banner-img"
+                  loading="eager"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Specialties Grid Container */}
+          <div className="specialties-page-container">
+            <div className="specialties-cards-grid">
+              {/* Card 1: Cardiology */}
+              <div
+                className="exact-specialty-card"
+                onClick={() => handleSpecialtyClick("Cardiology")}
+              >
+                <div className="exact-specialty-icon-box">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="#047857">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    <polyline points="4,11 8,11 10,7 13,16 15,10 17,13 20,13" fill="none" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3 className="exact-specialty-name">Cardiology</h3>
+                <p className="exact-specialty-desc">
+                  Advanced care for heart conditions and vascular diseases.
+                </p>
+              </div>
+
+              {/* Card 2: Neurology */}
+              <div
+                className="exact-specialty-card"
+                onClick={() => handleSpecialtyClick("Neurology")}
+              >
+                <div className="exact-specialty-icon-box">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z" />
+                    <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z" />
+                  </svg>
+                </div>
+                <h3 className="exact-specialty-name">Neurology</h3>
+                <p className="exact-specialty-desc">
+                  Expert treatment for brain, spine, and nervous system disorders.
+                </p>
+              </div>
+
+              {/* Card 3: Oncology */}
+              <div
+                className="exact-specialty-card"
+                onClick={() => handleSpecialtyClick("Oncology")}
+              >
+                <div className="exact-specialty-icon-box">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14.5 9a2.5 2.5 0 1 0-5 0c0 1.5 1.5 3.5 2.5 5.5 1-2 2.5-4 2.5-5.5z"/>
+                    <path d="M8.5 14L4 21"/>
+                    <path d="M15.5 14L20 21"/>
+                  </svg>
+                </div>
+                <h3 className="exact-specialty-name">Oncology</h3>
+                <p className="exact-specialty-desc">
+                  Comprehensive cancer care and advanced treatment.
+                </p>
+              </div>
+
+              {/* Card 4: Orthopedics */}
+              <div
+                className="exact-specialty-card"
+                onClick={() => handleSpecialtyClick("Orthopedics")}
+              >
+                <div className="exact-specialty-icon-box">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="4" r="2.2"/>
+                    <path d="M12 6.5v13.5"/>
+                    <path d="M7.5 10.5h9"/>
+                    <path d="M8 15h8"/>
+                    <path d="M9 19.5h6"/>
+                  </svg>
+                </div>
+                <h3 className="exact-specialty-name">Orthopedics</h3>
+                <p className="exact-specialty-desc">
+                  Bone, joint, and spine care for mobility and pain relief.
+                </p>
+              </div>
+
+              {/* Card 5: Gastroenterology */}
+              <div
+                className="exact-specialty-card"
+                onClick={() => handleSpecialtyClick("Gastroenterology")}
+              >
+                <div className="exact-specialty-icon-box">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 3a3 3 0 0 0-3 3v2a3 3 0 0 1-3 3H9a5 5 0 0 0-5 5v1a5 5 0 0 0 5 5h3a6 6 0 0 0 6-6V6a3 3 0 0 0-3-3z"/>
+                  </svg>
+                </div>
+                <h3 className="exact-specialty-name">Gastroenterology</h3>
+                <p className="exact-specialty-desc">
+                  Treatment for digestive disorders and liver diseases.
+                </p>
+              </div>
+
+              {/* Card 6: Nephrology */}
+              <div
+                className="exact-specialty-card"
+                onClick={() => handleSpecialtyClick("Nephrology")}
+              >
+                <div className="exact-specialty-icon-box">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 6c-3 0-5 2.5-5 5.5s2.5 6.5 6 6.5c3 0 4-2 4-4V6H7z"/>
+                    <path d="M17 6c3 0 5 2.5 5 5.5s-2.5 6.5-6 6.5c-3 0-4-2-4-4V6h5z"/>
+                  </svg>
+                </div>
+                <h3 className="exact-specialty-name">Nephrology</h3>
+                <p className="exact-specialty-desc">
+                  Kidney care, dialysis, and related kidney disorders.
+                </p>
+              </div>
+
+              {/* Extended Cards (Displayed when expandedSpecialties is true) */}
+              {expandedSpecialties && (
+                <>
+                  {/* Card 7: Paediatrics */}
+                  <div
+                    className="exact-specialty-card expanded-card"
+                    onClick={() => handleSpecialtyClick("Paediatrics")}
+                  >
+                    <div className="exact-specialty-icon-box">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="7" r="4" />
+                        <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+                        <circle cx="12" cy="7" r="1.5" fill="#047857" />
+                      </svg>
+                    </div>
+                    <h3 className="exact-specialty-name">Paediatrics &amp; Child Health</h3>
+                    <p className="exact-specialty-desc">
+                      Level-3 NICU, newborn screening, pediatric intensive care, and child wellness.
+                    </p>
+                  </div>
+
+                  {/* Card 8: Obstetrics & Gynaecology */}
+                  <div
+                    className="exact-specialty-card expanded-card"
+                    onClick={() => handleSpecialtyClick("Obstetrics & Gynaecology")}
+                  >
+                    <div className="exact-specialty-icon-box">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="9" r="6" />
+                        <line x1="12" y1="15" x2="12" y2="22" />
+                        <line x1="9" y1="18" x2="15" y2="18" />
+                      </svg>
+                    </div>
+                    <h3 className="exact-specialty-name">Obstetrics &amp; Gynaecology</h3>
+                    <p className="exact-specialty-desc">
+                      High-risk pregnancy care, painless deliveries, and advanced gynecological surgeries.
+                    </p>
+                  </div>
+
+                  {/* Card 9: Pulmonology */}
+                  <div
+                    className="exact-specialty-card expanded-card"
+                    onClick={() => handleSpecialtyClick("Pulmonology")}
+                  >
+                    <div className="exact-specialty-icon-box">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 4v8M9 7l3 3 3-3" />
+                        <path d="M6 10a4 4 0 0 0-4 4c0 4 3 7 7 7h1V12H7a1 1 0 0 0-1 1" />
+                        <path d="M18 10a4 4 0 0 1 4 4c0 4-3 7-7 7h-1V12h3a1 1 0 0 1 1 1" />
+                      </svg>
+                    </div>
+                    <h3 className="exact-specialty-name">Pulmonology &amp; Chest Medicine</h3>
+                    <p className="exact-specialty-desc">
+                      Advanced diagnostics for asthma, COPD, interstitial lung diseases, and sleep apnea.
+                    </p>
+                  </div>
+
+                  {/* Card 10: Dermatology */}
+                  <div
+                    className="exact-specialty-card expanded-card"
+                    onClick={() => handleSpecialtyClick("Dermatology")}
+                  >
+                    <div className="exact-specialty-icon-box">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2l2.4 5.6L20 10l-4.2 3.8 1.2 5.8L12 16.8 7 19.6l1.2-5.8L4 10l5.6-2.4z"/>
+                      </svg>
+                    </div>
+                    <h3 className="exact-specialty-name">Dermatology &amp; Cosmetology</h3>
+                    <p className="exact-specialty-desc">
+                      Clinical skincare, laser therapies, eczema, psoriasis, and aesthetic rejuvenation.
+                    </p>
+                  </div>
+
+                  {/* Card 11: Ophthalmology */}
+                  <div
+                    className="exact-specialty-card expanded-card"
+                    onClick={() => handleSpecialtyClick("Ophthalmology")}
+                  >
+                    <div className="exact-specialty-icon-box">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </div>
+                    <h3 className="exact-specialty-name">Ophthalmology (Eye Care)</h3>
+                    <p className="exact-specialty-desc">
+                      Robotic cataract surgery, laser vision correction, retina, and glaucoma management.
+                    </p>
+                  </div>
+
+                  {/* Card 12: ENT */}
+                  <div
+                    className="exact-specialty-card expanded-card"
+                    onClick={() => handleSpecialtyClick("ENT")}
+                  >
+                    <div className="exact-specialty-icon-box">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                      </svg>
+                    </div>
+                    <h3 className="exact-specialty-name">ENT (Ear, Nose &amp; Throat)</h3>
+                    <p className="exact-specialty-desc">
+                      Microscopic ear surgery, endoscopic sinus surgery, and voice disorder clinics.
+                    </p>
+                  </div>
+
+                  {/* Card 13: Urology */}
+                  <div
+                    className="exact-specialty-card expanded-card"
+                    onClick={() => handleSpecialtyClick("Urology")}
+                  >
+                    <div className="exact-specialty-icon-box">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                      </svg>
+                    </div>
+                    <h3 className="exact-specialty-name">Urology &amp; Andrology</h3>
+                    <p className="exact-specialty-desc">
+                      Laser treatment for kidney stones, prostate health, and male reproductive care.
+                    </p>
+                  </div>
+
+                  {/* Card 14: Endocrinology */}
+                  <div
+                    className="exact-specialty-card expanded-card"
+                    onClick={() => handleSpecialtyClick("Endocrinology")}
+                  >
+                    <div className="exact-specialty-icon-box">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2v6M12 18v4M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M2 12h6M18 12h4" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </div>
+                    <h3 className="exact-specialty-name">Endocrinology &amp; Diabetology</h3>
+                    <p className="exact-specialty-desc">
+                      Specialized diabetes care, thyroid disorder management, and hormonal therapy.
+                    </p>
+                  </div>
+
+                  {/* Card 15: General Surgery */}
+                  <div
+                    className="exact-specialty-card expanded-card"
+                    onClick={() => handleSpecialtyClick("General Surgery")}
+                  >
+                    <div className="exact-specialty-icon-box">
+                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="12" y1="18" x2="12" y2="12" />
+                        <line x1="9" y1="15" x2="15" y2="15" />
+                      </svg>
+                    </div>
+                    <h3 className="exact-specialty-name">General &amp; Laparoscopic Surgery</h3>
+                    <p className="exact-specialty-desc">
+                      Advanced keyhole abdominal surgeries, hernia repair, and surgical trauma care.
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* 3. View All Specialties Toggle Bar */}
+            <div
+              className="view-all-specialties-card"
+              onClick={() => setExpandedSpecialties(!expandedSpecialties)}
+            >
+              <div className="vas-left">
+                <div className="vas-icon-wrap">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                  </svg>
+                </div>
+                <div className="vas-text">
+                  <h3 className="vas-title">
+                    {expandedSpecialties ? "View All Specialties (Showing All Specialties)" : "View All Specialties"}
+                  </h3>
+                  <p className="vas-subtitle">
+                    {expandedSpecialties ? "Click to collapse to primary specialties" : "Explore all our specialties and services."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="vas-action-toggle">
+                <span>{expandedSpecialties ? "Show Less ▴" : "View All ▾"}</span>
+              </div>
+            </div>
           </div>
         </main>
       ) : (

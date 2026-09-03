@@ -1523,6 +1523,18 @@ function App() {
             path="/about-us"
             element={<HospitalLanding initialTab="about" />}
           />
+          <Route
+            path="/specialties"
+            element={<HospitalLanding initialTab="specialties" />}
+          />
+          <Route
+            path="/specialists"
+            element={<HospitalLanding initialTab="specialties" />}
+          />
+          <Route
+            path="/our-specialties"
+            element={<HospitalLanding initialTab="specialties" />}
+          />
 
           {/* LOGIN & REGISTER */}
           <Route
