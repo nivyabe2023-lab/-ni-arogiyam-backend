@@ -11,4 +11,4 @@ frontend/dist
 pom.xml
 mvnw
 mvnw.cmd
-src/
+/src/
