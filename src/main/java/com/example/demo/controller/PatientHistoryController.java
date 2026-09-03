@@ -62,7 +62,7 @@ public class PatientHistoryController {
         response.put("fullName", patientFullName);
         response.put("firstName", patient.getFirstName());
         response.put("lastName", patient.getLastName());
-        response.put("age", patient.getAge() != null ? patient.getAge() : 34);
+        response.put("age", patient.getAge() > 0 ? patient.getAge() : 34);
         response.put("gender", patient.getGender() != null ? patient.getGender() : "Male");
         response.put("phoneNumber", patient.getPhoneNumber() != null ? patient.getPhoneNumber() : "+91 98765 43210");
         response.put("bloodGroup", patient.getBloodGroup() != null ? patient.getBloodGroup() : "O+");
@@ -133,8 +133,8 @@ public class PatientHistoryController {
                     Map<String, Object> m = new LinkedHashMap<>();
                     m.put("id", a.getAppointmentId());
                     m.put("appointmentId", a.getAppointmentId());
-                    m.put("date", a.getAppointmentDate() != null ? a.getAppointmentDate().toString() : "2026-09-02");
-                    m.put("time", a.getAppointmentTime() != null ? a.getAppointmentTime() : "10:30 AM");
+                    m.put("date", a.getAppointmentDate() != null ? a.getAppointmentDate().toLocalDate().toString() : "2026-09-02");
+                    m.put("time", a.getAppointmentDate() != null ? a.getAppointmentDate().toLocalTime().toString() : "10:30 AM");
                     m.put("reason", a.getReason() != null ? a.getReason() : "Clinical Consultation");
                     m.put("status", a.getStatus() != null ? a.getStatus() : "SCHEDULED");
                     if (a.getDoctor() != null) {
