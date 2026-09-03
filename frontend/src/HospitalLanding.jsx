@@ -14,6 +14,8 @@ import doctorSaravananImg from "./assets/doctor_saravanan.jpg";
 import doctorMeenaImg from "./assets/doctor_meena.jpg";
 import doctorArvindImg from "./assets/doctor_arvind.jpg";
 import doctorPriyaImg from "./assets/doctor_priya.jpg";
+import contactBgDoctor from "./assets/contact_bg_doctor.jpg";
+import contactMapCardImg from "./assets/contact_map_card_hd.png";
 
 // =========================================================
 // SPECIALTY DOCTORS DATA WITH FULL ACHIEVEMENTS & SLOTS
@@ -540,12 +542,13 @@ export default function HospitalLanding({ initialTab = "home" }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Active page tab: 'home' | 'about' | 'specialties' | 'facilities' | 'doctors'
+  // Active page tab: 'home' | 'about' | 'specialties' | 'facilities' | 'doctors' | 'contact'
   const [activeTab, setActiveTab] = useState(() => {
     if (initialTab === "about") return "about";
     if (initialTab === "specialties") return "specialties";
     if (initialTab === "facilities") return "facilities";
     if (initialTab === "doctors") return "doctors";
+    if (initialTab === "contact") return "contact";
     if (typeof window !== "undefined") {
       const hash = window.location.hash.toLowerCase();
       const path = window.location.pathname.toLowerCase();
@@ -560,6 +563,9 @@ export default function HospitalLanding({ initialTab = "home" }) {
       }
       if (hash === "#doctors" || hash === "#our-doctors" || path.includes("/our-doctors") || path.includes("/doctors-list")) {
         return "doctors";
+      }
+      if (hash === "#contact" || hash === "#contact-us" || path.includes("/contact")) {
+        return "contact";
       }
     }
     return "home";
@@ -638,6 +644,9 @@ export default function HospitalLanding({ initialTab = "home" }) {
         if (!hash.includes("/")) {
           setSelectedSpecialtyDetail(null);
         }
+      } else if (hash === "#contact" || hash === "#contact-us" || path.includes("/contact")) {
+        setActiveTab("contact");
+        setSelectedSpecialtyDetail(null);
       } else if (hash === "#home" || hash === "" || path === "/" || path === "/home") {
         setActiveTab("home");
         setSelectedSpecialtyDetail(null);
@@ -769,6 +778,40 @@ export default function HospitalLanding({ initialTab = "home" }) {
     setSelectedSpecialtyDetail(null);
     window.history.pushState(null, "", "#doctors");
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleNavContact = (e) => {
+    if (e) e.preventDefault();
+    setActiveTab("contact");
+    setSelectedSpecialtyDetail(null);
+    window.history.pushState(null, "", "#contact");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Contact Us Form State
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+  const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+
+  const handleContactFormSubmit = (e) => {
+    e.preventDefault();
+    setContactSubmitting(true);
+    setTimeout(() => {
+      setContactSubmitting(false);
+      setContactSubmitted(true);
+      setContactForm({
+        name: "",
+        phone: "",
+        email: "",
+        message: "",
+      });
+      setTimeout(() => setContactSubmitted(false), 6000);
+    }, 500);
   };
 
   return (
@@ -933,10 +976,15 @@ export default function HospitalLanding({ initialTab = "home" }) {
               {activeTab === "doctors" && <div className="green-indicator-bar"></div>}
             </div>
 
-            <div className="menu-item-wrap">
-              <a href="#contact" className="menu-link" onClick={() => setBookingModalOpen(true)}>
+            <div className={`menu-item-wrap ${activeTab === "contact" ? "active-wrap" : ""}`}>
+              <a
+                href="#contact"
+                className={`menu-link ${activeTab === "contact" ? "active" : ""}`}
+                onClick={handleNavContact}
+              >
                 Contact Us
               </a>
+              {activeTab === "contact" && <div className="green-indicator-bar"></div>}
             </div>
           </nav>
 
@@ -2157,7 +2205,290 @@ export default function HospitalLanding({ initialTab = "home" }) {
                   <li><a href="#facilities" onClick={handleNavFacilities}>Visitor Guide</a></li>
                   <li><a href="#about" onClick={handleNavAbout}>FAQs</a></li>
                   <li><a href="#about" onClick={handleNavAbout}>Careers</a></li>
-                  <li><a href="#contact" onClick={() => setBookingModalOpen(true)}>Contact Us</a></li>
+                  <li><a href="#contact" onClick={handleNavContact}>Contact Us</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="footer-four-col-bottom">
+              <div className="footer-bottom-inner">
+                <span>&copy; 2025 NI AROGIYAM Hospital. All Rights Reserved.</span>
+                <div className="footer-bottom-links">
+                  <a href="#privacy">Privacy Policy</a>
+                  <span className="footer-sep">|</span>
+                  <a href="#terms">Terms &amp; Conditions</a>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </main>
+      ) : activeTab === "contact" ? (
+        /* =======================================================
+            RENDER: CONTACT US PAGE VIEW (EXACT MATCH TO DESIGN)
+            ======================================================= */
+        <main className="exact-contact-page-view">
+          {/* Subtle Doctor Watermark in Top Right Background */}
+          <div className="contact-bg-watermark-wrap" aria-hidden="true">
+            <img
+              src={contactBgDoctor}
+              alt=""
+              className="contact-bg-watermark-img"
+            />
+          </div>
+
+          <div className="contact-page-container">
+            {/* 1. Header & Breadcrumb */}
+            <div className="contact-header-section">
+              <h1 className="contact-page-title">Contact Us</h1>
+              <nav className="contact-breadcrumb" aria-label="Breadcrumb">
+                <a href="#home" className="breadcrumb-link" onClick={handleNavHome}>
+                  Home
+                </a>
+                <span className="breadcrumb-separator">&gt;</span>
+                <span className="breadcrumb-current">Contact Us</span>
+              </nav>
+              <p className="contact-page-subtitle">
+                We are here to help. Reach out to us anytime.
+              </p>
+            </div>
+
+            {/* 2. Three Column Main Grid */}
+            <div className="contact-main-grid">
+              {/* Column 1: Contact Information List */}
+              <div className="contact-info-column">
+                <div className="contact-info-list">
+                  {/* 1. Address */}
+                  <div className="contact-info-item">
+                    <div className="contact-info-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="10" r="3" />
+                        <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z" />
+                      </svg>
+                    </div>
+                    <div className="contact-info-text-group">
+                      <h3 className="contact-info-label">Address</h3>
+                      <p className="contact-info-val">
+                        Madurai Bypass Road,<br />
+                        Madurai, Tamil Nadu - 625020
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 2. Phone */}
+                  <div className="contact-info-item">
+                    <div className="contact-info-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                    </div>
+                    <div className="contact-info-text-group">
+                      <h3 className="contact-info-label">Phone</h3>
+                      <p className="contact-info-val">
+                        <a href="tel:+914523005300" className="contact-tel-link">
+                          +91 452 300 5300
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 3. Email */}
+                  <div className="contact-info-item">
+                    <div className="contact-info-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                      </svg>
+                    </div>
+                    <div className="contact-info-text-group">
+                      <h3 className="contact-info-label">Email</h3>
+                      <p className="contact-info-val">
+                        <a href="mailto:info@niarogiyam.com" className="contact-mail-link">
+                          info@niarogiyam.com
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 4. Emergency */}
+                  <div className="contact-info-item">
+                    <div className="contact-info-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                      </svg>
+                    </div>
+                    <div className="contact-info-text-group">
+                      <h3 className="contact-info-label">Emergency</h3>
+                      <p className="contact-info-val">24/7 Emergency Care</p>
+                    </div>
+                  </div>
+
+                  {/* 5. Working Hours */}
+                  <div className="contact-info-item">
+                    <div className="contact-info-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
+                    </div>
+                    <div className="contact-info-text-group">
+                      <h3 className="contact-info-label">Working Hours</h3>
+                      <p className="contact-info-val">Monday - Sunday, 24 Hours</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 2: Contact Form Card */}
+              <div className="contact-form-column">
+                <div className="contact-form-card">
+                  {contactSubmitted && (
+                    <div className="contact-success-toast">
+                      <span className="toast-check">✓</span>
+                      <span>Thank you! Your message has been sent. We will get back to you shortly.</span>
+                    </div>
+                  )}
+                  <form onSubmit={handleContactFormSubmit} className="contact-fields-form">
+                    <div className="contact-field-wrap">
+                      <input
+                        type="text"
+                        required
+                        placeholder="Your Name"
+                        className="contact-input-field"
+                        value={contactForm.name}
+                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="contact-field-wrap">
+                      <input
+                        type="tel"
+                        required
+                        placeholder="Phone Number"
+                        className="contact-input-field"
+                        value={contactForm.phone}
+                        onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="contact-field-wrap">
+                      <input
+                        type="email"
+                        required
+                        placeholder="Email Address"
+                        className="contact-input-field"
+                        value={contactForm.email}
+                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="contact-field-wrap">
+                      <textarea
+                        required
+                        rows="4"
+                        placeholder="Your Message"
+                        className="contact-textarea-field"
+                        value={contactForm.message}
+                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                      ></textarea>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={contactSubmitting}
+                      className="btn-contact-send-message"
+                    >
+                      {contactSubmitting ? "Sending..." : "Send Message"}
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              {/* Column 3: Location Map Card */}
+              <div className="contact-map-column">
+                <div className="contact-map-card">
+                  <div className="contact-map-image-container">
+                    <img
+                      src={contactMapCardImg}
+                      alt="NI AROGIYAM Hospital Location Map"
+                      className="contact-map-img"
+                    />
+
+                    {/* Floating Location Marker Pin Badge (Matching Screenshot) */}
+                    <div className="contact-map-pin-badge">
+                      <svg className="pin-badge-icon" viewBox="0 0 24 24" fill="#dc2626">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+                      </svg>
+                      <div className="pin-badge-content">
+                        <strong className="pin-badge-title">NI AROGIYAM</strong>
+                        <span className="pin-badge-sub">HOSPITAL</span>
+                      </div>
+                      <div className="pin-badge-pointer"></div>
+                    </div>
+                  </div>
+
+                  <a
+                    href="https://maps.google.com/?q=Madurai+Bypass+Road,+Madurai,+Tamil+Nadu"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="contact-map-link-overlay"
+                    title="Open in Google Maps"
+                  >
+                    <span>📍 View on Google Maps ↗</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4-Column Hospital Footer (Matching Reference Screenshot) */}
+          <footer className="exact-hospital-footer-four-col contact-footer-match">
+            <div className="footer-four-col-inner">
+              <div className="footer-brand-col">
+                <div className="footer-brand-logo-row">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                  </svg>
+                  <span className="footer-brand-name">NI AROGIYAM</span>
+                </div>
+                <span className="footer-brand-sub">HOSPITAL</span>
+                <p className="footer-brand-desc">
+                  Advanced medicine,<br />
+                  Compassionate healing,<br />
+                  World-class care.
+                </p>
+              </div>
+
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">Quick Links</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#home" onClick={handleNavHome}>Home</a></li>
+                  <li><a href="#about" onClick={handleNavAbout}>About Us</a></li>
+                  <li><a href="#specialties" onClick={handleNavSpecialties}>Specialties</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Facilities</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Patient &amp; Visitors</a></li>
+                  <li><a href="#doctors" onClick={handleNavDoctors}>Our Doctors</a></li>
+                </ul>
+              </div>
+
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">Our Services</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Emergency Care</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>ICU &amp; Critical Care</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Diagnostics</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Pharmacy</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Robotic Surgery</a></li>
+                </ul>
+              </div>
+
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">Support</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#specialties" onClick={handleNavSpecialties}>Insurance &amp; TPAs</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Visitor Guide</a></li>
+                  <li><a href="#about" onClick={handleNavAbout}>FAQs</a></li>
+                  <li><a href="#about" onClick={handleNavAbout}>Careers</a></li>
+                  <li><a href="#contact" onClick={handleNavContact}>Contact Us</a></li>
                 </ul>
               </div>
             </div>
@@ -2419,6 +2750,71 @@ export default function HospitalLanding({ initialTab = "home" }) {
           Why Choose <span className="green-text">NI AROGIYAM?</span>
         </h2>
       </section>
+
+      {/* 4-Column Hospital Footer */}
+      <footer className="exact-hospital-footer-four-col">
+        <div className="footer-four-col-inner">
+          <div className="footer-brand-col">
+            <div className="footer-brand-logo-row">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              </svg>
+              <span className="footer-brand-name">NI AROGIYAM</span>
+            </div>
+            <span className="footer-brand-sub">HOSPITAL</span>
+            <p className="footer-brand-desc">
+              Advanced medicine,<br />
+              Compassionate healing,<br />
+              World-class care.
+            </p>
+          </div>
+
+          <div className="footer-links-col">
+            <h4 className="footer-col-title">Quick Links</h4>
+            <ul className="footer-links-list">
+              <li><a href="#home" onClick={handleNavHome}>Home</a></li>
+              <li><a href="#about" onClick={handleNavAbout}>About Us</a></li>
+              <li><a href="#specialties" onClick={handleNavSpecialties}>Specialties</a></li>
+              <li><a href="#facilities" onClick={handleNavFacilities}>Facilities</a></li>
+              <li><a href="#facilities" onClick={handleNavFacilities}>Patient &amp; Visitors</a></li>
+              <li><a href="#doctors" onClick={handleNavDoctors}>Our Doctors</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-links-col">
+            <h4 className="footer-col-title">Our Services</h4>
+            <ul className="footer-links-list">
+              <li><a href="#facilities" onClick={handleNavFacilities}>Emergency Care</a></li>
+              <li><a href="#facilities" onClick={handleNavFacilities}>ICU &amp; Critical Care</a></li>
+              <li><a href="#facilities" onClick={handleNavFacilities}>Diagnostics</a></li>
+              <li><a href="#facilities" onClick={handleNavFacilities}>Pharmacy</a></li>
+              <li><a href="#facilities" onClick={handleNavFacilities}>Robotic Surgery</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-links-col">
+            <h4 className="footer-col-title">Support</h4>
+            <ul className="footer-links-list">
+              <li><a href="#specialties" onClick={handleNavSpecialties}>Insurance &amp; TPAs</a></li>
+              <li><a href="#facilities" onClick={handleNavFacilities}>Visitor Guide</a></li>
+              <li><a href="#about" onClick={handleNavAbout}>FAQs</a></li>
+              <li><a href="#about" onClick={handleNavAbout}>Careers</a></li>
+              <li><a href="#contact" onClick={handleNavContact}>Contact Us</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="footer-four-col-bottom">
+          <div className="footer-bottom-inner">
+            <span>&copy; 2025 NI AROGIYAM Hospital. All Rights Reserved.</span>
+            <div className="footer-bottom-links">
+              <a href="#privacy">Privacy Policy</a>
+              <span className="footer-sep">|</span>
+              <a href="#terms">Terms &amp; Conditions</a>
+            </div>
+          </div>
+        </div>
+      </footer>
         </>
       )}
 

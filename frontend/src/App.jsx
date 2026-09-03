@@ -1547,6 +1547,14 @@ function App() {
             path="/our-doctors"
             element={<HospitalLanding initialTab="doctors" />}
           />
+          <Route
+            path="/contact"
+            element={<HospitalLanding initialTab="contact" />}
+          />
+          <Route
+            path="/contact-us"
+            element={<HospitalLanding initialTab="contact" />}
+          />
 
           {/* LOGIN & REGISTER */}
           <Route
