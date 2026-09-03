@@ -6,6 +6,7 @@ export default function Specialities() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedDeptForModal, setSelectedDeptForModal] = useState(null);
 
   const categories = ["All", "Medical Specialities", "Surgical Specialities", "Super Specialities", "Critical & Diagnostic"];
 
@@ -165,8 +166,123 @@ export default function Specialities() {
     return matchesCategory && matchesSearch;
   });
 
-  const handleBookAppointment = (dept) => {
-    navigate("/appointments", { state: { preferredDepartment: dept.name, preferredDoctor: dept.hod } });
+  const DEPARTMENT_SPECIALISTS = {
+    cardiology: [
+      {
+        name: "Dr. Rajesh Sharma",
+        degrees: "MBBS, MD (Internal Med), DM (Cardiology), FACC (USA), FSCAI",
+        designation: "Director & Chief Interventional Cardiologist",
+        experience: "22+ Years Clinical Experience",
+        rating: "4.9 ★ (680+ Verified Reviews)",
+        timing: "Mon - Sat: 09:30 AM - 01:30 PM & 03:30 PM - 06:00 PM",
+        room: "Suite 101, Cardiac Sciences Tower",
+        achievements: [
+          "Over 7,500+ successful coronary angioplasties, complex bifurcation stenting, and CTO interventions.",
+          "Pioneer of Transcatheter Aortic Valve Replacement (TAVR / TAVI) in South Tamil Nadu.",
+          "Honored with the National Healthcare Excellence in Interventional Cardiology Award 2024.",
+          "Author of 48+ clinical research papers in the Journal of the American College of Cardiology (JACC)."
+        ],
+        slots: ["Today: 10:30 AM", "Today: 11:45 AM", "Today: 03:45 PM", "Tomorrow: 10:00 AM", "Tomorrow: 04:30 PM"],
+        avatarBg: "#047857"
+      },
+      {
+        name: "Dr. Ananya Sen",
+        degrees: "MBBS, MD (Medicine), DM (Cardiology), Fellowship in Electrophysiology (UK)",
+        designation: "Senior Consultant Cardiac Electrophysiologist & Arrhythmia Specialist",
+        experience: "15+ Years Clinical Experience",
+        rating: "4.9 ★ (410+ Verified Reviews)",
+        timing: "Mon - Fri: 10:00 AM - 04:00 PM",
+        room: "Suite 103, Cardiac Sciences Tower",
+        achievements: [
+          "Specialist in 3D Cardiac Mapping and 3,200+ Radiofrequency Catheter Ablations for complex Arrhythmias.",
+          "Successfully implanted 1,200+ Dual-Chamber Pacemakers, Defibrillators (ICD), and CRT-D devices.",
+          "Distinguished keynote faculty speaker at the World Heart Rhythm Congress (Geneva 2023)."
+        ],
+        slots: ["Today: 11:15 AM", "Today: 02:00 PM", "Tomorrow: 10:30 AM", "Tomorrow: 02:45 PM"],
+        avatarBg: "#065f46"
+      },
+      {
+        name: "Dr. K. Vigneshwaran",
+        degrees: "MBBS, MS (General Surgery), MCh (Cardiothoracic Surgery), FIACS",
+        designation: "Chief Cardiothoracic & Minimally Invasive Heart Surgeon",
+        experience: "19+ Years Clinical Experience",
+        rating: "4.8 ★ (520+ Verified Reviews)",
+        timing: "Tue, Thu, Sat: 09:00 AM - 02:00 PM",
+        room: "Suite 105, Surgical Pavilion",
+        achievements: [
+          "Over 4,200+ Open Heart Surgeries and Off-Pump Beating Heart Bypass (CABG) procedures completed.",
+          "Maintains an exemplary zero-mortality track record across last 300 Minimally Invasive Valve Surgeries."
+        ],
+        slots: ["Today: 01:15 PM", "Tomorrow: 09:30 AM", "Tomorrow: 11:30 AM"],
+        avatarBg: "#0d9488"
+      },
+      {
+        name: "Dr. Meera Nambiar",
+        degrees: "MBBS, MD (Pediatrics), DNB (Cardiology), Fellowship in Pediatric Cardiology (AIIMS)",
+        designation: "Senior Pediatric Cardiologist & Congenital Heart Specialist",
+        experience: "13+ Years Clinical Experience",
+        rating: "4.9 ★ (340+ Verified Reviews)",
+        timing: "Mon - Sat: 10:30 AM - 03:30 PM",
+        room: "Suite 106, Mother & Child Heart Wing",
+        achievements: [
+          "Successfully treated 1,500+ infants with congenital heart defects via non-surgical ASD/VSD device closures.",
+          "All-India Gold Medalist in Pediatric Cardiology from All India Institute of Medical Sciences (AIIMS)."
+        ],
+        slots: ["Today: 12:00 PM", "Today: 03:00 PM", "Tomorrow: 10:45 AM"],
+        avatarBg: "#0f766e"
+      }
+    ],
+    neurology: [
+      {
+        name: "Dr. Priya Sundaram",
+        degrees: "MBBS, MS, MCh (Neurosurgery), FINR, FAANS (USA)",
+        designation: "HOD & Chief Neurosurgeon & Spine Specialist",
+        experience: "20+ Years Clinical Experience",
+        rating: "4.9 ★ (580+ Verified Reviews)",
+        timing: "Mon - Sat: 09:30 AM - 04:00 PM",
+        room: "Suite 201, Neuro Sciences Wing",
+        achievements: [
+          "Pioneer in Minimally Invasive Keyhole Brain & Spine Tumor Resections with over 4,500 surgeries.",
+          "Established the Region's First Comprehensive Neuro-Endovascular Aneurysm Coiling Center."
+        ],
+        slots: ["Today: 11:00 AM", "Today: 03:15 PM", "Tomorrow: 10:00 AM"],
+        avatarBg: "#047857"
+      }
+    ]
+  };
+
+  const getSpecialistsForDept = (dept) => {
+    if (DEPARTMENT_SPECIALISTS[dept.id]) {
+      return DEPARTMENT_SPECIALISTS[dept.id];
+    }
+    return [
+      {
+        name: dept.hod.split(",")[0],
+        degrees: dept.hod.split(",").slice(1).join(",").trim(),
+        designation: `Head of Department - ${dept.name.split("&")[0]}`,
+        experience: "18+ Years Clinical Experience",
+        rating: "4.9 ★ (450+ Verified Reviews)",
+        timing: dept.timing,
+        room: dept.room,
+        achievements: [
+          `Supervised over 8,000+ patient procedures and clinical cases in ${dept.name.split("&")[0]}.`,
+          "Distinguished keynote speaker and fellow at regional & national medical congresses.",
+          "Published over 25+ research papers in indexed medical journals."
+        ],
+        slots: ["Today: 10:30 AM", "Today: 02:30 PM", "Tomorrow: 11:00 AM", "Tomorrow: 04:00 PM"],
+        avatarBg: "#047857"
+      }
+    ];
+  };
+
+  const handleBookAppointment = (dept, doctor = null, slot = "") => {
+    navigate("/appointments", {
+      state: {
+        preferredDepartment: dept.name,
+        preferredDoctor: doctor ? doctor.name : dept.hod,
+        preferredSlot: slot
+      }
+    });
   };
 
   return (
@@ -260,6 +376,13 @@ export default function Specialities() {
             <div className="dept-actions">
               <button
                 type="button"
+                className="btn-view-specialists"
+                onClick={() => setSelectedDeptForModal(dept)}
+              >
+                👨‍⚕️ View Specialists &amp; Available Slots
+              </button>
+              <button
+                type="button"
                 className="btn-book-dept"
                 onClick={() => handleBookAppointment(dept)}
               >
@@ -275,6 +398,113 @@ export default function Specialities() {
           <span>🔍</span>
           <h3>No matching clinical departments found</h3>
           <p>Try searching for another specialty or select "All" categories.</p>
+        </div>
+      )}
+
+      {/* DEPARTMENT SPECIALISTS & SLOTS MODAL */}
+      {selectedDeptForModal && (
+        <div className="dept-modal-backdrop" onClick={() => setSelectedDeptForModal(null)}>
+          <div className="dept-modal-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="dept-modal-header">
+              <div className="dmh-info">
+                <span className="dmh-icon">{selectedDeptForModal.icon}</span>
+                <div>
+                  <h2>{selectedDeptForModal.name}</h2>
+                  <p className="dmh-sub">
+                    📍 {selectedDeptForModal.room} &nbsp;•&nbsp; ⏰ {selectedDeptForModal.timing}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-close-dept-modal"
+                onClick={() => setSelectedDeptForModal(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="dept-modal-body">
+              <div className="dm-intro-banner">
+                <p>
+                  <strong>{selectedDeptForModal.name}</strong> specialists at NI AROGIYAM Hospital. Review verified clinical achievements, years of experience, and directly book an OPD consultation slot.
+                </p>
+              </div>
+
+              <div className="specialists-list-container">
+                {getSpecialistsForDept(selectedDeptForModal).map((doc, dIdx) => (
+                  <div key={dIdx} className="specialist-modal-card">
+                    <div className="smc-header">
+                      <div
+                        className="smc-avatar"
+                        style={{ backgroundColor: doc.avatarBg || "#047857" }}
+                      >
+                        {doc.name.replace("Dr. ", "").split(" ").map(n => n[0]).slice(0, 2).join("")}
+                      </div>
+
+                      <div className="smc-info">
+                        <div className="smc-name-row">
+                          <h3 className="smc-name">{doc.name}</h3>
+                          <span className="smc-badge">✓ Verified Specialist</span>
+                        </div>
+                        <div className="smc-degrees">{doc.degrees}</div>
+                        <div className="smc-desig">{doc.designation}</div>
+
+                        <div className="smc-meta-row">
+                          <span className="smc-exp-pill">⏱️ {doc.experience}</span>
+                          <span className="smc-rating-pill">⭐ {doc.rating}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="smc-achievements-box">
+                      <strong className="ach-title">🏆 Key Achievements &amp; Clinical Milestones:</strong>
+                      <ul className="ach-list">
+                        {doc.achievements.map((ach, aIdx) => (
+                          <li key={aIdx}>
+                            <span className="ach-bullet">✓</span> {ach}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="smc-slots-box">
+                      <strong className="slots-label">🕒 Available Consultation Slots:</strong>
+                      <div className="smc-slots-row">
+                        {doc.slots.map((slot, sIdx) => (
+                          <button
+                            key={sIdx}
+                            type="button"
+                            className="btn-modal-slot-chip"
+                            onClick={() => {
+                              setSelectedDeptForModal(null);
+                              handleBookAppointment(selectedDeptForModal, doc, slot);
+                            }}
+                            title={`Book with ${doc.name} for ${slot}`}
+                          >
+                            ● {slot}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="smc-footer">
+                      <button
+                        type="button"
+                        className="btn-book-specialist-direct"
+                        onClick={() => {
+                          setSelectedDeptForModal(null);
+                          handleBookAppointment(selectedDeptForModal, doc, doc.slots[0] || "");
+                        }}
+                      >
+                        📅 Book Appointment with {doc.name.split(" ")[1] || doc.name}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

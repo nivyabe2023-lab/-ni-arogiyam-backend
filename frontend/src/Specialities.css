@@ -261,6 +261,32 @@
 
 .dept-actions {
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-view-specialists {
+  width: 100%;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1.5px solid #a7f3d0;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-view-specialists:hover {
+  background: #047857;
+  color: #ffffff;
+  border-color: #047857;
 }
 
 .btn-book-dept {
@@ -282,6 +308,303 @@
 
 .btn-book-dept:hover {
   background: #0369a1;
+}
+
+/* =========================================================
+   SPECIALISTS & SLOTS MODAL IN SPECIALITIES.JSX
+   ========================================================= */
+.dept-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.dept-modal-dialog {
+  background: #ffffff;
+  border-radius: 20px;
+  max-width: 760px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.dept-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.dmh-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dmh-icon {
+  font-size: 32px;
+}
+
+.dmh-info h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.dmh-sub {
+  font-size: 0.84rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.btn-close-dept-modal {
+  background: #e2e8f0;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.btn-close-dept-modal:hover {
+  background: #cbd5e1;
+  color: #0f172a;
+}
+
+.dept-modal-body {
+  padding: 24px;
+}
+
+.dm-intro-banner {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 0.88rem;
+  color: #065f46;
+}
+
+.specialists-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.specialist-modal-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.smc-header {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.smc-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.smc-info {
+  flex: 1;
+}
+
+.smc-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.smc-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.smc-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.smc-degrees {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #047857;
+  margin-top: 2px;
+}
+
+.smc-desig {
+  font-size: 0.82rem;
+  color: #475569;
+  margin-top: 2px;
+}
+
+.smc-meta-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.smc-exp-pill, .smc-rating-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.smc-exp-pill {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.smc-rating-pill {
+  background: #fefce8;
+  color: #854d0e;
+  border: 1px solid #fef08a;
+}
+
+.smc-achievements-box {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-left: 3.5px solid #f59e0b;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.ach-title {
+  font-size: 0.8rem;
+  color: #92400e;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.ach-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ach-list li {
+  font-size: 0.8rem;
+  color: #451a03;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.ach-bullet {
+  color: #d97706;
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+
+.smc-slots-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.slots-label {
+  font-size: 0.8rem;
+  color: #166534;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.smc-slots-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.btn-modal-slot-chip {
+  background: #ffffff;
+  border: 1.5px solid #86efac;
+  color: #15803d;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-modal-slot-chip:hover {
+  background: #15803d;
+  color: #ffffff;
+  border-color: #15803d;
+}
+
+.smc-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-book-specialist-direct {
+  background: #047857;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-book-specialist-direct:hover {
+  background: #065f46;
 }
 
 .no-departments-found {

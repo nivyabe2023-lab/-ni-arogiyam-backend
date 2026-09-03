@@ -4,6 +4,527 @@ import "./HospitalLanding.css";
 import aboutHospitalReception from "./assets/about_hospital_reception_hd.jpg";
 import specialtiesStethoscopeBanner from "./assets/specialties_stethoscope_banner.jpg";
 
+// =========================================================
+// SPECIALTY DOCTORS DATA WITH FULL ACHIEVEMENTS & SLOTS
+// =========================================================
+const SPECIALTY_DOCTORS_DATA = {
+  Cardiology: {
+    title: "Cardiology & Cardiovascular Sciences",
+    tagline: "World-Class Heart Specialists, 24/7 Level-1 Emergency Cath Lab, Robotic Heart Care & Electrophysiology",
+    stats: [
+      { label: "Cardiologists", val: "4 Senior Specialists" },
+      { label: "Emergency Response", val: "24/7 Primary Angioplasty" },
+      { label: "Cath Lab Success", val: "99.4% Procedure Success" },
+      { label: "Cardiac ICU", val: "35 Dedicated CCU Beds" },
+    ],
+    doctors: [
+      {
+        id: "dr-rajesh-sharma",
+        name: "Dr. Rajesh Sharma",
+        degrees: "MBBS, MD (Internal Med), DM (Cardiology), FACC (USA), FSCAI",
+        designation: "Director & Chief Interventional Cardiologist",
+        experience: "22+ Years Clinical Experience",
+        rating: "4.9 ★ (680+ Verified Reviews)",
+        timing: "Mon - Sat: 09:30 AM - 01:30 PM & 03:30 PM - 06:00 PM",
+        room: "Suite 101, Cardiac Sciences Tower",
+        achievements: [
+          "Over 7,500+ successful coronary angioplasties, complex bifurcation stenting, and CTO interventions.",
+          "Pioneer of Transcatheter Aortic Valve Replacement (TAVR / TAVI) in South Tamil Nadu.",
+          "Honored with the National Healthcare Excellence in Interventional Cardiology Award 2024.",
+          "Author of 48+ clinical research papers in the Journal of the American College of Cardiology (JACC)."
+        ],
+        slots: ["Today: 10:30 AM", "Today: 11:45 AM", "Today: 03:45 PM", "Tomorrow: 10:00 AM", "Tomorrow: 04:30 PM"],
+        avatarBg: "#047857"
+      },
+      {
+        id: "dr-ananya-sen",
+        name: "Dr. Ananya Sen",
+        degrees: "MBBS, MD (Medicine), DM (Cardiology), Fellowship in Electrophysiology (UK)",
+        designation: "Senior Consultant Cardiac Electrophysiologist & Arrhythmia Specialist",
+        experience: "15+ Years Clinical Experience",
+        rating: "4.9 ★ (410+ Verified Reviews)",
+        timing: "Mon - Fri: 10:00 AM - 04:00 PM",
+        room: "Suite 103, Cardiac Sciences Tower",
+        achievements: [
+          "Specialist in 3D Cardiac Mapping and 3,200+ Radiofrequency Catheter Ablations for complex Arrhythmias.",
+          "Successfully implanted 1,200+ Dual-Chamber Pacemakers, Defibrillators (ICD), and CRT-D devices.",
+          "Distinguished keynote faculty speaker at the World Heart Rhythm Congress (Geneva 2023).",
+          "Leading regional authority in sudden cardiac arrest prevention and syncope diagnostics."
+        ],
+        slots: ["Today: 11:15 AM", "Today: 02:00 PM", "Tomorrow: 10:30 AM", "Tomorrow: 02:45 PM"],
+        avatarBg: "#065f46"
+      },
+      {
+        id: "dr-vigneshwaran",
+        name: "Dr. K. Vigneshwaran",
+        degrees: "MBBS, MS (General Surgery), MCh (Cardiothoracic Surgery), FIACS",
+        designation: "Chief Cardiothoracic & Minimally Invasive Heart Surgeon",
+        experience: "19+ Years Clinical Experience",
+        rating: "4.8 ★ (520+ Verified Reviews)",
+        timing: "Tue, Thu, Sat: 09:00 AM - 02:00 PM",
+        room: "Suite 105, Surgical Pavilion",
+        achievements: [
+          "Over 4,200+ Open Heart Surgeries and Off-Pump Beating Heart Bypass (CABG) procedures completed.",
+          "Maintains an exemplary zero-mortality track record across last 300 Minimally Invasive Valve Surgeries.",
+          "Elected Fellow of the International Society for Minimally Invasive Cardiothoracic Surgery (ISMICS).",
+          "Specialist in thoracic aortic aneurysm repair and emergency acute trauma reconstruction."
+        ],
+        slots: ["Today: 01:15 PM", "Tomorrow: 09:30 AM", "Tomorrow: 11:30 AM"],
+        avatarBg: "#0d9488"
+      },
+      {
+        id: "dr-meera-nambiar",
+        name: "Dr. Meera Nambiar",
+        degrees: "MBBS, MD (Pediatrics), DNB (Cardiology), Fellowship in Pediatric Cardiology (AIIMS)",
+        designation: "Senior Pediatric Cardiologist & Congenital Heart Specialist",
+        experience: "13+ Years Clinical Experience",
+        rating: "4.9 ★ (340+ Verified Reviews)",
+        timing: "Mon - Sat: 10:30 AM - 03:30 PM",
+        room: "Suite 106, Mother & Child Heart Wing",
+        achievements: [
+          "Successfully treated 1,500+ infants with congenital heart defects via non-surgical ASD/VSD device closures.",
+          "All-India Gold Medalist in Pediatric Cardiology from All India Institute of Medical Sciences (AIIMS).",
+          "Pioneered early fetal echocardiography screening panels detecting complex anomalies before birth.",
+          "Program Lead for NI AROGIYAM Children's Heart Care Mission."
+        ],
+        slots: ["Today: 12:00 PM", "Today: 03:00 PM", "Tomorrow: 10:45 AM", "Tomorrow: 01:30 PM"],
+        avatarBg: "#0f766e"
+      }
+    ]
+  },
+  Neurology: {
+    title: "Neurology, Neurosurgery & Spine Care",
+    tagline: "Hyperacute Stroke Unit, 4th Gen Micro-Neurosurgery, Epilepsy Monitoring & Spine Rehabilitation",
+    stats: [
+      { label: "Neuro Specialists", val: "3 Senior Consultants" },
+      { label: "Stroke Care", val: "24/7 Hyperacute Thrombolysis" },
+      { label: "Surgical Efficacy", val: "98.7% Positive Outcomes" },
+      { label: "Neuro ICU", val: "20 Intensive Beds" },
+    ],
+    doctors: [
+      {
+        id: "dr-priya-sundaram",
+        name: "Dr. Priya Sundaram",
+        degrees: "MBBS, MS, MCh (Neurosurgery), FINR, FAANS (USA)",
+        designation: "HOD & Chief Neurosurgeon & Spine Specialist",
+        experience: "20+ Years Clinical Experience",
+        rating: "4.9 ★ (580+ Verified Reviews)",
+        timing: "Mon - Sat: 09:30 AM - 04:00 PM",
+        room: "Suite 201, Neuro Sciences Wing",
+        achievements: [
+          "Pioneer in Minimally Invasive Keyhole Brain & Spine Tumor Resections with over 4,500 surgeries.",
+          "Established the Region's First Comprehensive Neuro-Endovascular Aneurysm Coiling Center.",
+          "Awarded Clinical Excellence in Neuro-Sciences by the World Neurological Federation.",
+          "Published landmark clinical treatises on complex cranio-vertebral junction stabilization."
+        ],
+        slots: ["Today: 11:00 AM", "Today: 03:15 PM", "Tomorrow: 10:00 AM", "Tomorrow: 02:30 PM"],
+        avatarBg: "#047857"
+      },
+      {
+        id: "dr-deepak-raman",
+        name: "Dr. Deepak Raman",
+        degrees: "MBBS, MD (Medicine), DM (Neurology)",
+        designation: "Senior Consultant Neurologist & Stroke Care Director",
+        experience: "14+ Years Clinical Experience",
+        rating: "4.8 ★ (390+ Verified Reviews)",
+        timing: "Mon - Sat: 10:00 AM - 05:00 PM",
+        room: "Suite 203, Neuro Sciences Wing",
+        achievements: [
+          "Director of the Comprehensive Stroke Unit achieving a 98% acute thrombolytic window success rate.",
+          "Specialist in Deep Brain Stimulation (DBS) therapy for Parkinson's disease and movement disorders.",
+          "Conducted 3,000+ epilepsy assessments with 24-hour video EEG telemetry monitoring."
+        ],
+        slots: ["Today: 10:15 AM", "Today: 02:00 PM", "Tomorrow: 11:30 AM", "Tomorrow: 03:45 PM"],
+        avatarBg: "#065f46"
+      }
+    ]
+  },
+  Oncology: {
+    title: "Medical & Surgical Oncology (Cancer Institute)",
+    tagline: "Precision Targeted Chemotherapy, Immunotherapy, Daycare Infusion & Robotic Tumor Resections",
+    stats: [
+      { label: "Onco-Specialists", val: "4 Senior Doctors" },
+      { label: "Targeted Care", val: "Molecular Genomics Guided" },
+      { label: "Daycare Lounge", val: "25 Modern Chemotherapy Beds" },
+      { label: "Tumor Board", val: "Weekly Multi-Disciplinary" },
+    ],
+    doctors: [
+      {
+        id: "dr-arvind-swaminathan",
+        name: "Dr. Arvind Swaminathan",
+        degrees: "MBBS, MD, DM (Medical Oncology), ESMO Certified (Europe)",
+        designation: "Chief Medical Oncologist & Cancer Institute Director",
+        experience: "18+ Years Clinical Experience",
+        rating: "4.9 ★ (610+ Verified Reviews)",
+        timing: "Mon - Sat: 08:30 AM - 04:30 PM",
+        room: "Suite 301, Cancer Care Tower",
+        achievements: [
+          "Pioneered customized biomarker-guided Targeted Therapy & Immunotherapy for 3,500+ cancer survivors.",
+          "Principal investigator in 12 global phase-III clinical trials evaluating novel cancer immunotherapeutics.",
+          "Certified by the European Society for Medical Oncology (ESMO) with highest academic honors."
+        ],
+        slots: ["Today: 09:45 AM", "Today: 01:30 PM", "Tomorrow: 10:15 AM", "Tomorrow: 03:30 PM"],
+        avatarBg: "#047857"
+      },
+      {
+        id: "dr-sharmila-varma",
+        name: "Dr. Sharmila Varma",
+        degrees: "MBBS, MS, MCh (Surgical Oncology), Robotic Fellowship (USA)",
+        designation: "Senior Consultant Surgical Oncologist",
+        experience: "16+ Years Clinical Experience",
+        rating: "4.9 ★ (470+ Verified Reviews)",
+        timing: "Mon - Fri: 09:00 AM - 03:30 PM",
+        room: "Suite 304, Cancer Care Tower",
+        achievements: [
+          "Over 2,800+ complex robotic and organ-preserving oncological resections completed.",
+          "Renowned specialist in breast conservation surgery and sentinel lymph node navigation.",
+          "Recipient of the National Women in Medicine Leadership Award 2023."
+        ],
+        slots: ["Today: 11:30 AM", "Today: 04:00 PM", "Tomorrow: 02:00 PM"],
+        avatarBg: "#065f46"
+      }
+    ]
+  },
+  Orthopedics: {
+    title: "Orthopedics & Robotic Joint Replacement",
+    tagline: "4th Gen Robotic Total Knee & Hip Replacements, Sports Arthroscopy & Rapid Rehabilitation",
+    stats: [
+      { label: "Surgeons", val: "3 Senior Ortho Specialists" },
+      { label: "Robotic Tech", val: "4th Gen Mako & Rosa Systems" },
+      { label: "Mobilization", val: "Rapid 4-Hour Post-Op Walk" },
+      { label: "Trauma Response", val: "24/7 Polytrauma Center" },
+    ],
+    doctors: [
+      {
+        id: "dr-vikram-sethupathi",
+        name: "Dr. Vikram Sethupathi",
+        degrees: "MBBS, MS (Ortho), MCh, Fellowship in Robotic Arthroplasty (Germany)",
+        designation: "Director of Orthopedics & Chief Robotic Joint Surgeon",
+        experience: "21+ Years Clinical Experience",
+        rating: "4.9 ★ (720+ Verified Reviews)",
+        timing: "Mon - Sat: 09:00 AM - 05:00 PM",
+        room: "Suite 112, Orthopedic Wing",
+        achievements: [
+          "Completed over 6,000+ Robotic Total Knee and Hip Replacements with sub-millimeter precision.",
+          "Pioneered the 'Fast-Track Rapid Recovery' protocol enabling patients to mobilize within 4 hours.",
+          "Renowned expert in complex revision joint reconstructions and pelvic trauma surgeries."
+        ],
+        slots: ["Today: 10:00 AM", "Today: 01:00 PM", "Today: 04:30 PM", "Tomorrow: 09:30 AM", "Tomorrow: 03:00 PM"],
+        avatarBg: "#047857"
+      },
+      {
+        id: "dr-gautam-chandra",
+        name: "Dr. Gautam Chandrasekhar",
+        degrees: "MBBS, MS (Ortho), Fellowship in Sports Medicine & Spine (Australia)",
+        designation: "Senior Arthroscopy & Sports Medicine Specialist",
+        experience: "13+ Years Clinical Experience",
+        rating: "4.8 ★ (350+ Verified Reviews)",
+        timing: "Mon - Sat: 10:30 AM - 04:30 PM",
+        room: "Suite 115, Orthopedic Wing",
+        achievements: [
+          "Official sports injuries consultant for premier regional athletic federations.",
+          "Over 2,200+ keyhole arthroscopic ACL, meniscus, and rotator cuff reconstructions.",
+          "Specialist in biological regenerative PRP and stem cell therapies for joint preservation."
+        ],
+        slots: ["Today: 11:30 AM", "Today: 03:30 PM", "Tomorrow: 10:30 AM"],
+        avatarBg: "#065f46"
+      }
+    ]
+  },
+  Gastroenterology: {
+    title: "Gastroenterology & Hepatobiliary Sciences",
+    tagline: "4K Endoscopy Suites, Therapeutic ERCP, Fatty Liver & Comprehensive Cirrhosis Management",
+    stats: [
+      { label: "Gastroenterologists", val: "3 Senior Specialists" },
+      { label: "Endoscopy Unit", val: "Advanced 4K Olympus Suites" },
+      { label: "Liver Clinic", val: "Fatty Liver & Cirrhosis Care" },
+      { label: "Daycare", val: "Painless Sedation Endoscopy" },
+    ],
+    doctors: [
+      {
+        id: "dr-meenakshi-sundaram",
+        name: "Dr. Meenakshi Sundaram",
+        degrees: "MBBS, MD (Medicine), DM (Gastroenterology), FASGE (USA)",
+        designation: "Chief Gastroenterologist & Interventional Endoscopy Lead",
+        experience: "17+ Years Clinical Experience",
+        rating: "4.9 ★ (510+ Verified Reviews)",
+        timing: "Mon - Sat: 09:00 AM - 03:30 PM",
+        room: "Endoscopy Suite & OPD 108",
+        achievements: [
+          "Performed over 14,000+ diagnostic & therapeutic endoscopies, colonoscopies, and bile duct ERCPs.",
+          "Pioneer of Third Space Endoscopy (POEM, ESD) for achalasia and early digestive lesions.",
+          "Honored Fellow of the American Society for Gastrointestinal Endoscopy (FASGE)."
+        ],
+        slots: ["Today: 10:30 AM", "Today: 02:30 PM", "Tomorrow: 11:00 AM", "Tomorrow: 03:30 PM"],
+        avatarBg: "#047857"
+      }
+    ]
+  },
+  Nephrology: {
+    title: "Nephrology & 24/7 Hemodialysis Unit",
+    tagline: "High-Flux Hemodialysis, Continuous Renal Replacement (CRRT) & Kidney Transplant Medicine",
+    stats: [
+      { label: "Nephrologists", val: "2 Senior Consultants" },
+      { label: "Dialysis Stations", val: "24/7 20 Modern Units" },
+      { label: "CRRT Technology", val: "Continuous ICU Dialysis" },
+      { label: "Transplants", val: "Pre & Post Transplant Wing" },
+    ],
+    doctors: [
+      {
+        id: "dr-suresh-chandran",
+        name: "Dr. Suresh Chandran",
+        degrees: "MBBS, MD (Medicine), DM (Nephrology), FASN (USA)",
+        designation: "Director of Nephrology & Kidney Transplant Medicine",
+        experience: "19+ Years Clinical Experience",
+        rating: "4.9 ★ (460+ Verified Reviews)",
+        timing: "Mon - Sat: 08:00 AM - 06:00 PM",
+        room: "Dialysis Wing (Ground Floor)",
+        achievements: [
+          "Supervised over 550+ live and deceased donor kidney transplants with exemplary graft survival.",
+          "Oversaw more than 60,000+ safe hemodialysis sessions utilizing high-flux biocompatible dialyzers.",
+          "Elected Fellow of the American Society of Nephrology (FASN)."
+        ],
+        slots: ["Today: 09:30 AM", "Today: 12:00 PM", "Tomorrow: 03:00 PM", "Tomorrow: 05:00 PM"],
+        avatarBg: "#047857"
+      }
+    ]
+  },
+  Paediatrics: {
+    title: "Paediatrics, Neonatology & Child Health",
+    tagline: "Level-3 Advanced NICU, Pediatric Intensive Care, Child Growth & Pediatric Cardiology Care",
+    stats: [
+      { label: "Pediatricians", val: "3 Senior Specialists" },
+      { label: "NICU Unit", val: "Level-3 High-Frequency Vent" },
+      { label: "Emergency", val: "24/7 Pediatric Trauma" },
+      { label: "Vaccinations", val: "Universal Immunization" },
+    ],
+    doctors: [
+      {
+        id: "dr-radhika-narayanan",
+        name: "Dr. Radhika Narayanan",
+        degrees: "MBBS, MD (Pediatrics), DNB, FIAP (Fellow Indian Academy of Pediatrics)",
+        designation: "HOD & Chief Consultant Pediatrician",
+        experience: "18+ Years Clinical Experience",
+        rating: "4.9 ★ (580+ Verified Reviews)",
+        timing: "Mon - Sat: 08:30 AM - 01:30 PM & 04:00 PM - 06:30 PM",
+        room: "Suite 101, Mother & Child Pavilion",
+        achievements: [
+          "Supervised over 12,000+ pediatric inpatients and critical neonatal recoveries with distinction.",
+          "Recipient of the National Dr. B.C. Roy Memorial Oration Award for Child Health Advocacy.",
+          "Lead consultant for childhood asthma clinics and developmental assessment programs."
+        ],
+        slots: ["Today: 09:30 AM", "Today: 11:30 AM", "Today: 04:30 PM", "Tomorrow: 10:00 AM", "Tomorrow: 05:00 PM"],
+        avatarBg: "#047857"
+      },
+      {
+        id: "dr-senthil-kumar",
+        name: "Dr. Senthil Kumar",
+        degrees: "MBBS, DCH, DNB (Pediatrics), Fellowship in Neonatology (UK)",
+        designation: "Director of Neonatal Intensive Care Unit (NICU)",
+        experience: "14+ Years Clinical Experience",
+        rating: "4.9 ★ (420+ Verified Reviews)",
+        timing: "Mon - Sat: 10:00 AM - 04:00 PM",
+        room: "Level-3 NICU Complex, Mother & Child Block",
+        achievements: [
+          "Achieved a 99.2% survival rate in extremely low birth weight preterm neonates (<800g).",
+          "Pioneered Therapeutic Hypothermia protocol for perinatal asphyxia prevention.",
+          "Published over 18+ papers on neonatal high-frequency oscillatory ventilation."
+        ],
+        slots: ["Today: 10:45 AM", "Today: 02:30 PM", "Tomorrow: 11:15 AM", "Tomorrow: 03:30 PM"],
+        avatarBg: "#065f46"
+      }
+    ]
+  },
+  "Obstetrics & Gynaecology": {
+    title: "Obstetrics, Gynaecology & Fetal Medicine",
+    tagline: "High-Risk Pregnancy, Painless LDR Delivery Suites, Laparoscopic Gynaec Surgery & Infertility",
+    stats: [
+      { label: "Gynaecologists", val: "3 Senior Consultants" },
+      { label: "Delivery Suites", val: "LDR Private Suites" },
+      { label: "Laparoscopy", val: "3D 4K Minimally Invasive" },
+      { label: "Fetal Medicine", val: "Advanced Genetic Screening" },
+    ],
+    doctors: [
+      {
+        id: "dr-gayathri-ramanathan",
+        name: "Dr. Gayathri Ramanathan",
+        degrees: "MBBS, MS (OBG), DGO, FICOG, Fellowship in Laparoscopy",
+        designation: "Director of Women's Health & Senior Obstetrician",
+        experience: "20+ Years Clinical Experience",
+        rating: "4.9 ★ (640+ Verified Reviews)",
+        timing: "Mon - Sat: 09:00 AM - 05:00 PM",
+        room: "Suite 104, Women's Health Pavilion",
+        achievements: [
+          "Supervised over 8,500+ successful normal and painless high-risk obstetric deliveries.",
+          "Over 3,200+ advanced laparoscopic hysterectomies and myomectomies performed.",
+          "Distinguished keynote speaker at the All India Congress of Obstetrics and Gynaecology (AICOG)."
+        ],
+        slots: ["Today: 10:15 AM", "Today: 01:15 PM", "Today: 04:00 PM", "Tomorrow: 09:30 AM", "Tomorrow: 02:45 PM"],
+        avatarBg: "#047857"
+      },
+      {
+        id: "dr-malathi-venkat",
+        name: "Dr. Malathi Venkat",
+        degrees: "MBBS, DGO, DNB (OBG), Fellowship in Reproductive Medicine (Germany)",
+        designation: "Senior Consultant Infertility & High-Risk Pregnancy Specialist",
+        experience: "15+ Years Clinical Experience",
+        rating: "4.8 ★ (390+ Verified Reviews)",
+        timing: "Mon - Fri: 10:30 AM - 04:30 PM",
+        room: "Suite 108, Fertility & Fetal Medicine Center",
+        achievements: [
+          "High-success clinical record in assisted reproductive techniques and recurrent pregnancy loss care.",
+          "Specialist in 3D/4D Fetal anomaly ultrasound scans and invasive prenatal diagnosis.",
+          "Author of clinical guidelines on gestational diabetes management in South Asia."
+        ],
+        slots: ["Today: 11:30 AM", "Today: 03:00 PM", "Tomorrow: 10:30 AM"],
+        avatarBg: "#065f46"
+      }
+    ]
+  },
+  Pulmonology: {
+    title: "Pulmonology, Sleep Medicine & Interventional Chest Care",
+    tagline: "4K Bronchoscopy & EBUS, Comprehensive Sleep Lab, Pulmonary Rehab & Severe Asthma/COPD Care",
+    stats: [
+      { label: "Pulmonologists", val: "2 Senior Consultants" },
+      { label: "Bronchoscopy", val: "Fiberoptic & EBUS Suite" },
+      { label: "Sleep Lab", val: "Full Polysomnography" },
+      { label: "PFT Testing", val: "Diffusion DLCO & Spirometry" },
+    ],
+    doctors: [
+      {
+        id: "dr-karthikeyan-balaji",
+        name: "Dr. Karthikeyan Balaji",
+        degrees: "MBBS, MD (Chest Medicine), DTCD, FCCP (USA), FAPSR",
+        designation: "HOD & Chief Interventional Pulmonologist",
+        experience: "16+ Years Clinical Experience",
+        rating: "4.9 ★ (490+ Verified Reviews)",
+        timing: "Mon - Sat: 09:00 AM - 04:00 PM",
+        room: "Suite 120, Pulmonary & Respiratory Complex",
+        achievements: [
+          "Over 3,800+ fiberoptic bronchoscopies, endobronchial ultrasound (EBUS), and foreign body removals.",
+          "Established the Region's First Comprehensive Sleep Apnea & Polysomnography Diagnostic Lab.",
+          "Fellow of the American College of Chest Physicians (FCCP)."
+        ],
+        slots: ["Today: 10:00 AM", "Today: 01:30 PM", "Today: 03:45 PM", "Tomorrow: 11:00 AM", "Tomorrow: 04:15 PM"],
+        avatarBg: "#047857"
+      },
+      {
+        id: "dr-ramesh-babu",
+        name: "Dr. Ramesh Babu",
+        degrees: "MBBS, MD (Pulmonary Medicine), Fellowship in Critical Care",
+        designation: "Senior Consultant Pulmonologist & Critical Care Specialist",
+        experience: "12+ Years Clinical Experience",
+        rating: "4.8 ★ (310+ Verified Reviews)",
+        timing: "Mon - Sat: 10:30 AM - 05:00 PM",
+        room: "Suite 122, Pulmonary Medicine Wing",
+        achievements: [
+          "Director of Respiratory ICU with specialized protocols for ARDS and non-invasive ventilation.",
+          "Pioneered post-viral lung fibrosis rehabilitation program with customized pulmonary exercises.",
+          "Published clinical research in the European Respiratory Journal."
+        ],
+        slots: ["Today: 11:15 AM", "Today: 02:45 PM", "Tomorrow: 10:00 AM"],
+        avatarBg: "#065f46"
+      }
+    ]
+  },
+  "General Surgery": {
+    title: "General & Advanced Laparoscopic GI Surgery",
+    tagline: "4K Minimal Access Surgery, Laser Proctology, Surgical Oncology & Hernia Repair Center",
+    stats: [
+      { label: "Surgeons", val: "3 Senior Specialists" },
+      { label: "OT Suites", val: "6 Modern Modular OTs" },
+      { label: "Daycare Surgery", val: "Painless Laser Proctology" },
+      { label: "Trauma Care", val: "24/7 Emergency Surgery" },
+    ],
+    doctors: [
+      {
+        id: "dr-ananthakrishnan-v",
+        name: "Dr. Ananthakrishnan V.",
+        degrees: "MBBS, MS (General Surgery), FIAGES, FALS (Hernia & Bariatric)",
+        designation: "Director of Surgical Services & Chief Laparoscopic Surgeon",
+        experience: "23+ Years Clinical Experience",
+        rating: "4.9 ★ (710+ Verified Reviews)",
+        timing: "Mon - Sat: 09:00 AM - 05:00 PM",
+        room: "Suite 210, Surgical Suites (Block B)",
+        achievements: [
+          "Completed over 9,000+ minimal access laparoscopic surgeries including complex hernia repairs.",
+          "Pioneered single-incision laparoscopic surgery (SILS) and 3D laparoscopic cholecystectomy.",
+          "Past President of the Association of Minimal Access Surgeons of India (Regional Chapter)."
+        ],
+        slots: ["Today: 10:30 AM", "Today: 01:00 PM", "Tomorrow: 09:30 AM", "Tomorrow: 03:30 PM"],
+        avatarBg: "#047857"
+      },
+      {
+        id: "dr-deepa-lakshmi",
+        name: "Dr. Deepa Lakshmi",
+        degrees: "MBBS, MS (Gen Surg), Fellowship in Minimal Access Surgery",
+        designation: "Senior Consultant Breast & Endocrine Surgeon",
+        experience: "13+ Years Clinical Experience",
+        rating: "4.8 ★ (360+ Verified Reviews)",
+        timing: "Mon - Fri: 10:00 AM - 04:00 PM",
+        room: "Suite 214, Surgical Pavilion",
+        achievements: [
+          "Specialist in oncoplastic breast surgery and minimally invasive thyroidectomy.",
+          "Conducted over 1,500+ successful laser treatments for varicose veins and proctology.",
+          "Active researcher in surgical site infection prevention and ERAS protocols."
+        ],
+        slots: ["Today: 11:45 AM", "Today: 03:15 PM", "Tomorrow: 10:45 AM"],
+        avatarBg: "#065f46"
+      }
+    ]
+  }
+};
+
+// Helper to get department data with dynamic fallback
+const getDeptDoctorData = (deptName) => {
+  if (!deptName) return SPECIALTY_DOCTORS_DATA.Cardiology;
+  if (SPECIALTY_DOCTORS_DATA[deptName]) {
+    return SPECIALTY_DOCTORS_DATA[deptName];
+  }
+  // Search case-insensitively or via alias
+  const queryLower = deptName.toLowerCase();
+  for (const [key, val] of Object.entries(SPECIALTY_DOCTORS_DATA)) {
+    if (key.toLowerCase() === queryLower || key.toLowerCase().includes(queryLower) || queryLower.includes(key.toLowerCase())) {
+      return val;
+    }
+  }
+  // Generic rich fallback for extended specialties
+  return {
+    title: `${deptName} & Advanced Medical Care`,
+    tagline: `Comprehensive patient diagnosis, specialized clinical care, and 24/7 consultations in ${deptName}.`,
+    stats: [
+      { label: "Specialists", val: "2 Senior Consultants" },
+      { label: "Care Model", val: "Evidence-Based Protocol" },
+      { label: "Success Rate", val: "99.1% Patient Satisfaction" },
+      { label: "Emergency", val: "24/7 Coverage" },
+    ],
+    doctors: [
+      {
+        id: `dr-${deptName.toLowerCase().replace(/[^a-z]/g, "")}-head`,
+        name: `Dr. K. Sivasankaran`,
+        degrees: `MBBS, MD, DNB (${deptName}), Senior Fellowship`,
+        designation: `Head of Department & Senior Consultant in ${deptName}`,
+        experience: "17+ Years Clinical Experience",
+        rating: "4.9 ★ (380+ Verified Reviews)",
+        timing: "Mon - Sat: 10:00 AM - 04:00 PM",
+        room: `Suite 204, Specialty Clinic Wing`,
+        achievements: [
+          `Over 5,000+ clinical patient evaluations and successful procedures in ${deptName}.`,
+          `National speaker and faculty member at annual medical congresses.`,
+          `Published over 25+ papers in renowned national and international indexed medical journals.`
+        ],
+        slots: ["Today: 11:00 AM", "Today: 03:00 PM", "Tomorrow: 10:30 AM", "Tomorrow: 02:00 PM"],
+        avatarBg: "#047857"
+      }
+    ]
+  };
+};
+
+// Flexible resolver that never fails
+const resolveDepartmentData = (deptKeyOrName) => {
+  return getDeptDoctorData(deptKeyOrName);
+};
+
 export default function HospitalLanding({ initialTab = "home" }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,6 +549,27 @@ export default function HospitalLanding({ initialTab = "home" }) {
   // State to toggle additional specialties when clicking "View All Specialties"
   const [expandedSpecialties, setExpandedSpecialties] = useState(false);
 
+  // Detail view for specialty doctors (e.g. 'Cardiology', 'Neurology', etc.)
+  const [selectedSpecialtyDetail, setSelectedSpecialtyDetail] = useState(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash.toLowerCase();
+      if (hash.includes("cardio")) return "Cardiology";
+      if (hash.includes("neuro")) return "Neurology";
+      if (hash.includes("onco")) return "Oncology";
+      if (hash.includes("ortho")) return "Orthopedics";
+      if (hash.includes("gastro")) return "Gastroenterology";
+      if (hash.includes("nephro")) return "Nephrology";
+    }
+    return null;
+  });
+
+  // Selected doctor and slot for appointment booking
+  const [selectedDoctorForBooking, setSelectedDoctorForBooking] = useState(null);
+  const [selectedSlotForBooking, setSelectedSlotForBooking] = useState("");
+  const [bookingRefId, setBookingRefId] = useState("");
+  const [doctorSearchQuery, setDoctorSearchQuery] = useState("");
+  const [doctorSlotFilter, setDoctorSlotFilter] = useState("all");
+
   // Sync tab with URL hash or pathname changes
   useEffect(() => {
     const handleHashOrPath = () => {
@@ -35,10 +577,45 @@ export default function HospitalLanding({ initialTab = "home" }) {
       const path = window.location.pathname.toLowerCase();
       if (hash === "#about" || hash === "#about-us" || path.includes("/about")) {
         setActiveTab("about");
+        setSelectedSpecialtyDetail(null);
+      } else if (hash.includes("cardio")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("Cardiology");
+      } else if (hash.includes("neuro")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("Neurology");
+      } else if (hash.includes("onco")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("Oncology");
+      } else if (hash.includes("ortho")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("Orthopedics");
+      } else if (hash.includes("gastro")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("Gastroenterology");
+      } else if (hash.includes("nephro")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("Nephrology");
+      } else if (hash.includes("paed") || hash.includes("ped")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("Paediatrics");
+      } else if (hash.includes("gyn") || hash.includes("obg")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("Obstetrics & Gynaecology");
+      } else if (hash.includes("pulm") || hash.includes("chest") || hash.includes("lung")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("Pulmonology");
+      } else if (hash.includes("surg")) {
+        setActiveTab("specialties");
+        setSelectedSpecialtyDetail("General Surgery");
       } else if (hash === "#specialties" || hash === "#specialists" || path.includes("/specialties") || path.includes("/specialists") || path.includes("/our-specialties")) {
         setActiveTab("specialties");
+        if (!hash.includes("/")) {
+          setSelectedSpecialtyDetail(null);
+        }
       } else if (hash === "#home" || hash === "" || path === "/" || path === "/home") {
         setActiveTab("home");
+        setSelectedSpecialtyDetail(null);
       }
     };
 
@@ -61,25 +638,60 @@ export default function HospitalLanding({ initialTab = "home" }) {
     phoneNumber: "",
     email: "",
     department: "Cardiology",
+    doctorName: "",
     preferredDate: "",
+    preferredSlot: "",
     notes: "",
   });
 
   const handleBookingSubmit = (e) => {
     e.preventDefault();
+    const deptPrefix = (appointmentForm.department || "CARD").substring(0, 4).toUpperCase().replace(/[^A-Z]/g, "CARD");
+    const generatedRef = `NIA-${deptPrefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+    setBookingRefId(generatedRef);
     setBookingSuccess(true);
-    setTimeout(() => {
-      setBookingSuccess(false);
-      setBookingModalOpen(false);
-      setAppointmentForm({
-        fullName: "",
-        phoneNumber: "",
-        email: "",
-        department: "Cardiology",
-        preferredDate: "",
-        notes: "",
-      });
-    }, 2400);
+  };
+
+  // Click on a specialty card: opens the detailed doctors view for that specialty
+  const handleCardClickToDetail = (name) => {
+    if (name === "View All") {
+      setActiveTab("specialties");
+      setExpandedSpecialties(true);
+      setSelectedSpecialtyDetail(null);
+      return;
+    }
+    setActiveTab("specialties");
+    setSelectedSpecialty(name);
+    setSelectedSpecialtyDetail(name);
+    setDoctorSearchQuery("");
+    setDoctorSlotFilter("all");
+    window.history.pushState(null, "", `#specialties/${name.toLowerCase().replace(/[^a-z]/g, "")}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Return from doctor view back to the 6-card specialties grid
+  const handleBackToAllSpecialties = (e) => {
+    if (e) e.preventDefault();
+    setSelectedSpecialtyDetail(null);
+    window.history.pushState(null, "", "#specialties");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Direct booking with doctor & slot
+  const handleBookDoctorWithSlot = (doctor, slot = "") => {
+    const dept = selectedSpecialtyDetail || "Cardiology";
+    setSelectedSpecialty(dept);
+    setSelectedDoctorForBooking(doctor);
+    setSelectedSlotForBooking(slot);
+    setBookingSuccess(false);
+    setAppointmentForm((prev) => ({
+      ...prev,
+      department: dept,
+      doctorName: doctor?.name || "",
+      preferredDate: slot ? (slot.toLowerCase().includes("tomorrow") ? new Date(Date.now() + 86400000).toISOString().split("T")[0] : new Date().toISOString().split("T")[0]) : prev.preferredDate || new Date().toISOString().split("T")[0],
+      preferredSlot: slot,
+    }));
+    setBookingModalOpen(true);
   };
 
   const handleSpecialtyClick = (name) => {
@@ -89,15 +701,14 @@ export default function HospitalLanding({ initialTab = "home" }) {
       window.history.pushState(null, "", "#specialties");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      setSelectedSpecialty(name);
-      setAppointmentForm((prev) => ({ ...prev, department: name }));
-      setBookingModalOpen(true);
+      handleCardClickToDetail(name);
     }
   };
 
   const handleNavHome = (e) => {
     if (e) e.preventDefault();
     setActiveTab("home");
+    setSelectedSpecialtyDetail(null);
     window.history.pushState(null, "", "#home");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -105,6 +716,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
   const handleNavAbout = (e) => {
     if (e) e.preventDefault();
     setActiveTab("about");
+    setSelectedSpecialtyDetail(null);
     window.history.pushState(null, "", "#about");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -112,6 +724,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
   const handleNavSpecialties = (e) => {
     if (e) e.preventDefault();
     setActiveTab("specialties");
+    setSelectedSpecialtyDetail(null);
     window.history.pushState(null, "", "#specialties");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -240,12 +853,15 @@ export default function HospitalLanding({ initialTab = "home" }) {
               {activeTab === "specialties" && <div className="green-indicator-bar"></div>}
               {specialtiesDropdown && (
                 <div className="popover-dropdown">
-                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Cardiology</a>
-                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Neurology</a>
-                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Oncology</a>
-                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Orthopedics</a>
-                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Gastroenterology</a>
-                  <a href="#specialties" onClick={(e) => { setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>Nephrology</a>
+                  <a href="#specialties/cardiology" onClick={(e) => { e.preventDefault(); setSpecialtiesDropdown(false); handleCardClickToDetail("Cardiology"); }}>🫀 Cardiology</a>
+                  <a href="#specialties/neurology" onClick={(e) => { e.preventDefault(); setSpecialtiesDropdown(false); handleCardClickToDetail("Neurology"); }}>🧠 Neurology</a>
+                  <a href="#specialties/oncology" onClick={(e) => { e.preventDefault(); setSpecialtiesDropdown(false); handleCardClickToDetail("Oncology"); }}>🎗️ Oncology</a>
+                  <a href="#specialties/orthopedics" onClick={(e) => { e.preventDefault(); setSpecialtiesDropdown(false); handleCardClickToDetail("Orthopedics"); }}>🦴 Orthopedics</a>
+                  <a href="#specialties/gastroenterology" onClick={(e) => { e.preventDefault(); setSpecialtiesDropdown(false); handleCardClickToDetail("Gastroenterology"); }}>🩺 Gastroenterology</a>
+                  <a href="#specialties/nephrology" onClick={(e) => { e.preventDefault(); setSpecialtiesDropdown(false); handleCardClickToDetail("Nephrology"); }}>🧪 Nephrology</a>
+                  <a href="#specialties/paediatrics" onClick={(e) => { e.preventDefault(); setSpecialtiesDropdown(false); handleCardClickToDetail("Paediatrics"); }}>👶 Paediatrics</a>
+                  <a href="#specialties/pulmonology" onClick={(e) => { e.preventDefault(); setSpecialtiesDropdown(false); handleCardClickToDetail("Pulmonology"); }}>🫁 Pulmonology</a>
+                  <a href="#specialties" onClick={(e) => { e.preventDefault(); setSpecialtiesDropdown(false); handleNavSpecialties(e); }}>View All Specialties →</a>
                 </div>
               )}
             </div>
@@ -491,344 +1107,639 @@ export default function HospitalLanding({ initialTab = "home" }) {
           </div>
         </main>
       ) : activeTab === "specialties" ? (
-        /* =======================================================
-            RENDER: OUR SPECIALTIES PAGE VIEW (EXACT MATCH TO DESIGN)
-            ======================================================= */
-        <main className="exact-specialties-page-view">
-          {/* 1. Header Banner with Stethoscope Graphic */}
-          <div className="specialties-header-banner">
-            <div className="specialties-header-container">
-              <div className="specialties-header-text">
-                <h1 className="specialties-page-title">Our Specialties</h1>
-                <nav className="specialties-breadcrumb" aria-label="Breadcrumb">
-                  <a
-                    href="#home"
-                    className="breadcrumb-link"
-                    onClick={handleNavHome}
+        selectedSpecialtyDetail ? (() => {
+          const deptData = resolveDepartmentData(selectedSpecialtyDetail);
+          const q = (doctorSearchQuery || "").trim().toLowerCase();
+          const filteredDoctors = (deptData?.doctors || []).filter((doc) => {
+            const matchesSearch = !q ||
+              doc.name.toLowerCase().includes(q) ||
+              doc.designation.toLowerCase().includes(q) ||
+              doc.degrees.toLowerCase().includes(q) ||
+              (doc.achievements && doc.achievements.some(a => a.toLowerCase().includes(q)));
+
+            const matchesSlot = doctorSlotFilter === "all" ||
+              (doctorSlotFilter === "today" && doc.slots.some(s => s.toLowerCase().includes("today"))) ||
+              (doctorSlotFilter === "tomorrow" && doc.slots.some(s => s.toLowerCase().includes("tomorrow")));
+
+            return matchesSearch && matchesSlot;
+          });
+
+          return (
+            <main className="exact-specialty-detail-view">
+              {/* Top Navigation Row: Back Button and Breadcrumbs */}
+              <div className="dept-detail-top-nav-bar">
+                <div className="dept-detail-top-inner">
+                  <button
+                    type="button"
+                    className="btn-back-to-specialties"
+                    onClick={handleBackToAllSpecialties}
                   >
-                    Home
-                  </a>
-                  <span className="breadcrumb-separator">›</span>
-                  <span className="breadcrumb-current">Specialties</span>
-                </nav>
-                <p className="specialties-intro-desc">
-                  Comprehensive care across a wide range of specialties to
-                  <br />
-                  to meet your healthcare needs.
-                </p>
-              </div>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Back to All Specialties</span>
+                  </button>
 
-              <div className="specialties-banner-image-wrap">
-                <img
-                  src={specialtiesStethoscopeBanner}
-                  alt="Stethoscope Healthcare Background"
-                  className="specialties-banner-img"
-                  loading="eager"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* 2. Specialties Grid Container */}
-          <div className="specialties-page-container">
-            <div className="specialties-cards-grid">
-              {/* Card 1: Cardiology */}
-              <div
-                className="exact-specialty-card"
-                onClick={() => handleSpecialtyClick("Cardiology")}
-              >
-                <div className="exact-specialty-icon-box">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="#047857">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    <polyline points="4,11 8,11 10,7 13,16 15,10 17,13 20,13" fill="none" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <nav className="dept-detail-breadcrumb" aria-label="Breadcrumb">
+                    <a href="#home" className="breadcrumb-link" onClick={handleNavHome}>Home</a>
+                    <span className="breadcrumb-separator">›</span>
+                    <a href="#specialties" className="breadcrumb-link" onClick={handleBackToAllSpecialties}>Specialties</a>
+                    <span className="breadcrumb-separator">›</span>
+                    <span className="breadcrumb-current">{selectedSpecialtyDetail}</span>
+                  </nav>
                 </div>
-                <h3 className="exact-specialty-name">Cardiology</h3>
-                <p className="exact-specialty-desc">
-                  Advanced care for heart conditions and vascular diseases.
-                </p>
               </div>
 
-              {/* Card 2: Neurology */}
-              <div
-                className="exact-specialty-card"
-                onClick={() => handleSpecialtyClick("Neurology")}
-              >
-                <div className="exact-specialty-icon-box">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z" />
-                    <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z" />
-                  </svg>
+              {/* Department Hero Banner */}
+              <div className="dept-hero-banner">
+                <div className="dept-hero-container">
+                  <div className="dept-hero-main">
+                    <div className="dept-badge-row">
+                      <span className="dept-pill-badge">
+                        {selectedSpecialtyDetail.toLowerCase().includes("cardio") ? "🫀 SUPER SPECIALTY EXCELLENCE" : "CLINICAL SPECIALTY"}
+                      </span>
+                      <span className="dept-status-live">● OPD &amp; Emergency Active 24/7</span>
+                    </div>
+                    <h1 className="dept-hero-title">{deptData.title}</h1>
+                    <p className="dept-hero-tagline">{deptData.tagline}</p>
+                  </div>
+
+                  {/* Key Department Stats Strip */}
+                  <div className="dept-stats-grid">
+                    {deptData.stats.map((st, sidx) => (
+                      <div key={sidx} className="dept-stat-card">
+                        <strong className="dept-stat-num">{st.val}</strong>
+                        <span className="dept-stat-lbl">{st.label}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="exact-specialty-name">Neurology</h3>
-                <p className="exact-specialty-desc">
-                  Expert treatment for brain, spine, and nervous system disorders.
-                </p>
               </div>
 
-              {/* Card 3: Oncology */}
-              <div
-                className="exact-specialty-card"
-                onClick={() => handleSpecialtyClick("Oncology")}
-              >
-                <div className="exact-specialty-icon-box">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14.5 9a2.5 2.5 0 1 0-5 0c0 1.5 1.5 3.5 2.5 5.5 1-2 2.5-4 2.5-5.5z"/>
-                    <path d="M8.5 14L4 21"/>
-                    <path d="M15.5 14L20 21"/>
-                  </svg>
+              {/* Quick Specialty Switcher Bar (Tabs) */}
+              <div className="dept-quick-switcher-container">
+                <div className="dept-quick-switcher-inner">
+                  <span className="switcher-prompt">Select Department:</span>
+                  <div className="switcher-chips-scroll">
+                    {Object.keys(SPECIALTY_DOCTORS_DATA).map((deptKey) => (
+                      <button
+                        key={deptKey}
+                        type="button"
+                        className={`switcher-dept-chip ${selectedSpecialtyDetail.toLowerCase() === deptKey.toLowerCase() ? "active" : ""}`}
+                        onClick={() => handleCardClickToDetail(deptKey)}
+                      >
+                        {deptKey === "Cardiology" && "🫀 "}
+                        {deptKey === "Neurology" && "🧠 "}
+                        {deptKey === "Oncology" && "🎗️ "}
+                        {deptKey === "Orthopedics" && "🦴 "}
+                        {deptKey === "Gastroenterology" && "🩺 "}
+                        {deptKey === "Nephrology" && "🧪 "}
+                        {deptKey === "Paediatrics" && "👶 "}
+                        {deptKey === "Obstetrics & Gynaecology" && "🤰 "}
+                        {deptKey === "Pulmonology" && "🫁 "}
+                        {deptKey === "General Surgery" && "🔪 "}
+                        {deptKey}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="exact-specialty-name">Oncology</h3>
-                <p className="exact-specialty-desc">
-                  Comprehensive cancer care and advanced treatment.
-                </p>
               </div>
 
-              {/* Card 4: Orthopedics */}
-              <div
-                className="exact-specialty-card"
-                onClick={() => handleSpecialtyClick("Orthopedics")}
-              >
-                <div className="exact-specialty-icon-box">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="4" r="2.2"/>
-                    <path d="M12 6.5v13.5"/>
-                    <path d="M7.5 10.5h9"/>
-                    <path d="M8 15h8"/>
-                    <path d="M9 19.5h6"/>
-                  </svg>
+              {/* Doctors Listing Section */}
+              <div className="dept-doctors-container">
+                <div className="dept-doctors-section-header">
+                  <div>
+                    <h2 className="dept-doctors-title">
+                      Senior Specialists &amp; Consultants in {selectedSpecialtyDetail}
+                      <span className="doctors-count-badge">{(filteredDoctors || []).length} Available</span>
+                    </h2>
+                    <p className="dept-doctors-subtitle">
+                      Choose any specialist below to view qualifications, verified clinical achievements, years of experience, and directly book an available consultation slot.
+                    </p>
+                  </div>
+
+                  {/* Filter and Search Bar */}
+                  <div className="doctors-controls-bar">
+                    <div className="doc-search-box">
+                      <span className="doc-search-icon">🔍</span>
+                      <input
+                        type="text"
+                        placeholder="Search doctor, procedure, or achievement..."
+                        value={doctorSearchQuery}
+                        onChange={(e) => setDoctorSearchQuery(e.target.value)}
+                      />
+                      {doctorSearchQuery && (
+                        <button className="btn-clear-doc-search" onClick={() => setDoctorSearchQuery("")}>✕</button>
+                      )}
+                    </div>
+
+                    <div className="doc-slot-filter-buttons">
+                      <button
+                        type="button"
+                        className={`filter-btn ${doctorSlotFilter === "all" ? "active" : ""}`}
+                        onClick={() => setDoctorSlotFilter("all")}
+                      >
+                        All Doctors
+                      </button>
+                      <button
+                        type="button"
+                        className={`filter-btn ${doctorSlotFilter === "today" ? "active" : ""}`}
+                        onClick={() => setDoctorSlotFilter("today")}
+                      >
+                        Available Today
+                      </button>
+                      <button
+                        type="button"
+                        className={`filter-btn ${doctorSlotFilter === "tomorrow" ? "active" : ""}`}
+                        onClick={() => setDoctorSlotFilter("tomorrow")}
+                      >
+                        Available Tomorrow
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="exact-specialty-name">Orthopedics</h3>
-                <p className="exact-specialty-desc">
-                  Bone, joint, and spine care for mobility and pain relief.
-                </p>
+
+                {/* Doctors Grid */}
+                <div className="doctors-cards-grid">
+                  {filteredDoctors.map((doc) => (
+                    <div key={doc.id} className="doctor-profile-card">
+                      {/* Top Row: Avatar & Basic Information */}
+                      <div className="doctor-card-top-section">
+                        <div
+                          className="doctor-avatar-box"
+                          style={{ backgroundColor: doc.avatarBg || "#047857" }}
+                        >
+                          <span className="doctor-avatar-initials">
+                            {doc.name.replace("Dr. ", "").split(" ").map(n => n[0]).slice(0, 2).join("")}
+                          </span>
+                          <div className="doc-online-dot" title="Accepting OPD Patients Today"></div>
+                        </div>
+
+                        <div className="doctor-header-details">
+                          <div className="doc-title-row">
+                            <h3 className="doc-name">{doc.name}</h3>
+                            <span className="doc-verified-pill">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="#047857">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                              </svg>
+                              Verified Specialist
+                            </span>
+                          </div>
+
+                          <div className="doc-degrees-text">{doc.degrees}</div>
+                          <div className="doc-designation-text">{doc.designation}</div>
+
+                          {/* Experience and Rating Badges */}
+                          <div className="doc-meta-badges-row">
+                            <span className="doc-exp-badge">
+                              <span className="badge-icon">⏱️</span>
+                              {doc.experience}
+                            </span>
+                            <span className="doc-rating-badge">
+                              <span className="badge-icon">⭐</span>
+                              {doc.rating}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Room & Timings Box */}
+                      <div className="doctor-logistics-box">
+                        <div className="logistics-item">
+                          <span className="logistics-label">⏰ OPD Consultation Timings:</span>
+                          <span className="logistics-val">{doc.timing}</span>
+                        </div>
+                        <div className="logistics-item">
+                          <span className="logistics-label">📍 Consultation Suite:</span>
+                          <span className="logistics-val highlight-location">{doc.room}</span>
+                        </div>
+                      </div>
+
+                      {/* Doctor Achievements Box */}
+                      <div className="doctor-achievements-box">
+                        <div className="achievements-heading">
+                          <span className="trophy-icon">🏆</span>
+                          <strong>Key Career Achievements &amp; Clinical Milestones:</strong>
+                        </div>
+                        <ul className="achievements-bullet-list">
+                          {doc.achievements.map((ach, aidx) => (
+                            <li key={aidx} className="achievement-list-item">
+                              <span className="achievement-check">✓</span>
+                              <span>{ach}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Available Consultation Slots */}
+                      <div className="doctor-slots-box">
+                        <div className="slots-header-row">
+                          <span className="slots-label">
+                            <span className="slots-icon">🕒</span>
+                            <strong>Available Consultation Slots:</strong>
+                          </span>
+                          <span className="slots-note">(Click any slot to book instantly)</span>
+                        </div>
+                        <div className="slots-chips-grid">
+                          {doc.slots.map((slot, sidx) => (
+                            <button
+                              key={sidx}
+                              type="button"
+                              className={`btn-slot-chip ${selectedDoctorForBooking?.id === doc.id && selectedSlotForBooking === slot ? "active-slot-chip" : ""}`}
+                              onClick={() => handleBookDoctorWithSlot(doc, slot)}
+                              title={`Book appointment with ${doc.name} for ${slot}`}
+                            >
+                              <span className="slot-chip-bullet">●</span>
+                              <span className="slot-chip-text">{slot}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="doctor-card-footer-actions">
+                        <button
+                          type="button"
+                          className="btn-book-this-doctor"
+                          onClick={() => handleBookDoctorWithSlot(doc, doc.slots[0] || "")}
+                        >
+                          <span>📅</span>
+                          <span>Book Appointment with {doc.name.split(" ")[1] || doc.name}</span>
+                        </button>
+                        <a
+                          href="tel:+914523005300"
+                          className="btn-call-desk-secondary"
+                          title="Contact OPD Reception Desk"
+                        >
+                          <span>📞</span>
+                          <span>Call OPD Desk</span>
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {filteredDoctors.length === 0 && (
+                  <div className="no-specialists-found">
+                    <div className="nsf-icon">🔍</div>
+                    <h3>No specialists match your search criteria</h3>
+                    <p>Try searching with another keyword or select "All Doctors".</p>
+                    <button
+                      type="button"
+                      className="btn-reset-filters"
+                      onClick={() => {
+                        setDoctorSearchQuery("");
+                        setDoctorSlotFilter("all");
+                      }}
+                    >
+                      Reset Search &amp; Filters
+                    </button>
+                  </div>
+                )}
               </div>
-
-              {/* Card 5: Gastroenterology */}
-              <div
-                className="exact-specialty-card"
-                onClick={() => handleSpecialtyClick("Gastroenterology")}
-              >
-                <div className="exact-specialty-icon-box">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 3a3 3 0 0 0-3 3v2a3 3 0 0 1-3 3H9a5 5 0 0 0-5 5v1a5 5 0 0 0 5 5h3a6 6 0 0 0 6-6V6a3 3 0 0 0-3-3z"/>
-                  </svg>
-                </div>
-                <h3 className="exact-specialty-name">Gastroenterology</h3>
-                <p className="exact-specialty-desc">
-                  Treatment for digestive disorders and liver diseases.
-                </p>
-              </div>
-
-              {/* Card 6: Nephrology */}
-              <div
-                className="exact-specialty-card"
-                onClick={() => handleSpecialtyClick("Nephrology")}
-              >
-                <div className="exact-specialty-icon-box">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M7 6c-3 0-5 2.5-5 5.5s2.5 6.5 6 6.5c3 0 4-2 4-4V6H7z"/>
-                    <path d="M17 6c3 0 5 2.5 5 5.5s-2.5 6.5-6 6.5c-3 0-4-2-4-4V6h5z"/>
-                  </svg>
-                </div>
-                <h3 className="exact-specialty-name">Nephrology</h3>
-                <p className="exact-specialty-desc">
-                  Kidney care, dialysis, and related kidney disorders.
-                </p>
-              </div>
-
-              {/* Extended Cards (Displayed when expandedSpecialties is true) */}
-              {expandedSpecialties && (
-                <>
-                  {/* Card 7: Paediatrics */}
-                  <div
-                    className="exact-specialty-card expanded-card"
-                    onClick={() => handleSpecialtyClick("Paediatrics")}
-                  >
-                    <div className="exact-specialty-icon-box">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="7" r="4" />
-                        <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-                        <circle cx="12" cy="7" r="1.5" fill="#047857" />
-                      </svg>
-                    </div>
-                    <h3 className="exact-specialty-name">Paediatrics &amp; Child Health</h3>
-                    <p className="exact-specialty-desc">
-                      Level-3 NICU, newborn screening, pediatric intensive care, and child wellness.
-                    </p>
-                  </div>
-
-                  {/* Card 8: Obstetrics & Gynaecology */}
-                  <div
-                    className="exact-specialty-card expanded-card"
-                    onClick={() => handleSpecialtyClick("Obstetrics & Gynaecology")}
-                  >
-                    <div className="exact-specialty-icon-box">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="9" r="6" />
-                        <line x1="12" y1="15" x2="12" y2="22" />
-                        <line x1="9" y1="18" x2="15" y2="18" />
-                      </svg>
-                    </div>
-                    <h3 className="exact-specialty-name">Obstetrics &amp; Gynaecology</h3>
-                    <p className="exact-specialty-desc">
-                      High-risk pregnancy care, painless deliveries, and advanced gynecological surgeries.
-                    </p>
-                  </div>
-
-                  {/* Card 9: Pulmonology */}
-                  <div
-                    className="exact-specialty-card expanded-card"
-                    onClick={() => handleSpecialtyClick("Pulmonology")}
-                  >
-                    <div className="exact-specialty-icon-box">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 4v8M9 7l3 3 3-3" />
-                        <path d="M6 10a4 4 0 0 0-4 4c0 4 3 7 7 7h1V12H7a1 1 0 0 0-1 1" />
-                        <path d="M18 10a4 4 0 0 1 4 4c0 4-3 7-7 7h-1V12h3a1 1 0 0 1 1 1" />
-                      </svg>
-                    </div>
-                    <h3 className="exact-specialty-name">Pulmonology &amp; Chest Medicine</h3>
-                    <p className="exact-specialty-desc">
-                      Advanced diagnostics for asthma, COPD, interstitial lung diseases, and sleep apnea.
-                    </p>
-                  </div>
-
-                  {/* Card 10: Dermatology */}
-                  <div
-                    className="exact-specialty-card expanded-card"
-                    onClick={() => handleSpecialtyClick("Dermatology")}
-                  >
-                    <div className="exact-specialty-icon-box">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2l2.4 5.6L20 10l-4.2 3.8 1.2 5.8L12 16.8 7 19.6l1.2-5.8L4 10l5.6-2.4z"/>
-                      </svg>
-                    </div>
-                    <h3 className="exact-specialty-name">Dermatology &amp; Cosmetology</h3>
-                    <p className="exact-specialty-desc">
-                      Clinical skincare, laser therapies, eczema, psoriasis, and aesthetic rejuvenation.
-                    </p>
-                  </div>
-
-                  {/* Card 11: Ophthalmology */}
-                  <div
-                    className="exact-specialty-card expanded-card"
-                    onClick={() => handleSpecialtyClick("Ophthalmology")}
-                  >
-                    <div className="exact-specialty-icon-box">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    </div>
-                    <h3 className="exact-specialty-name">Ophthalmology (Eye Care)</h3>
-                    <p className="exact-specialty-desc">
-                      Robotic cataract surgery, laser vision correction, retina, and glaucoma management.
-                    </p>
-                  </div>
-
-                  {/* Card 12: ENT */}
-                  <div
-                    className="exact-specialty-card expanded-card"
-                    onClick={() => handleSpecialtyClick("ENT")}
-                  >
-                    <div className="exact-specialty-icon-box">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-                      </svg>
-                    </div>
-                    <h3 className="exact-specialty-name">ENT (Ear, Nose &amp; Throat)</h3>
-                    <p className="exact-specialty-desc">
-                      Microscopic ear surgery, endoscopic sinus surgery, and voice disorder clinics.
-                    </p>
-                  </div>
-
-                  {/* Card 13: Urology */}
-                  <div
-                    className="exact-specialty-card expanded-card"
-                    onClick={() => handleSpecialtyClick("Urology")}
-                  >
-                    <div className="exact-specialty-icon-box">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                      </svg>
-                    </div>
-                    <h3 className="exact-specialty-name">Urology &amp; Andrology</h3>
-                    <p className="exact-specialty-desc">
-                      Laser treatment for kidney stones, prostate health, and male reproductive care.
-                    </p>
-                  </div>
-
-                  {/* Card 14: Endocrinology */}
-                  <div
-                    className="exact-specialty-card expanded-card"
-                    onClick={() => handleSpecialtyClick("Endocrinology")}
-                  >
-                    <div className="exact-specialty-icon-box">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2v6M12 18v4M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M2 12h6M18 12h4" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    </div>
-                    <h3 className="exact-specialty-name">Endocrinology &amp; Diabetology</h3>
-                    <p className="exact-specialty-desc">
-                      Specialized diabetes care, thyroid disorder management, and hormonal therapy.
-                    </p>
-                  </div>
-
-                  {/* Card 15: General Surgery */}
-                  <div
-                    className="exact-specialty-card expanded-card"
-                    onClick={() => handleSpecialtyClick("General Surgery")}
-                  >
-                    <div className="exact-specialty-icon-box">
-                      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                        <polyline points="14 2 14 8 20 8" />
-                        <line x1="12" y1="18" x2="12" y2="12" />
-                        <line x1="9" y1="15" x2="15" y2="15" />
-                      </svg>
-                    </div>
-                    <h3 className="exact-specialty-name">General &amp; Laparoscopic Surgery</h3>
-                    <p className="exact-specialty-desc">
-                      Advanced keyhole abdominal surgeries, hernia repair, and surgical trauma care.
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* 3. View All Specialties Toggle Bar */}
-            <div
-              className="view-all-specialties-card"
-              onClick={() => setExpandedSpecialties(!expandedSpecialties)}
-            >
-              <div className="vas-left">
-                <div className="vas-icon-wrap">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                    <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                    <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                    <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                  </svg>
-                </div>
-                <div className="vas-text">
-                  <h3 className="vas-title">
-                    {expandedSpecialties ? "View All Specialties (Showing All Specialties)" : "View All Specialties"}
-                  </h3>
-                  <p className="vas-subtitle">
-                    {expandedSpecialties ? "Click to collapse to primary specialties" : "Explore all our specialties and services."}
+            </main>
+          );
+        })() : (
+          /* =======================================================
+              RENDER: OUR SPECIALTIES PAGE VIEW (EXACT MATCH TO DESIGN)
+              ======================================================= */
+          <main className="exact-specialties-page-view">
+            {/* 1. Header Banner with Stethoscope Graphic */}
+            <div className="specialties-header-banner">
+              <div className="specialties-header-container">
+                <div className="specialties-header-text">
+                  <h1 className="specialties-page-title">Our Specialties</h1>
+                  <nav className="specialties-breadcrumb" aria-label="Breadcrumb">
+                    <a
+                      href="#home"
+                      className="breadcrumb-link"
+                      onClick={handleNavHome}
+                    >
+                      Home
+                    </a>
+                    <span className="breadcrumb-separator">›</span>
+                    <span className="breadcrumb-current">Specialties</span>
+                  </nav>
+                  <p className="specialties-intro-desc">
+                    Comprehensive care across a wide range of specialties to
+                    <br />
+                    to meet your healthcare needs.
                   </p>
                 </div>
-              </div>
 
-              <div className="vas-action-toggle">
-                <span>{expandedSpecialties ? "Show Less ▴" : "View All ▾"}</span>
+                <div className="specialties-banner-image-wrap">
+                  <img
+                    src={specialtiesStethoscopeBanner}
+                    alt="Stethoscope Healthcare Background"
+                    className="specialties-banner-img"
+                    loading="eager"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </main>
+
+            {/* 2. Specialties Grid Container */}
+            <div className="specialties-page-container">
+              <div className="specialties-cards-grid">
+                {/* Card 1: Cardiology */}
+                <div
+                  className="exact-specialty-card"
+                  onClick={() => handleSpecialtyClick("Cardiology")}
+                >
+                  <div className="exact-specialty-icon-box">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="#047857">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                      <polyline points="4,11 8,11 10,7 13,16 15,10 17,13 20,13" fill="none" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 className="exact-specialty-name">Cardiology</h3>
+                  <p className="exact-specialty-desc">
+                    Advanced care for heart conditions and vascular diseases.
+                  </p>
+                </div>
+
+                {/* Card 2: Neurology */}
+                <div
+                  className="exact-specialty-card"
+                  onClick={() => handleSpecialtyClick("Neurology")}
+                >
+                  <div className="exact-specialty-icon-box">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z" />
+                      <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z" />
+                    </svg>
+                  </div>
+                  <h3 className="exact-specialty-name">Neurology</h3>
+                  <p className="exact-specialty-desc">
+                    Expert treatment for brain, spine, and nervous system disorders.
+                  </p>
+                </div>
+
+                {/* Card 3: Oncology */}
+                <div
+                  className="exact-specialty-card"
+                  onClick={() => handleSpecialtyClick("Oncology")}
+                >
+                  <div className="exact-specialty-icon-box">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14.5 9a2.5 2.5 0 1 0-5 0c0 1.5 1.5 3.5 2.5 5.5 1-2 2.5-4 2.5-5.5z"/>
+                      <path d="M8.5 14L4 21"/>
+                      <path d="M15.5 14L20 21"/>
+                    </svg>
+                  </div>
+                  <h3 className="exact-specialty-name">Oncology</h3>
+                  <p className="exact-specialty-desc">
+                    Comprehensive cancer care and advanced treatment.
+                  </p>
+                </div>
+
+                {/* Card 4: Orthopedics */}
+                <div
+                  className="exact-specialty-card"
+                  onClick={() => handleSpecialtyClick("Orthopedics")}
+                >
+                  <div className="exact-specialty-icon-box">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="4" r="2.2"/>
+                      <path d="M12 6.5v13.5"/>
+                      <path d="M7.5 10.5h9"/>
+                      <path d="M8 15h8"/>
+                      <path d="M9 19.5h6"/>
+                    </svg>
+                  </div>
+                  <h3 className="exact-specialty-name">Orthopedics</h3>
+                  <p className="exact-specialty-desc">
+                    Bone, joint, and spine care for mobility and pain relief.
+                  </p>
+                </div>
+
+                {/* Card 5: Gastroenterology */}
+                <div
+                  className="exact-specialty-card"
+                  onClick={() => handleSpecialtyClick("Gastroenterology")}
+                >
+                  <div className="exact-specialty-icon-box">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 3a3 3 0 0 0-3 3v2a3 3 0 0 1-3 3H9a5 5 0 0 0-5 5v1a5 5 0 0 0 5 5h3a6 6 0 0 0 6-6V6a3 3 0 0 0-3-3z"/>
+                    </svg>
+                  </div>
+                  <h3 className="exact-specialty-name">Gastroenterology</h3>
+                  <p className="exact-specialty-desc">
+                    Treatment for digestive disorders and liver diseases.
+                  </p>
+                </div>
+
+                {/* Card 6: Nephrology */}
+                <div
+                  className="exact-specialty-card"
+                  onClick={() => handleSpecialtyClick("Nephrology")}
+                >
+                  <div className="exact-specialty-icon-box">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M7 6c-3 0-5 2.5-5 5.5s2.5 6.5 6 6.5c3 0 4-2 4-4V6H7z"/>
+                      <path d="M17 6c3 0 5 2.5 5 5.5s-2.5 6.5-6 6.5c-3 0-4-2-4-4V6h5z"/>
+                    </svg>
+                  </div>
+                  <h3 className="exact-specialty-name">Nephrology</h3>
+                  <p className="exact-specialty-desc">
+                    Kidney care, dialysis, and related kidney disorders.
+                  </p>
+                </div>
+
+                {/* Extended Cards (Displayed when expandedSpecialties is true) */}
+                {expandedSpecialties && (
+                  <>
+                    {/* Card 7: Paediatrics */}
+                    <div
+                      className="exact-specialty-card expanded-card"
+                      onClick={() => handleSpecialtyClick("Paediatrics")}
+                    >
+                      <div className="exact-specialty-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="7" r="4" />
+                          <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+                          <circle cx="12" cy="7" r="1.5" fill="#047857" />
+                        </svg>
+                      </div>
+                      <h3 className="exact-specialty-name">Paediatrics &amp; Child Health</h3>
+                      <p className="exact-specialty-desc">
+                        Level-3 NICU, newborn screening, pediatric intensive care, and child wellness.
+                      </p>
+                    </div>
+
+                    {/* Card 8: Obstetrics & Gynaecology */}
+                    <div
+                      className="exact-specialty-card expanded-card"
+                      onClick={() => handleSpecialtyClick("Obstetrics & Gynaecology")}
+                    >
+                      <div className="exact-specialty-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="9" r="6" />
+                          <line x1="12" y1="15" x2="12" y2="22" />
+                          <line x1="9" y1="18" x2="15" y2="18" />
+                        </svg>
+                      </div>
+                      <h3 className="exact-specialty-name">Obstetrics &amp; Gynaecology</h3>
+                      <p className="exact-specialty-desc">
+                        High-risk pregnancy care, painless deliveries, and advanced gynecological surgeries.
+                      </p>
+                    </div>
+
+                    {/* Card 9: Pulmonology */}
+                    <div
+                      className="exact-specialty-card expanded-card"
+                      onClick={() => handleSpecialtyClick("Pulmonology")}
+                    >
+                      <div className="exact-specialty-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 4v8M9 7l3 3 3-3" />
+                          <path d="M6 10a4 4 0 0 0-4 4c0 4 3 7 7 7h1V12H7a1 1 0 0 0-1 1" />
+                          <path d="M18 10a4 4 0 0 1 4 4c0 4-3 7-7 7h-1V12h3a1 1 0 0 1 1 1" />
+                        </svg>
+                      </div>
+                      <h3 className="exact-specialty-name">Pulmonology &amp; Chest Medicine</h3>
+                      <p className="exact-specialty-desc">
+                        Advanced diagnostics for asthma, COPD, interstitial lung diseases, and sleep apnea.
+                      </p>
+                    </div>
+
+                    {/* Card 10: Dermatology */}
+                    <div
+                      className="exact-specialty-card expanded-card"
+                      onClick={() => handleSpecialtyClick("Dermatology")}
+                    >
+                      <div className="exact-specialty-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2l2.4 5.6L20 10l-4.2 3.8 1.2 5.8L12 16.8 7 19.6l1.2-5.8L4 10l5.6-2.4z"/>
+                        </svg>
+                      </div>
+                      <h3 className="exact-specialty-name">Dermatology &amp; Cosmetology</h3>
+                      <p className="exact-specialty-desc">
+                        Clinical skincare, laser therapies, eczema, psoriasis, and aesthetic rejuvenation.
+                      </p>
+                    </div>
+
+                    {/* Card 11: Ophthalmology */}
+                    <div
+                      className="exact-specialty-card expanded-card"
+                      onClick={() => handleSpecialtyClick("Ophthalmology")}
+                    >
+                      <div className="exact-specialty-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      </div>
+                      <h3 className="exact-specialty-name">Ophthalmology (Eye Care)</h3>
+                      <p className="exact-specialty-desc">
+                        Robotic cataract surgery, laser vision correction, retina, and glaucoma management.
+                      </p>
+                    </div>
+
+                    {/* Card 12: ENT */}
+                    <div
+                      className="exact-specialty-card expanded-card"
+                      onClick={() => handleSpecialtyClick("ENT")}
+                    >
+                      <div className="exact-specialty-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                        </svg>
+                      </div>
+                      <h3 className="exact-specialty-name">ENT (Ear, Nose &amp; Throat)</h3>
+                      <p className="exact-specialty-desc">
+                        Microscopic ear surgery, endoscopic sinus surgery, and voice disorder clinics.
+                      </p>
+                    </div>
+
+                    {/* Card 13: Urology */}
+                    <div
+                      className="exact-specialty-card expanded-card"
+                      onClick={() => handleSpecialtyClick("Urology")}
+                    >
+                      <div className="exact-specialty-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                      </div>
+                      <h3 className="exact-specialty-name">Urology &amp; Andrology</h3>
+                      <p className="exact-specialty-desc">
+                        Laser treatment for kidney stones, prostate health, and male reproductive care.
+                      </p>
+                    </div>
+
+                    {/* Card 14: Endocrinology */}
+                    <div
+                      className="exact-specialty-card expanded-card"
+                      onClick={() => handleSpecialtyClick("Endocrinology")}
+                    >
+                      <div className="exact-specialty-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2v6M12 18v4M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M2 12h6M18 12h4" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      </div>
+                      <h3 className="exact-specialty-name">Endocrinology &amp; Diabetology</h3>
+                      <p className="exact-specialty-desc">
+                        Specialized diabetes care, thyroid disorder management, and hormonal therapy.
+                      </p>
+                    </div>
+
+                    {/* Card 15: General Surgery */}
+                    <div
+                      className="exact-specialty-card expanded-card"
+                      onClick={() => handleSpecialtyClick("General Surgery")}
+                    >
+                      <div className="exact-specialty-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <line x1="12" y1="18" x2="12" y2="12" />
+                          <line x1="9" y1="15" x2="15" y2="15" />
+                        </svg>
+                      </div>
+                      <h3 className="exact-specialty-name">General &amp; Laparoscopic Surgery</h3>
+                      <p className="exact-specialty-desc">
+                        Advanced keyhole abdominal surgeries, hernia repair, and surgical trauma care.
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* 3. View All Specialties Toggle Bar */}
+              <div
+                className="view-all-specialties-card"
+                onClick={() => setExpandedSpecialties(!expandedSpecialties)}
+              >
+                <div className="vas-left">
+                  <div className="vas-icon-wrap">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                    </svg>
+                  </div>
+                  <div className="vas-text">
+                    <h3 className="vas-title">
+                      {expandedSpecialties ? "View All Specialties (Showing All Specialties)" : "View All Specialties"}
+                    </h3>
+                    <p className="vas-subtitle">
+                      {expandedSpecialties ? "Click to collapse to primary specialties" : "Explore all our specialties and services."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="vas-action-toggle">
+                  <span>{expandedSpecialties ? "Show Less ▴" : "View All ▾"}</span>
+                </div>
+              </div>
+            </div>
+          </main>
+        )
       ) : (
         /* =======================================================
             RENDER: HOME PAGE VIEW
@@ -1082,11 +1993,13 @@ export default function HospitalLanding({ initialTab = "home" }) {
           ======================================================= */}
       {bookingModalOpen && (
         <div className="modal-backdrop-overlay" onClick={() => setBookingModalOpen(false)}>
-          <div className="modal-dialog-card" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-dialog-card modal-large" onClick={(e) => e.stopPropagation()}>
             <div className="modal-dialog-header">
               <div>
-                <h2>Book Doctor Appointment</h2>
-                <p>Specialty: <strong>{selectedSpecialty}</strong></p>
+                <h2>Book Doctor Consultation</h2>
+                <p className="modal-sub">
+                  Department: <strong className="highlight-text">{appointmentForm.department || selectedSpecialty}</strong>
+                </p>
               </div>
               <button
                 type="button"
@@ -1097,72 +2010,231 @@ export default function HospitalLanding({ initialTab = "home" }) {
               </button>
             </div>
 
+            {/* Selected Doctor Preview Header (If doctor was clicked) */}
+            {selectedDoctorForBooking && (
+              <div className="modal-doctor-preview-card">
+                <div
+                  className="mdp-avatar-circle"
+                  style={{ backgroundColor: selectedDoctorForBooking.avatarBg || "#047857" }}
+                >
+                  {selectedDoctorForBooking.name.replace("Dr. ", "").split(" ").map(n => n[0]).slice(0, 2).join("")}
+                </div>
+                <div className="mdp-doctor-info">
+                  <div className="mdp-name-row">
+                    <strong className="mdp-doctor-name">{selectedDoctorForBooking.name}</strong>
+                    <span className="mdp-verified-badge">✓ Verified Specialist</span>
+                  </div>
+                  <div className="mdp-desig">{selectedDoctorForBooking.designation}</div>
+                  <div className="mdp-meta-tags">
+                    <span>📍 {selectedDoctorForBooking.room}</span>
+                    <span>⏱️ {selectedDoctorForBooking.experience}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* In-Modal Available Slot Selector */}
+            {selectedDoctorForBooking?.slots && (
+              <div className="modal-slots-selector-group">
+                <label className="modal-slots-label">
+                  <span>🕒 Choose Consultation Slot:</span>
+                  <span className="modal-slots-hint">(Click to choose)</span>
+                </label>
+                <div className="modal-slots-chips-row">
+                  {selectedDoctorForBooking.slots.map((slot, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      className={`modal-slot-pill ${selectedSlotForBooking === slot || appointmentForm.preferredSlot === slot ? "active-slot-pill" : ""}`}
+                      onClick={() => {
+                        setSelectedSlotForBooking(slot);
+                        setAppointmentForm((prev) => ({
+                          ...prev,
+                          preferredSlot: slot,
+                        }));
+                      }}
+                    >
+                      <span className="slot-dot-circle">●</span>
+                      <span>{slot}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {bookingSuccess ? (
               <div className="modal-success-state">
-                <div className="success-badge">✓</div>
-                <h3>Appointment Requested!</h3>
-                <p>
-                  Thank you, <strong>{appointmentForm.fullName || "Patient"}</strong>. Your consultation request for <strong>{appointmentForm.department}</strong> has been registered.
+                <div className="success-badge-circle">✓</div>
+                <h3 className="success-heading">Appointment Confirmed!</h3>
+                <p className="success-lead">
+                  Your appointment with <strong>{selectedDoctorForBooking?.name || appointmentForm.doctorName || "our Senior Specialist"}</strong> has been reserved successfully.
                 </p>
+
+                <div className="success-ref-card">
+                  <span className="ref-label">Booking Confirmation Ref #</span>
+                  <strong className="ref-code">{bookingRefId || "NIA-CARD-5829"}</strong>
+                </div>
+
+                <div className="success-dossier-list">
+                  <div className="dossier-row">
+                    <span className="dossier-label">Patient Name:</span>
+                    <strong className="dossier-val">{appointmentForm.fullName}</strong>
+                  </div>
+                  <div className="dossier-row">
+                    <span className="dossier-label">Consulting Specialist:</span>
+                    <strong className="dossier-val">{selectedDoctorForBooking?.name || appointmentForm.doctorName || "Senior Consultant"}</strong>
+                  </div>
+                  <div className="dossier-row">
+                    <span className="dossier-label">Specialty / Department:</span>
+                    <strong className="dossier-val">{appointmentForm.department}</strong>
+                  </div>
+                  <div className="dossier-row">
+                    <span className="dossier-label">Consultation Slot:</span>
+                    <strong className="dossier-val highlight-green">
+                      {selectedSlotForBooking || appointmentForm.preferredSlot || appointmentForm.preferredDate || "Today: 10:30 AM"}
+                    </strong>
+                  </div>
+                  <div className="dossier-row">
+                    <span className="dossier-label">OPD Room / Location:</span>
+                    <strong className="dossier-val">{selectedDoctorForBooking?.room || "Suite 101, Specialty Tower"}</strong>
+                  </div>
+                </div>
+
                 <p className="sms-notice">
                   📱 Confirmation SMS sent to <strong>{appointmentForm.phoneNumber}</strong>.
+                  <br />Please arrive 15 minutes prior to the scheduled slot with any past health records.
                 </p>
+
+                <div className="success-actions-row">
+                  <button
+                    type="button"
+                    className="btn-done-booking"
+                    onClick={() => {
+                      setBookingModalOpen(false);
+                      setBookingSuccess(false);
+                      setSelectedDoctorForBooking(null);
+                      setSelectedSlotForBooking("");
+                    }}
+                  >
+                    Done
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-book-another-slot"
+                    onClick={() => {
+                      setBookingSuccess(false);
+                      setAppointmentForm({
+                        fullName: "",
+                        phoneNumber: "",
+                        email: "",
+                        department: selectedSpecialtyDetail || "Cardiology",
+                        doctorName: "",
+                        preferredDate: "",
+                        preferredSlot: "",
+                        notes: "",
+                      });
+                      setSelectedDoctorForBooking(null);
+                      setSelectedSlotForBooking("");
+                    }}
+                  >
+                    Book Another Slot
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleBookingSubmit} className="modal-booking-form">
-                <div className="modal-form-group">
-                  <label>Full Name *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Enter Patient Full Name"
-                    value={appointmentForm.fullName}
-                    onChange={(e) =>
-                      setAppointmentForm({ ...appointmentForm, fullName: e.target.value })
-                    }
-                  />
+                <div className="modal-form-two-col">
+                  <div className="modal-form-group">
+                    <label>Patient Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Ramesh Kumar"
+                      value={appointmentForm.fullName}
+                      onChange={(e) =>
+                        setAppointmentForm({ ...appointmentForm, fullName: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="modal-form-group">
+                    <label>Contact Mobile Number *</label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="e.g. +91 98765 43210"
+                      value={appointmentForm.phoneNumber}
+                      onChange={(e) =>
+                        setAppointmentForm({ ...appointmentForm, phoneNumber: e.target.value })
+                      }
+                    />
+                  </div>
                 </div>
 
-                <div className="modal-form-group">
-                  <label>Contact Phone Number *</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="Mobile Number"
-                    value={appointmentForm.phoneNumber}
-                    onChange={(e) =>
-                      setAppointmentForm({ ...appointmentForm, phoneNumber: e.target.value })
-                    }
-                  />
+                <div className="modal-form-two-col">
+                  <div className="modal-form-group">
+                    <label>Email Address (Optional)</label>
+                    <input
+                      type="email"
+                      placeholder="e.g. patient@example.com"
+                      value={appointmentForm.email}
+                      onChange={(e) =>
+                        setAppointmentForm({ ...appointmentForm, email: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="modal-form-group">
+                    <label>Department / Specialty *</label>
+                    <select
+                      value={appointmentForm.department}
+                      onChange={(e) => {
+                        const newDept = e.target.value;
+                        setAppointmentForm({ ...appointmentForm, department: newDept });
+                        if (selectedDoctorForBooking) {
+                          setSelectedDoctorForBooking(null);
+                          setSelectedSlotForBooking("");
+                        }
+                      }}
+                    >
+                      <option value="Cardiology">Cardiology</option>
+                      <option value="Neurology">Neurology</option>
+                      <option value="Oncology">Oncology</option>
+                      <option value="Orthopedics">Orthopedics</option>
+                      <option value="Gastroenterology">Gastroenterology</option>
+                      <option value="Nephrology">Nephrology</option>
+                      <option value="Paediatrics">Paediatrics</option>
+                      <option value="Obstetrics & Gynaecology">Obstetrics &amp; Gynaecology</option>
+                      <option value="Pulmonology">Pulmonology</option>
+                      <option value="General Surgery">General Surgery</option>
+                    </select>
+                  </div>
                 </div>
 
-                <div className="modal-form-group">
-                  <label>Department / Specialty *</label>
-                  <select
-                    value={appointmentForm.department}
-                    onChange={(e) =>
-                      setAppointmentForm({ ...appointmentForm, department: e.target.value })
-                    }
-                  >
-                    <option value="Cardiology">Cardiology</option>
-                    <option value="Neurology">Neurology</option>
-                    <option value="Oncology">Oncology</option>
-                    <option value="Orthopedics">Orthopedics</option>
-                    <option value="Gastroenterology">Gastroenterology</option>
-                    <option value="Nephrology">Nephrology</option>
-                  </select>
-                </div>
+                <div className="modal-form-two-col">
+                  <div className="modal-form-group">
+                    <label>Preferred Date *</label>
+                    <input
+                      type="date"
+                      required
+                      value={appointmentForm.preferredDate}
+                      onChange={(e) =>
+                        setAppointmentForm({ ...appointmentForm, preferredDate: e.target.value })
+                      }
+                    />
+                  </div>
 
-                <div className="modal-form-group">
-                  <label>Preferred Date *</label>
-                  <input
-                    type="date"
-                    required
-                    value={appointmentForm.preferredDate}
-                    onChange={(e) =>
-                      setAppointmentForm({ ...appointmentForm, preferredDate: e.target.value })
-                    }
-                  />
+                  <div className="modal-form-group">
+                    <label>Consultation Reason / Symptoms</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Chest tightness, routine follow-up"
+                      value={appointmentForm.notes}
+                      onChange={(e) =>
+                        setAppointmentForm({ ...appointmentForm, notes: e.target.value })
+                      }
+                    />
+                  </div>
                 </div>
 
                 <div className="modal-buttons-row">
@@ -1174,7 +2246,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
                     Cancel
                   </button>
                   <button type="submit" className="btn-modal-confirm">
-                    Confirm Appointment
+                    <span>✓</span> Confirm &amp; Reserve Appointment
                   </button>
                 </div>
               </form>
