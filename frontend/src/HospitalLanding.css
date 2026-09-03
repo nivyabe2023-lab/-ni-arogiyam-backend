@@ -285,20 +285,17 @@
 }
 
 .hero-text-block {
-  max-width: 530px;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: 26px 30px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  max-width: 520px;
+  background: transparent;
+  padding: 0;
+  border: none;
+  box-shadow: none;
 }
 
 .hero-main-heading {
   display: flex;
   flex-direction: column;
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   line-height: 1.15;
 }
 
@@ -307,33 +304,36 @@
   font-weight: 900;
   color: #0f172a;
   letter-spacing: -0.5px;
+  text-shadow: 0 0 16px #ffffff, 0 0 28px #ffffff, 0 1px 4px rgba(255, 255, 255, 0.9);
 }
 
 .heading-line-green {
   font-size: 38px;
   font-weight: 900;
-  color: #059669;
+  color: #047857;
   letter-spacing: -0.5px;
+  text-shadow: 0 0 16px #ffffff, 0 0 28px #ffffff, 0 1px 4px rgba(255, 255, 255, 0.9);
 }
 
 .hero-intro-text {
   font-size: 14px;
   line-height: 1.65;
   color: #0f172a;
-  font-weight: 500;
-  margin: 0 0 24px;
+  font-weight: 600;
+  margin: 0 0 28px;
+  text-shadow: 0 0 14px #ffffff, 0 0 22px #ffffff, 0 1px 3px #ffffff;
 }
 
 .hero-intro-text strong {
   color: #064e3b;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 /* 4 STATS ROW */
 .hero-stats-row {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
 }
 
@@ -369,13 +369,15 @@
   font-weight: 900;
   color: #0f172a;
   line-height: 1.1;
+  text-shadow: 0 0 12px #ffffff, 0 0 18px #ffffff, 0 1px 2px #ffffff;
 }
 
 .stat-label {
   font-size: 11px;
-  color: #334155;
-  font-weight: 600;
+  color: #0f172a;
+  font-weight: 700;
   margin-top: 2px;
+  text-shadow: 0 0 12px #ffffff, 0 0 18px #ffffff, 0 1px 2px #ffffff;
 }
 
 /* ============================================================
