@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./HospitalLanding.css";
+import hospitalHeroImg from "./assets/hospital_building.jpg";
 
 export default function HospitalLanding() {
   const navigate = useNavigate();
 
-  // Accessibility state
-  const [fontScale, setFontScale] = useState(1);
-  const [isGreyscale, setIsGreyscale] = useState(false);
+  // Dropdown menus state
+  const [specialtiesDropdown, setSpecialtiesDropdown] = useState(false);
+  const [visitorDropdown, setVisitorDropdown] = useState(false);
 
   // Modals state
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
@@ -37,17 +38,6 @@ export default function HospitalLanding() {
     patientCondition: "Cardiac / Chest Pain Emergency",
     notes: "",
   });
-
-  // Font Scaling handlers
-  const handleIncreaseFont = () => {
-    if (fontScale < 1.25) setFontScale((prev) => Math.min(prev + 0.1, 1.25));
-  };
-  const handleDecreaseFont = () => {
-    if (fontScale > 0.85) setFontScale((prev) => Math.max(prev - 0.1, 0.85));
-  };
-  const handleResetFont = () => {
-    setFontScale(1);
-  };
 
   const handleBookingSubmit = (e) => {
     e.preventDefault();
@@ -85,15 +75,26 @@ export default function HospitalLanding() {
     }, 3000);
   };
 
-  // Specialities Data
-  const specialities = [
+  // Specialties data matching mockup
+  const quickSpecialties = [
+    { id: "cardio", name: "Cardiology", icon: "🫀", desc: "Heart & Vascular Care" },
+    { id: "neuro", name: "Neurology", icon: "🧠", desc: "Brain & Spine Institute" },
+    { id: "onco", name: "Oncology", icon: "🎗️", desc: "Comprehensive Cancer Care" },
+    { id: "ortho", name: "Orthopedics", icon: "🦴", desc: "Robotic Joint Replacement" },
+    { id: "gastro", name: "Gastroenterology", icon: "🔬", desc: "Digestive & Liver Sciences" },
+    { id: "nephro", name: "Nephrology", icon: "🫘", desc: "Dialysis & Renal Care" },
+    { id: "all", name: "View All", icon: "▦", desc: "40+ Super Specialties", isViewAll: true },
+  ];
+
+  // Full Specialties Data
+  const fullSpecialities = [
     {
       id: "cardio",
       category: "cardiac",
       icon: "🫀",
       title: "Cardiology & Cardiac Surgery",
       badge: "Centre of Excellence",
-      desc: "Advanced 24/7 Cath Lab, Primary Angioplasty, Minimally Invasive Bypass (CABG), Valve Replacement & Pediatric Cardiology.",
+      desc: "Advanced 24/7 Cath Lab, Primary Angioplasty in <60 mins, Minimally Invasive Bypass (CABG), Valve Replacement & Pediatric Cardiology.",
       doctorsCount: 14,
       tag: "24/7 Heart Attack Center",
     },
@@ -103,7 +104,7 @@ export default function HospitalLanding() {
       icon: "🧠",
       title: "Neurology & Neurosurgery",
       badge: "Comprehensive Stroke Unit",
-      desc: "Dedicated Comprehensive Stroke Unit, Brain & Spine Micro-surgery, Neuro-Navigation, Epilepsy Clinic & Neuro-Rehabilitation.",
+      desc: "Dedicated Acute Stroke Unit, Brain & Spine Micro-surgery, Neuro-Navigation, Epilepsy Clinic & Neuro-Rehabilitation.",
       doctorsCount: 10,
       tag: "Robotic Spine Surgery",
     },
@@ -111,7 +112,7 @@ export default function HospitalLanding() {
       id: "ortho",
       category: "surgical",
       icon: "🦴",
-      title: "Orthopaedics & Joint Replacement",
+      title: "Orthopedics & Joint Replacement",
       badge: "Robotic Joint Care",
       desc: "Robotic Total Knee & Hip Replacements, Arthroscopic Sports Medicine, Complex Trauma & Spine Deformity Correction.",
       doctorsCount: 12,
@@ -158,16 +159,6 @@ export default function HospitalLanding() {
       tag: "Painless Delivery",
     },
     {
-      id: "pulmo",
-      category: "medical",
-      icon: "🫁",
-      title: "Pulmonology & Critical Care",
-      badge: "Advanced Respiratory Care",
-      desc: "Advanced Bronchoscopy Unit, Sleep Disorder Clinic, Severe Asthma & COPD Clinic, ECMO & Respiratory ICU.",
-      doctorsCount: 7,
-      tag: "ECMO Certified",
-    },
-    {
       id: "gastro",
       category: "surgical",
       icon: "🔬",
@@ -178,11 +169,6 @@ export default function HospitalLanding() {
       tag: "High-Definition Endoscopy",
     },
   ];
-
-  const filteredSpecialities =
-    activeTab === "all"
-      ? specialities
-      : specialities.filter((item) => item.category === activeTab);
 
   // Health Packages
   const healthPackages = [
@@ -243,25 +229,6 @@ export default function HospitalLanding() {
         "Geriatric Specialist Consultation",
       ],
     },
-    {
-      id: "pkg-4",
-      name: "Well-Woman Complete Health",
-      originalPrice: "₹ 6,000",
-      offerPrice: "₹ 2,799",
-      discount: "53% OFF",
-      popular: false,
-      testsCount: "45+ Tests Designed for Women",
-      idealFor: "Women of all age groups",
-      highlights: [
-        "Digital Bilateral Mammography / Breast USG",
-        "Liquid-Based Pap Smear Cytology",
-        "Thyroid Profile (Total T3, T4, Ultra TSH)",
-        "Serum Ferritin, Iron & Calcium Studies",
-        "Pelvic Ultrasound (Uterus & Ovaries)",
-        "Fasting & Post-Prandial Blood Sugar",
-        "Senior Gynecologist Consultation",
-      ],
-    },
   ];
 
   // Doctors
@@ -281,7 +248,7 @@ export default function HospitalLanding() {
       qualification: "MBBS, MD, DM (Neurology), FINR",
       experience: "18+ Years Exp",
       schedule: "Mon - Fri: 10:00 AM - 05:00 PM",
-      rating: "4.9 ★★★../../",
+      rating: "4.9 ★★★★★",
       avatar: "👩‍⚕️",
     },
     {
@@ -293,255 +260,222 @@ export default function HospitalLanding() {
       rating: "5.0 ★★★★★",
       avatar: "👨‍⚕️",
     },
-    {
-      name: "Dr. Meenakshi Iyer",
-      dept: "Obstetrics & High-Risk Pregnancy",
-      qualification: "MBBS, DGO, MD (OBG), MRCOG (London)",
-      experience: "16+ Years Exp",
-      schedule: "Mon - Sat: 09:30 AM - 03:30 PM",
-      rating: "4.9 ★★★../../",
-      avatar: "👩‍⚕️",
-    },
   ];
 
-  // Live Blood Stock
+  // Blood Stock
   const bloodBankStock = [
     { group: "A+", units: 18, status: "Available", bg: "#16a34a" },
     { group: "A-", units: 4, status: "Critical", bg: "#dc2626" },
     { group: "B+", units: 24, status: "Available", bg: "#16a34a" },
     { group: "B-", units: 6, status: "Low", bg: "#ea580c" },
     { group: "O+", units: 32, status: "Available", bg: "#16a34a" },
-    { group: "O-", units: 3, status: "Critical (Universal)", bg: "#dc2626" },
+    { group: "O-", units: 3, status: "Critical", bg: "#dc2626" },
     { group: "AB+", units: 12, status: "Available", bg: "#16a34a" },
     { group: "AB-", units: 5, status: "Low", bg: "#ea580c" },
   ];
 
   return (
-    <div
-      className={`hospital-landing-page ${isGreyscale ? "mode-greyscale" : ""}`}
-      style={{ "--landing-font-scale": fontScale }}
-    >
+    <div className="exact-hospital-homepage">
       {/* =======================================================
-          TOP BAR (ACCREDITATION & 24/7 EMERGENCY & ACCESSIBILITY)
+          1. TOP CONTACT & SOCIAL BAR (EXACT MOCKUP)
           ======================================================= */}
-      <div className="landing-topbar">
-        <div className="landing-topbar-inner">
-          <div className="landing-topbar-left">
-            <span className="nabh-badge">
-              ★ NABH & NABL ACCREDITED TERTIARY CARE HOSPITAL
-            </span>
-            <a href="tel:08022065000" className="emergency-hotline-link">
-              <span className="live-pulse"></span>
-              <span>24/7 Emergency & Trauma: <strong>080-22065000 / 108</strong></span>
-            </a>
+      <div className="exact-top-bar">
+        <div className="exact-top-bar-inner">
+          <div className="top-location">
+            <span className="loc-pin">📍</span>
+            <span>Madurai Bypass Road, Madurai, Tamil Nadu</span>
           </div>
 
-          <div className="landing-topbar-right">
-            {/* ACCESSIBILITY CONTROLS */}
-            <div className="landing-accessibility">
-              <span className="acc-label">Accessibility:</span>
-              <div className="acc-font-group">
-                <button
-                  type="button"
-                  onClick={handleDecreaseFont}
-                  title="Decrease Font Size"
-                >
-                  A-
-                </button>
-                <button
-                  type="button"
-                  onClick={handleResetFont}
-                  title="Normal Font Size"
-                >
-                  A
-                </button>
-                <button
-                  type="button"
-                  onClick={handleIncreaseFont}
-                  title="Increase Font Size"
-                >
-                  A+
-                </button>
-              </div>
-              <button
-                type="button"
-                className={`acc-contrast-toggle ${isGreyscale ? "active" : ""}`}
-                onClick={() => setIsGreyscale(!isGreyscale)}
-              >
-                🌗 {isGreyscale ? "Normal" : "High Contrast"}
-              </button>
+          <div className="top-right-group">
+            <span className="top-emergency-text">24/7 Emergency Care</span>
+            <a href="tel:+914523503500" className="top-phone-link">
+              <span>📞</span>
+              <strong>+91 452 350 3500</strong>
+            </a>
+
+            <div className="top-social-icons">
+              <a href="#facebook" aria-label="Facebook" className="social-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+              <a href="#instagram" aria-label="Instagram" className="social-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </a>
+              <a href="#youtube" aria-label="YouTube" className="social-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </a>
+              <a href="#linkedin" aria-label="LinkedIn" className="social-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+              </a>
             </div>
 
-            {/* QUICK ACTIONS */}
             <button
               type="button"
-              className="quick-btn-ambulance"
-              onClick={() => setSosModalOpen(true)}
-            >
-              🚑 24/7 Ambulance
-            </button>
-            <button
-              type="button"
-              className="quick-btn-login"
+              className="top-staff-login-btn"
               onClick={() => navigate("/login")}
             >
-              🔐 Staff / Doctor Login
+              🔐 Staff Login
             </button>
           </div>
         </div>
       </div>
 
       {/* =======================================================
-          MAIN NAVBAR
+          2. MAIN NAVBAR (EXACT MOCKUP)
           ======================================================= */}
-      <header className="landing-navbar">
-        <div className="navbar-container">
-          <div className="brand-container" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-            <div className="brand-icon">N</div>
-            <div className="brand-text">
-              <span className="brand-title">NI AROGIYAM</span>
-              <span className="brand-tagline">Multispeciality Hospital & Research Centre</span>
+      <header className="exact-navbar">
+        <div className="exact-navbar-inner">
+          {/* LOGO */}
+          <div className="brand-logo-area" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+            <div className="logo-svg-wrap">
+              <svg viewBox="0 0 48 48" fill="none" className="stethoscope-brand-icon">
+                <path d="M14 8C14 5.79086 15.7909 4 18 4H30C32.2091 4 34 5.79086 34 8V18C34 23.5228 29.5228 28 24 28C18.4772 28 14 23.5228 14 18V8Z" stroke="#065f46" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M24 28V36C24 40.4183 27.5817 44 32 44C36.4183 44 40 40.4183 40 36V30" stroke="#065f46" strokeWidth="3" strokeLinecap="round"/>
+                <circle cx="40" cy="30" r="4" fill="#10b981"/>
+                <path d="M24 12C22 10 19 11 19 14C19 18 24 21 24 21C24 21 29 18 29 14C29 11 26 10 24 12Z" fill="#10b981"/>
+              </svg>
+            </div>
+            <div className="brand-text-block">
+              <span className="brand-name-main">NI AROGIYAM</span>
+              <span className="brand-sub-main">— INTELLIGENT HEALTHCARE SYSTEM —</span>
             </div>
           </div>
 
-          <nav className="nav-menu">
-            <a href="#specialities">Specialities</a>
-            <a href="#emergency">Emergency & Blood Bank</a>
-            <a href="#packages">Health Packages</a>
-            <a href="#insurance">Insurance & TPA</a>
-            <a href="#guide">Patient Guide</a>
-            <a href="#doctors">Our Doctors</a>
-            <a href="#contact">Contact & Location</a>
+          {/* MENU LINKS */}
+          <nav className="exact-nav-links">
+            <a href="#home" className="nav-item active">Home</a>
+            <a href="#about" className="nav-item">About Us</a>
+
+            <div
+              className="nav-dropdown"
+              onMouseEnter={() => setSpecialtiesDropdown(true)}
+              onMouseLeave={() => setSpecialtiesDropdown(false)}
+            >
+              <a href="#specialties" className="nav-item dropdown-trigger">
+                Specialties <span className="caret">⌄</span>
+              </a>
+              {specialtiesDropdown && (
+                <div className="dropdown-menu">
+                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Cardiology & Heart Surgery</a>
+                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Neurology & Stroke Center</a>
+                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Oncology & Cancer Care</a>
+                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Orthopedics & Joint Replacement</a>
+                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Gastroenterology & GI Surgery</a>
+                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Nephrology & Renal Dialysis</a>
+                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Paediatrics & Level-3 NICU</a>
+                </div>
+              )}
+            </div>
+
+            <a href="#facilities" className="nav-item">Facilities</a>
+
+            <div
+              className="nav-dropdown"
+              onMouseEnter={() => setVisitorDropdown(true)}
+              onMouseLeave={() => setVisitorDropdown(false)}
+            >
+              <a href="#guide" className="nav-item dropdown-trigger">
+                Patients &amp; Visitors <span className="caret">⌄</span>
+              </a>
+              {visitorDropdown && (
+                <div className="dropdown-menu">
+                  <a href="#guide" onClick={() => setVisitorDropdown(false)}>Visiting Hours &amp; Guidelines</a>
+                  <a href="#guide" onClick={() => setVisitorDropdown(false)}>Room Categories &amp; Tariffs</a>
+                  <a href="#insurance" onClick={() => setVisitorDropdown(false)}>Insurance &amp; Cashless TPA</a>
+                  <a href="#emergency" onClick={() => setVisitorDropdown(false)}>24/7 Pharmacy &amp; Blood Bank</a>
+                </div>
+              )}
+            </div>
+
+            <a href="#doctors" className="nav-item">Our Doctors</a>
+            <a href="#contact" className="nav-item">Contact Us</a>
           </nav>
 
-          <div className="nav-actions">
+          {/* CTA */}
+          <div className="nav-right-actions">
             <button
               type="button"
-              className="btn-book-nav"
+              className="btn-book-appointment-pill"
               onClick={() => setBookingModalOpen(true)}
             >
-              📅 Book Appointment
+              Book Appointment
             </button>
-            <Link to="/login" className="btn-portal-login">
-              Hospital Portal ➔
-            </Link>
           </div>
         </div>
       </header>
 
       {/* =======================================================
-          HERO SECTION (ADVERTISEMENT & SHOWCASE)
+          3. HERO SECTION (EXACT MOCKUP)
           ======================================================= */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <div className="hero-text-block">
-            <div className="hero-pill">
-              <span className="pulse-dot"></span>
-              <span>⭐ South India's Most Trusted Super-Speciality Healthcare Destination</span>
-            </div>
+      <section id="home" className="exact-hero-section">
+        <div className="hero-background-art">
+          <img
+            src={hospitalHeroImg}
+            alt="NI AROGIYAM Hospital Grand Building"
+            className="hero-hospital-building-img"
+          />
+          <div className="hero-gradient-overlay"></div>
+        </div>
 
-            <h1 className="hero-heading">
-              Advanced Medicine.<br />
-              <span className="hero-highlight">Compassionate Healing.</span><br />
-              World-Class Care.
+        <div className="exact-hero-inner">
+          <div className="hero-left-col">
+            <h1 className="hero-title-stack">
+              <span className="title-row-1">Advanced Medicine.</span>
+              <span className="title-row-2">Compassionate Healing.</span>
+              <span className="title-row-3">World-Class Care.</span>
             </h1>
 
-            <p className="hero-description">
-              <strong>NI AROGIYAM</strong> is a state-of-the-art 500-bed tertiary care hospital equipped with 4th Gen Robotic Surgery, 24/7 Level-1 Trauma & Emergency, Comprehensive Cancer Institute, and Cashless Insurance support for over 40+ TPAs.
+            <p className="hero-description-text">
+              <strong>NI AROGIYAM</strong> is a state-of-the-art 500-bed tertiary care hospital equipped with 4th Gen Robotic Surgery, 24/7 Level-1 Trauma &amp; Emergency, Comprehensive Cancer Institute, and Cashless Insurance support for over 40+ TPAs.
             </p>
 
-            <div className="hero-buttons">
-              <button
-                type="button"
-                className="btn-hero-primary"
-                onClick={() => setBookingModalOpen(true)}
-              >
-                📅 Book Doctor Consultation
-              </button>
-              <button
-                type="button"
-                className="btn-hero-emergency"
-                onClick={() => setSosModalOpen(true)}
-              >
-                🚨 Emergency & Ambulance (080-22065000)
-              </button>
-              <a href="#packages" className="btn-hero-secondary">
-                📦 Executive Health Packages
-              </a>
-            </div>
-
-            <div className="hero-key-stats">
-              <div className="stat-pill">
-                <strong>500+</strong>
-                <span>Advanced Beds</span>
-              </div>
-              <div className="stat-pill">
-                <strong>120+</strong>
-                <span>Senior Doctors</span>
-              </div>
-              <div className="stat-pill">
-                <strong>50,000+</strong>
-                <span>Happy Patients</span>
-              </div>
-              <div className="stat-pill">
-                <strong>99.8%</strong>
-                <span>Success Rate</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="hero-card-block">
-            <div className="hero-featured-card">
-              <div className="card-top-alert">
-                <span className="emergency-blink">🔴 LIVE 24/7 EMERGENCY READY</span>
-                <span className="avg-eta">Ambulance ETA: &lt; 10 Mins</span>
-              </div>
-
-              <h3>24/7 Rapid Emergency Response</h3>
-              <p className="card-sub">Level-1 Trauma, Cardiac Chest Pain Unit & Advanced Stroke Thrombolysis Care.</p>
-
-              <div className="emergency-quick-grid">
-                <div className="em-item">
-                  <span className="em-icon">🚑</span>
-                  <div>
-                    <strong>ICU On Wheels Fleet</strong>
-                    <small>Ventilators & Defibrillators</small>
-                  </div>
+            {/* 4 CIRCULAR FLOATING STATS (EXACT MOCKUP) */}
+            <div className="hero-circle-stats-row">
+              <div className="circle-stat-item">
+                <div className="circle-icon-badge">
+                  <span>🛏️</span>
                 </div>
-                <div className="em-item">
-                  <span className="em-icon">🩸</span>
-                  <div>
-                    <strong>24/7 Blood Bank</strong>
-                    <small>All Blood Groups Available</small>
-                  </div>
-                </div>
-                <div className="em-item">
-                  <span className="em-icon">💳</span>
-                  <div>
-                    <strong>100% Cashless TPA</strong>
-                    <small>Instant 0-Min Pre-Auth</small>
-                  </div>
-                </div>
-                <div className="em-item">
-                  <span className="em-icon">🤖</span>
-                  <div>
-                    <strong>Robotic & Modular OTs</strong>
-                    <small>Ultra-clean HEPA Laminar</small>
-                  </div>
+                <div className="circle-stat-text">
+                  <strong>500+</strong>
+                  <span>Bed Capacity</span>
                 </div>
               </div>
 
-              <div className="hero-card-cta">
-                <a href="tel:08022065000" className="hero-phone-cta">
-                  📞 Call Hotline: 080-22065000
-                </a>
-                <button
-                  type="button"
-                  className="hero-sos-btn"
-                  onClick={() => setSosModalOpen(true)}
-                >
-                  Request Ambulance SOS
-                </button>
+              <div className="circle-stat-item">
+                <div className="circle-icon-badge">
+                  <span>🩺</span>
+                </div>
+                <div className="circle-stat-text">
+                  <strong>40+</strong>
+                  <span>Specialties</span>
+                </div>
+              </div>
+
+              <div className="circle-stat-item">
+                <div className="circle-icon-badge">
+                  <span>👤</span>
+                </div>
+                <div className="circle-stat-text">
+                  <strong>1L+</strong>
+                  <span>Patients Treated</span>
+                </div>
+              </div>
+
+              <div className="circle-stat-item">
+                <div className="circle-icon-badge">
+                  <span>🤖</span>
+                </div>
+                <div className="circle-stat-text">
+                  <strong>4th Gen</strong>
+                  <span>Robotic Surgery</span>
+                </div>
               </div>
             </div>
           </div>
@@ -549,272 +483,203 @@ export default function HospitalLanding() {
       </section>
 
       {/* =======================================================
-          HOSPITAL METRICS BANNER
+          4. DARK GREEN FEATURE RIBBON (EXACT MOCKUP)
           ======================================================= */}
-      <section className="metrics-ribbon">
-        <div className="metric-box">
-          <div className="metric-icon">🏥</div>
-          <div>
-            <h3>500+</h3>
-            <p>Inpatient & ICU Beds</p>
-          </div>
-        </div>
-        <div className="metric-box">
-          <div className="metric-icon">👨‍⚕️</div>
-          <div>
-            <h3>120+</h3>
-            <p>Distinguished Super-Specialists</p>
-          </div>
-        </div>
-        <div className="metric-box">
-          <div className="metric-icon">⏱️</div>
-          <div>
-            <h3>24/7/365</h3>
-            <p>Trauma, Stroke & Cardiac ICUs</p>
-          </div>
-        </div>
-        <div className="metric-box">
-          <div className="metric-icon">🏆</div>
-          <div>
-            <h3>NABH & NABL</h3>
-            <p>Highest National Accreditation</p>
-          </div>
-        </div>
-        <div className="metric-box">
-          <div className="metric-icon">💳</div>
-          <div>
-            <h3>40+ TPAs</h3>
-            <p>Hassle-Free Cashless Hospitalization</p>
-          </div>
-        </div>
-      </section>
-
-      {/* =======================================================
-          24/7 EMERGENCY & BLOOD BANK SHOWCASE
-          ======================================================= */}
-      <section id="emergency" className="emergency-showcase-section">
-        <div className="section-header">
-          <div className="section-pill-red">🚨 24/7 CRITICAL CARE & TRAUMA</div>
-          <h2>Level-1 Emergency & Trauma Care Centre</h2>
-          <p>
-            Equipped with round-the-clock emergency physicians, interventional cardiologists, neuro-trauma surgeons, and dedicated life-support ambulances.
-          </p>
-        </div>
-
-        <div className="emergency-content-grid">
-          <div className="emergency-features-card">
-            <h3>Emergency Infrastructure & Highlights</h3>
-            <ul className="em-features-list">
-              <li>
-                <span className="check-icon">✓</span>
-                <div>
-                  <strong>Chest Pain & Heart Attack Emergency:</strong>
-                  <p>Door-to-Balloon primary angioplasty in &lt; 60 minutes with 24/7 active Cath Lab.</p>
-                </div>
-              </li>
-              <li>
-                <span className="check-icon">✓</span>
-                <div>
-                  <strong>Comprehensive Acute Stroke Center:</strong>
-                  <p>Immediate CT/MRI neuro-imaging & IV Thrombolytic therapy for ischemic stroke.</p>
-                </div>
-              </li>
-              <li>
-                <span className="check-icon">✓</span>
-                <div>
-                  <strong>Level-III Neonatal & Pediatric ICU (NICU/PICU):</strong>
-                  <p>Advanced incubators, micro-ventilators, and round-the-clock pediatric intensivists.</p>
-                </div>
-              </li>
-              <li>
-                <span className="check-icon">✓</span>
-                <div>
-                  <strong>Advanced Life Support (ALS) Ambulance Fleet:</strong>
-                  <p>Equipped with transport ventilators, defibrillators, telemetry, and emergency medical technicians.</p>
-                </div>
-              </li>
-            </ul>
-
-            <div className="emergency-actions-row">
-              <a href="tel:08022065000" className="btn-call-emergency">
-                🚨 Dial 080-22065000
-              </a>
-              <button
-                type="button"
-                className="btn-req-ambulance"
-                onClick={() => setSosModalOpen(true)}
-              >
-                🚑 Dispatch Ambulance
-              </button>
+      <section className="dark-green-feature-ribbon">
+        <div className="ribbon-inner">
+          <div className="ribbon-col">
+            <div className="ribbon-icon">⏱️</div>
+            <div className="ribbon-text">
+              <h3>24/7</h3>
+              <p>Emergency Care</p>
             </div>
           </div>
 
-          <div className="blood-bank-card">
-            <div className="bb-header">
-              <div>
-                <h3>24/7 Live Blood Bank Status</h3>
-                <p>NABL Accredited Component Separation Unit</p>
-              </div>
-              <span className="live-status-pill">● LIVE INVENTORY</span>
-            </div>
+          <div className="ribbon-divider"></div>
 
-            <div className="blood-units-grid">
-              {bloodBankStock.map((b) => (
-                <div key={b.group} className="blood-unit-box">
-                  <div className="blood-group-badge">{b.group}</div>
-                  <div className="blood-count">{b.units} Units</div>
-                  <span className="blood-status-tag" style={{ color: b.bg }}>
-                    {b.status}
-                  </span>
-                </div>
-              ))}
+          <div className="ribbon-col">
+            <div className="ribbon-icon">🛡️</div>
+            <div className="ribbon-text">
+              <h3>Cashless</h3>
+              <p>Insurance</p>
             </div>
+          </div>
 
-            <div className="blood-bank-footer">
-              <span>🩸 Platelets, FFP, Packed Red Blood Cells (PRBC) & Cryoprecipitate Available 24/7</span>
-              <a href="tel:08022065002" className="bb-phone-link">Blood Helpline: 080-22065002</a>
+          <div className="ribbon-divider"></div>
+
+          <div className="ribbon-col">
+            <div className="ribbon-icon">📑</div>
+            <div className="ribbon-text">
+              <h3>40+</h3>
+              <p>TPA Partners</p>
+            </div>
+          </div>
+
+          <div className="ribbon-divider"></div>
+
+          <div className="ribbon-col">
+            <div className="ribbon-icon">🔬</div>
+            <div className="ribbon-text">
+              <h3>Advanced</h3>
+              <p>Technology</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* =======================================================
-          CENTERS OF EXCELLENCE & SPECIALITIES
+          5. OUR SPECIALTIES (EXACT MOCKUP CARDS)
           ======================================================= */}
-      <section id="specialities" className="specialities-section">
-        <div className="section-header">
-          <div className="section-pill">🩺 CLINICAL SPECIALITIES</div>
-          <h2>Centers of Excellence & Super-Specialities</h2>
-          <p>
-            World-class medical expertise supported by state-of-the-art diagnostic and surgical technology.
-          </p>
-
-          <div className="speciality-filter-tabs">
-            <button
-              type="button"
-              className={activeTab === "all" ? "active" : ""}
-              onClick={() => setActiveTab("all")}
-            >
-              All Specialities
-            </button>
-            <button
-              type="button"
-              className={activeTab === "cardiac" ? "active" : ""}
-              onClick={() => setActiveTab("cardiac")}
-            >
-              Cardiac Sciences
-            </button>
-            <button
-              type="button"
-              className={activeTab === "neuro" ? "active" : ""}
-              onClick={() => setActiveTab("neuro")}
-            >
-              Neurosciences
-            </button>
-            <button
-              type="button"
-              className={activeTab === "surgical" ? "active" : ""}
-              onClick={() => setActiveTab("surgical")}
-            >
-              Surgical & Ortho
-            </button>
-            <button
-              type="button"
-              className={activeTab === "medical" ? "active" : ""}
-              onClick={() => setActiveTab("medical")}
-            >
-              Medical & Oncology
-            </button>
-            <button
-              type="button"
-              className={activeTab === "paediatric" ? "active" : ""}
-              onClick={() => setActiveTab("paediatric")}
-            >
-              Mother & Child
-            </button>
-          </div>
+      <section id="specialties" className="exact-specialties-section">
+        <div className="section-title-wrap">
+          <h2>Our Specialties</h2>
         </div>
 
-        <div className="specialities-grid">
-          {filteredSpecialities.map((item) => (
-            <div key={item.id} className="speciality-card">
-              <div className="spec-card-top">
-                <span className="spec-icon">{item.icon}</span>
-                <span className="spec-badge">{item.badge}</span>
-              </div>
-              <h3>{item.title}</h3>
-              <p>{item.desc}</p>
-              <div className="spec-meta">
-                <span className="doc-count">👨‍⚕️ {item.doctorsCount} Specialists</span>
-                <span className="spec-tag">{item.tag}</span>
-              </div>
-              <button
-                type="button"
-                className="btn-spec-book"
-                onClick={() => {
+        <div className="specialties-cards-row">
+          {quickSpecialties.map((item) => (
+            <div
+              key={item.id}
+              className={`exact-spec-card ${item.isViewAll ? "card-view-all" : ""}`}
+              onClick={() => {
+                if (item.isViewAll) {
+                  document.getElementById("facilities")?.scrollIntoView({ behavior: "smooth" });
+                } else {
                   setAppointmentForm((prev) => ({
                     ...prev,
-                    department: item.title.split("&")[0].trim(),
+                    department: item.name,
                   }));
                   setBookingModalOpen(true);
-                }}
-              >
-                Book Specialist ➔
-              </button>
+                }
+              }}
+            >
+              <div className="spec-card-icon-wrap">
+                <span className="spec-emoji-icon">{item.icon}</span>
+              </div>
+              <h4 className="spec-card-name">{item.name}</h4>
             </div>
           ))}
         </div>
       </section>
 
       {/* =======================================================
-          HEALTH CHECKUP PACKAGES ADVERTISEMENT
+          6. WHY CHOOSE NI AROGIYAM? & COMPREHENSIVE SECTIONS
           ======================================================= */}
-      <section id="packages" className="packages-section">
-        <div className="section-header">
-          <div className="section-pill-gold">⭐ PREVENTIVE HEALTHCARE OFFERS</div>
-          <h2>Executive Health Checkup Packages</h2>
-          <p>
-            Invest in your wellness with comprehensive diagnostic health packages tailored for every life stage.
+      <section id="facilities" className="exact-why-choose-section">
+        <div className="section-title-wrap">
+          <h2>Why Choose <span className="highlight-brand">NI AROGIYAM?</span></h2>
+          <p className="section-sub-desc">
+            South India's premier multi-super-speciality hospital and research institute delivering compassionate clinical care with cutting-edge medical technology.
           </p>
         </div>
 
-        <div className="packages-grid">
+        <div className="why-choose-grid-4">
+          <div className="facility-box">
+            <div className="fac-icon-wrap">🤖</div>
+            <h3>4th Gen Robotic Surgery</h3>
+            <p>Minimally invasive precision surgeries with da Vinci robotic surgical systems ensuring reduced blood loss and rapid patient recovery.</p>
+          </div>
+
+          <div className="facility-box">
+            <div className="fac-icon-wrap">🏥</div>
+            <h3>Zero-Infection Modular OTs</h3>
+            <p>12 state-of-the-art modular operation theatres with Laminar Airflow & Class-100 positive pressure HEPA filtration.</p>
+          </div>
+
+          <div className="facility-box">
+            <div className="fac-icon-wrap">🧠</div>
+            <h3>3.0 Tesla MRI & 128-Slice CT</h3>
+            <p>Ultra-low dose high-speed diagnostic neuro & cardiac imaging with artificial intelligence assisted scans.</p>
+          </div>
+
+          <div className="facility-box">
+            <div className="fac-icon-wrap">❤️</div>
+            <h3>Patient-Centric Compassion</h3>
+            <p>1:1 dedicated nursing care in all intensive care units with round-the-clock senior consultant supervision.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* =======================================================
+          7. 24/7 EMERGENCY & BLOOD BANK READY
+          ======================================================= */}
+      <section id="emergency" className="emergency-blood-section">
+        <div className="emergency-blood-inner">
+          <div className="em-block-left">
+            <div className="em-red-pill">🚨 24/7 LEVEL-1 TRAUMA &amp; EMERGENCY</div>
+            <h2>Round-the-Clock Critical Care &amp; Ambulance</h2>
+            <p>
+              Dedicated Chest Pain Unit with &lt;60 min door-to-balloon primary angioplasty, Comprehensive Stroke Thrombolysis, and GPS-enabled ICU On Wheels.
+            </p>
+
+            <div className="em-quick-contacts-row">
+              <a href="tel:+914523503500" className="btn-call-hotline">
+                📞 Emergency: +91 452 350 3500
+              </a>
+              <button
+                type="button"
+                className="btn-sos-ambulance"
+                onClick={() => setSosModalOpen(true)}
+              >
+                🚑 Request Ambulance SOS
+              </button>
+            </div>
+          </div>
+
+          <div className="em-block-right">
+            <div className="blood-stock-banner">
+              <div className="bb-top">
+                <h3>Live Blood Bank Stock (24/7)</h3>
+                <span className="bb-live-tag">● READY</span>
+              </div>
+              <div className="blood-pills-row">
+                {bloodBankStock.map((b) => (
+                  <div key={b.group} className="bb-unit-pill">
+                    <strong>{b.group}</strong>
+                    <span>{b.units} Units</span>
+                  </div>
+                ))}
+              </div>
+              <p className="bb-footer-note">🩸 PRBC, Platelets, FFP &amp; Cryoprecipitate Available 24/7</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =======================================================
+          8. PREVENTIVE HEALTH CHECKUP PACKAGES
+          ======================================================= */}
+      <section id="packages" className="health-packages-section">
+        <div className="section-title-wrap">
+          <h2>Executive Health Checkup Packages</h2>
+          <p className="section-sub-desc">
+            Invest in your long-term wellness with comprehensive diagnostic screening packages at special discounted tariffs.
+          </p>
+        </div>
+
+        <div className="packages-cards-grid">
           {healthPackages.map((pkg) => (
-            <div
-              key={pkg.id}
-              className={`package-card ${pkg.popular ? "featured-package" : ""}`}
-            >
-              {pkg.popular && <div className="popular-ribbon">MOST POPULAR</div>}
+            <div key={pkg.id} className={`package-item-card ${pkg.popular ? "popular-card" : ""}`}>
+              {pkg.popular && <div className="pkg-ribbon-tag">MOST POPULAR</div>}
+              <h3>{pkg.name}</h3>
+              <span className="pkg-target">{pkg.idealFor}</span>
 
-              <div className="pkg-header">
-                <h3>{pkg.name}</h3>
-                <span className="pkg-ideal">{pkg.idealFor}</span>
+              <div className="pkg-price-row">
+                <span className="pkg-offer-rate">{pkg.offerPrice}</span>
+                <span className="pkg-orig-rate">{pkg.originalPrice}</span>
+                <span className="pkg-discount-pill">{pkg.discount}</span>
               </div>
 
-              <div className="pkg-pricing">
-                <div className="price-box">
-                  <span className="current-price">{pkg.offerPrice}</span>
-                  <span className="original-price">{pkg.originalPrice}</span>
-                </div>
-                <span className="discount-tag">{pkg.discount}</span>
-              </div>
+              <div className="pkg-test-badge">🔬 {pkg.testsCount}</div>
 
-              <div className="pkg-tests-badge">
-                🔬 {pkg.testsCount}
-              </div>
-
-              <ul className="pkg-highlights">
-                {pkg.highlights.map((h, idx) => (
-                  <li key={idx}>
-                    <span className="pkg-check">✓</span>
-                    <span>{h}</span>
-                  </li>
+              <ul className="pkg-list">
+                {pkg.highlights.map((h, i) => (
+                  <li key={i}>✓ {h}</li>
                 ))}
               </ul>
 
               <button
                 type="button"
-                className="btn-book-pkg"
+                className="btn-book-pkg-action"
                 onClick={() => {
                   setSelectedPackage(pkg);
                   setPackageModalOpen(true);
@@ -828,147 +693,24 @@ export default function HospitalLanding() {
       </section>
 
       {/* =======================================================
-          INSURANCE & TPA CASHLESS TIE-UPS
+          9. OUR SENIOR DOCTORS
           ======================================================= */}
-      <section id="insurance" className="insurance-showcase-section">
-        <div className="insurance-inner">
-          <div className="insurance-text-col">
-            <div className="section-pill">💳 CASHLESS HOSPITALIZATION</div>
-            <h2>40+ Empanelled TPA & Insurance Tie-Ups</h2>
-            <p>
-              Experience seamless, stress-free admissions and discharge with our 24/7 dedicated Insurance & Cashless TPA Helpdesk.
-            </p>
-
-            <div className="tpa-points">
-              <div className="tpa-point">
-                <span className="tpa-icon">⚡</span>
-                <div>
-                  <strong>0-Minute Pre-Authorization Assistance</strong>
-                  <p>Dedicated insurance coordinators process claims on arrival.</p>
-                </div>
-              </div>
-              <div className="tpa-point">
-                <span className="tpa-icon">🏛️</span>
-                <div>
-                  <strong>Government Health Schemes Supported</strong>
-                  <p>Ayushman Bharat (PM-JAY), Chief Minister Comprehensive Health Scheme, ECHS, CGHS & ESIC.</p>
-                </div>
-              </div>
-              <div className="tpa-point">
-                <span className="tpa-icon">🛡️</span>
-                <div>
-                  <strong>Corporate & PSU Tie-Ups</strong>
-                  <p>Cashless coverage for all major multinational corporations, banks, and public sectors.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="tpa-cta-box">
-              <span>Have an insurance query? Call our 24/7 TPA Desk:</span>
-              <strong>📞 080-22065005 / tpa@niarogiyam.org</strong>
-            </div>
-          </div>
-
-          <div className="insurance-partners-col">
-            <h3>Our Empanelled TPA & Insurance Partners</h3>
-            <div className="tpa-logos-grid">
-              <div className="tpa-badge">Star Health</div>
-              <div className="tpa-badge">HDFC ERGO</div>
-              <div className="tpa-badge">ICICI Lombard</div>
-              <div className="tpa-badge">Care Health</div>
-              <div className="tpa-badge">Medi Assist</div>
-              <div className="tpa-badge">Paramount TPA</div>
-              <div className="tpa-badge">Vidal Health</div>
-              <div className="tpa-badge">MDIndia TPA</div>
-              <div className="tpa-badge">Bajaj Allianz</div>
-              <div className="tpa-badge">Niva Bupa</div>
-              <div className="tpa-badge">Tata AIG</div>
-              <div className="tpa-badge">Ayushman Bharat</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =======================================================
-          PATIENT & VISITOR GUIDE / AMENITIES
-          ======================================================= */}
-      <section id="guide" className="guide-section">
-        <div className="section-header">
-          <div className="section-pill">ℹ️ VISITOR AMENITIES & TARIFFS</div>
-          <h2>Patient & Visitor Experience</h2>
-          <p>
-            Designed with compassion and comfort to ensure every patient and family member feels cared for.
-          </p>
+      <section id="doctors" className="doctors-directory-section">
+        <div className="section-title-wrap">
+          <h2>Meet Our Distinguished Medical Specialists</h2>
         </div>
 
-        <div className="guide-grid">
-          <div className="guide-card">
-            <span className="guide-icon">🕒</span>
-            <h3>Visiting Hours & Guidelines</h3>
-            <p><strong>General Wards:</strong> 04:30 PM - 07:00 PM</p>
-            <p><strong>ICU / Critical Care:</strong> 11:00 AM - 12:00 PM & 05:00 PM - 06:00 PM</p>
-            <small>One visitor pass per patient to maintain hygiene and infection control.</small>
-          </div>
-
-          <div className="guide-card">
-            <span className="guide-icon">🛏️</span>
-            <h3>Room Types & Accommodation</h3>
-            <p><strong>General Ward:</strong> Multi-bed with nurse station</p>
-            <p><strong>Twin Sharing:</strong> Semi-private with AC</p>
-            <p><strong>Single Deluxe:</strong> Private room with attendant sofa</p>
-            <p><strong>VIP Presidential Suite:</strong> Luxurious 2-room suite</p>
-          </div>
-
-          <div className="guide-card">
-            <span className="guide-icon">💊</span>
-            <h3>24/7 Pharmacy & NABL Lab</h3>
-            <p><strong>In-House Pharmacy:</strong> 100% genuine medicines round-the-clock</p>
-            <p><strong>Diagnostic Lab:</strong> Fully automated pathology, biochemistry & molecular testing with online report delivery.</p>
-          </div>
-
-          <div className="guide-card">
-            <span className="guide-icon">🍽️</span>
-            <h3>Hospital Amenities</h3>
-            <p>• Hygienic multi-cuisine Cafeteria & Nutrition Bar</p>
-            <p>• Free high-speed Wi-Fi across campus</p>
-            <p>• Multi-level parking & 24/7 Wheelchair Assistance</p>
-            <p>• Multi-faith prayer room & ATM facilities</p>
-          </div>
-        </div>
-      </section>
-
-      {/* =======================================================
-          DISTINGUISHED DOCTORS DIRECTORY
-          ======================================================= */}
-      <section id="doctors" className="doctors-section">
-        <div className="section-header">
-          <div className="section-pill">👨‍⚕️ EXPERT MEDICAL FACULTY</div>
-          <h2>Meet Our Senior Medical Specialists</h2>
-          <p>
-            Renowned clinicians and surgeons with decades of global experience and patient dedication.
-          </p>
-        </div>
-
-        <div className="doctors-grid">
+        <div className="doctors-cards-grid">
           {featuredDoctors.map((doc, idx) => (
-            <div key={idx} className="doctor-profile-card">
-              <div className="doc-avatar-box">
-                <span className="doc-emoji-avatar">{doc.avatar}</span>
-                <span className="doc-exp-badge">{doc.experience}</span>
-              </div>
-
+            <div key={idx} className="doc-card">
+              <div className="doc-avatar-circle">{doc.avatar}</div>
               <h3>{doc.name}</h3>
-              <span className="doc-department">{doc.dept}</span>
-              <p className="doc-degrees">{doc.qualification}</p>
-
-              <div className="doc-schedule-box">
-                <span>🕒 {doc.schedule}</span>
-                <span className="doc-rating">{doc.rating}</span>
-              </div>
-
+              <span className="doc-spec-title">{doc.dept}</span>
+              <p className="doc-qual-text">{doc.qualification}</p>
+              <span className="doc-exp-tag">⭐ {doc.experience}</span>
               <button
                 type="button"
-                className="btn-doc-appointment"
+                className="btn-doc-book-appt"
                 onClick={() => {
                   setAppointmentForm((prev) => ({
                     ...prev,
@@ -978,7 +720,7 @@ export default function HospitalLanding() {
                   setBookingModalOpen(true);
                 }}
               >
-                Book Appointment With Doctor
+                Book Consultation
               </button>
             </div>
           ))}
@@ -986,124 +728,70 @@ export default function HospitalLanding() {
       </section>
 
       {/* =======================================================
-          WHY CHOOSE NI AROGIYAM
+          10. FOOTER
           ======================================================= */}
-      <section className="why-choose-section">
-        <div className="section-header">
-          <div className="section-pill">⭐ THE NI AROGIYAM ADVANTAGE</div>
-          <h2>Why Thousands Trust NI AROGIYAM Hospital</h2>
-        </div>
-
-        <div className="advantage-grid">
-          <div className="adv-item">
-            <div className="adv-num">01</div>
-            <h4>4th Gen Robotic Surgery</h4>
-            <p>Minimally invasive precision surgeries ensuring minimal blood loss, minimal scarring, and rapid recovery.</p>
-          </div>
-          <div className="adv-item">
-            <div className="adv-num">02</div>
-            <h4>Zero-Infection Modular OTs</h4>
-            <p>12 ultra-modern modular operation theatres with Laminar Airflow & positive pressure HEPA filtration.</p>
-          </div>
-          <div className="adv-item">
-            <div className="adv-num">03</div>
-            <h4>Advanced 3.0 Tesla MRI & CT</h4>
-            <p>Ultra-fast, ultra-low radiation diagnostic imaging with artificial intelligence assisted scans.</p>
-          </div>
-          <div className="adv-item">
-            <div className="adv-num">04</div>
-            <h4>Compassionate Patient Care</h4>
-            <p>Patient-first philosophy with 1:1 dedicated nursing care in all intensive care units.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* =======================================================
-          APPOINTMENT CTA BANNER
-          ======================================================= */}
-      <section className="appointment-cta-banner">
-        <div className="cta-banner-content">
-          <div className="cta-text">
-            <h2>Need Immediate Medical Consultation?</h2>
-            <p>Our senior specialists and emergency doctors are available 24/7. Book your appointment online or call our helpline.</p>
-          </div>
-          <div className="cta-buttons">
-            <button
-              type="button"
-              className="btn-banner-book"
-              onClick={() => setBookingModalOpen(true)}
-            >
-              📅 Schedule Appointment Online
-            </button>
-            <a href="tel:08022065000" className="btn-banner-call">
-              📞 Call 080-22065000
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* =======================================================
-          CONTACT & LOCATION FOOTER
-          ======================================================= */}
-      <footer id="contact" className="landing-footer">
-        <div className="footer-main-grid">
-          <div className="footer-col brand-col">
-            <div className="footer-brand">
-              <span className="brand-logo-small">N</span>
-              <span className="brand-name-footer">NI AROGIYAM</span>
+      <footer id="contact" className="exact-hospital-footer">
+        <div className="footer-top-grid">
+          <div className="footer-brand-column">
+            <div className="brand-logo-area">
+              <div className="logo-svg-wrap footer-logo-wrap">
+                <svg viewBox="0 0 48 48" fill="none" className="stethoscope-brand-icon">
+                  <path d="M14 8C14 5.79086 15.7909 4 18 4H30C32.2091 4 34 5.79086 34 8V18C34 23.5228 29.5228 28 24 28C18.4772 28 14 23.5228 14 18V8Z" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M24 28V36C24 40.4183 27.5817 44 32 44C36.4183 44 40 40.4183 40 36V30" stroke="#ffffff" strokeWidth="3" strokeLinecap="round"/>
+                  <circle cx="40" cy="30" r="4" fill="#34d399"/>
+                  <path d="M24 12C22 10 19 11 19 14C19 18 24 21 24 21C24 21 29 18 29 14C29 11 26 10 24 12Z" fill="#34d399"/>
+                </svg>
+              </div>
+              <div className="brand-text-block">
+                <span className="brand-name-main text-white">NI AROGIYAM</span>
+                <span className="brand-sub-main text-emerald">— INTELLIGENT HEALTHCARE SYSTEM —</span>
+              </div>
             </div>
-            <p className="footer-desc">
-              Premier 500-Bed Multi-Super-Speciality Hospital and Research Centre. Committed to affordable, world-class healthcare.
+            <p className="footer-about-text">
+              Premier 500-Bed Multi-Super-Speciality Hospital &amp; Research Centre. Committed to affordable excellence in patient care.
             </p>
-            <div className="footer-accreditation">
-              <span>★ NABH Accredited Hospital</span>
-              <span>★ NABL Accredited Diagnostics</span>
-            </div>
+            <p className="footer-addr">
+              📍 <strong>Hospital Campus:</strong> Madurai Bypass Road, Madurai, Tamil Nadu - 625016
+            </p>
           </div>
 
-          <div className="footer-col">
+          <div className="footer-nav-column">
             <h4>Quick Links</h4>
-            <ul className="footer-links">
-              <li><a href="#specialities">Clinical Specialities</a></li>
-              <li><a href="#emergency">Emergency & Blood Bank</a></li>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#about">About Us</a></li>
+              <li><a href="#specialties">Specialties</a></li>
+              <li><a href="#facilities">Facilities</a></li>
               <li><a href="#packages">Health Packages</a></li>
-              <li><a href="#insurance">Insurance & TPA</a></li>
-              <li><a href="#guide">Patient Guide & Tariffs</a></li>
-              <li><a href="#doctors">Find a Doctor</a></li>
+              <li><a href="#doctors">Our Doctors</a></li>
             </ul>
           </div>
 
-          <div className="footer-col">
+          <div className="footer-contact-column">
             <h4>24/7 Helplines</h4>
-            <ul className="footer-contacts">
-              <li>🚨 <strong>Emergency / Trauma:</strong> 080-22065000</li>
+            <ul>
+              <li>🚨 <strong>Emergency / Trauma:</strong> +91 452 350 3500</li>
               <li>🚑 <strong>Ambulance Dispatch:</strong> 080-22065001</li>
               <li>🩸 <strong>Blood Bank Desk:</strong> 080-22065002</li>
               <li>📅 <strong>Appointments:</strong> 080-22065003</li>
-              <li>💳 <strong>Insurance & TPA:</strong> 080-22065005</li>
               <li>✉️ <strong>Email:</strong> contact@niarogiyam.org</li>
             </ul>
           </div>
 
-          <div className="footer-col staff-portal-col">
-            <h4>Hospital Staff & Management</h4>
-            <p>Restricted access for Doctors, Nurses, Wardens & System Administrators.</p>
-            <Link to="/login" className="btn-footer-portal-login">
-              🔐 Staff & Doctor Portal Login
+          <div className="footer-portal-column">
+            <h4>Hospital Staff Access</h4>
+            <p>Access for Doctors, Wardens &amp; Management.</p>
+            <Link to="/login" className="btn-footer-staff-login">
+              🔐 Staff / Doctor Portal Login
             </Link>
-            <p className="footer-address">
-              📍 <strong>Hospital Address:</strong><br />
-              NI AROGIYAM Healthcare Complex, Sarjapur-Koramangala Ring Road, Bengaluru, Karnataka - 560034
-            </p>
           </div>
         </div>
 
-        <div className="footer-bottom-bar">
+        <div className="footer-bottom-copyright">
           <p>© {new Date().getFullYear()} NI AROGIYAM Hospital Management System. All Rights Reserved.</p>
-          <div className="footer-legal-links">
+          <div className="footer-legal">
             <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Patient Rights & Charter</a>
-            <a href="#nabh">Quality Standards</a>
+            <a href="#terms">Patient Rights</a>
             <Link to="/login">Admin Login</Link>
           </div>
         </div>
@@ -1137,7 +825,7 @@ export default function HospitalLanding() {
                   Thank you, <strong>{appointmentForm.fullName || "Patient"}</strong>. Your consultation request for <strong>{appointmentForm.department}</strong> has been received.
                 </p>
                 <p className="confirmation-sms-notice">
-                  📱 A confirmation SMS & WhatsApp reminder with appointment token has been sent to <strong>{appointmentForm.phoneNumber}</strong>.
+                  📱 A confirmation SMS &amp; WhatsApp reminder with token number has been sent to <strong>{appointmentForm.phoneNumber}</strong>.
                 </p>
               </div>
             ) : (
@@ -1156,7 +844,7 @@ export default function HospitalLanding() {
                     />
                   </div>
                   <div className="form-field">
-                    <label>Mobile Number (For SMS OTP & Token) *</label>
+                    <label>Mobile Number *</label>
                     <input
                       type="tel"
                       required
@@ -1171,23 +859,21 @@ export default function HospitalLanding() {
 
                 <div className="form-row-2">
                   <div className="form-field">
-                    <label>Department / Speciality *</label>
+                    <label>Department / Specialty *</label>
                     <select
                       value={appointmentForm.department}
                       onChange={(e) =>
                         setAppointmentForm({ ...appointmentForm, department: e.target.value })
                       }
                     >
-                      <option value="Cardiology">Cardiology & Heart Care</option>
-                      <option value="Neurology">Neurology & Stroke Care</option>
-                      <option value="Orthopaedics">Orthopaedics & Joint Replacement</option>
-                      <option value="Oncology">Medical & Surgical Oncology</option>
-                      <option value="Nephrology">Nephrology & Renal Care</option>
-                      <option value="Paediatrics">Paediatrics & Child Care</option>
-                      <option value="Obstetrics & Gynaecology">Obstetrics & Gynaecology</option>
-                      <option value="Pulmonology">Pulmonology & Chest Medicine</option>
-                      <option value="Gastroenterology">Gastroenterology & GI Surgery</option>
-                      <option value="General Medicine">General Internal Medicine</option>
+                      <option value="Cardiology">Cardiology &amp; Heart Care</option>
+                      <option value="Neurology">Neurology &amp; Stroke Care</option>
+                      <option value="Orthopedics">Orthopedics &amp; Joint Replacement</option>
+                      <option value="Oncology">Medical &amp; Surgical Oncology</option>
+                      <option value="Nephrology">Nephrology &amp; Renal Care</option>
+                      <option value="Gastroenterology">Gastroenterology &amp; GI Surgery</option>
+                      <option value="Paediatrics">Paediatrics &amp; Child Care</option>
+                      <option value="Obstetrics & Gynaecology">Obstetrics &amp; Gynaecology</option>
                     </select>
                   </div>
 
@@ -1232,18 +918,6 @@ export default function HospitalLanding() {
                   </div>
                 </div>
 
-                <div className="form-field">
-                  <label>Symptoms / Medical Notes (Optional)</label>
-                  <textarea
-                    rows={2}
-                    placeholder="Briefly describe symptoms or past medical condition..."
-                    value={appointmentForm.notes}
-                    onChange={(e) =>
-                      setAppointmentForm({ ...appointmentForm, notes: e.target.value })
-                    }
-                  />
-                </div>
-
                 <div className="modal-footer-actions">
                   <button
                     type="button"
@@ -1253,7 +927,7 @@ export default function HospitalLanding() {
                     Cancel
                   </button>
                   <button type="submit" className="btn-modal-submit">
-                    Confirm & Book Appointment ➔
+                    Confirm Appointment ➔
                   </button>
                 </div>
               </form>
@@ -1286,33 +960,17 @@ export default function HospitalLanding() {
               <div className="modal-success-box">
                 <div className="success-icon">✓</div>
                 <h3>Health Package Reserved!</h3>
-                <p>
-                  Your booking for <strong>{selectedPackage?.name}</strong> at discounted price <strong>{selectedPackage?.offerPrice}</strong> is confirmed.
-                </p>
-                <p className="confirmation-sms-notice">
-                  📱 Instructions for 10-12 hours fasting and lab preparation have been dispatched to your phone.
-                </p>
+                <p>Your package booking has been confirmed. Details sent to your mobile.</p>
               </div>
             ) : (
               <form onSubmit={handleBookingSubmit} className="modal-form">
-                <div className="pkg-summary-banner">
-                  <div>
-                    <strong>{selectedPackage?.name}</strong>
-                    <span>{selectedPackage?.testsCount}</span>
-                  </div>
-                  <div className="pkg-rate-highlight">
-                    <span className="rate-num">{selectedPackage?.offerPrice}</span>
-                    <span className="rate-orig">{selectedPackage?.originalPrice}</span>
-                  </div>
-                </div>
-
                 <div className="form-row-2">
                   <div className="form-field">
                     <label>Patient Full Name *</label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Meera S."
+                      placeholder="Full Name"
                       value={appointmentForm.fullName}
                       onChange={(e) =>
                         setAppointmentForm({ ...appointmentForm, fullName: e.target.value })
@@ -1324,7 +982,7 @@ export default function HospitalLanding() {
                     <input
                       type="tel"
                       required
-                      placeholder="e.g. 9840123456"
+                      placeholder="Mobile Number"
                       value={appointmentForm.phoneNumber}
                       onChange={(e) =>
                         setAppointmentForm({ ...appointmentForm, phoneNumber: e.target.value })
@@ -1333,30 +991,16 @@ export default function HospitalLanding() {
                   </div>
                 </div>
 
-                <div className="form-row-2">
-                  <div className="form-field">
-                    <label>Preferred Checkup Date *</label>
-                    <input
-                      type="date"
-                      required
-                      value={appointmentForm.preferredDate}
-                      onChange={(e) =>
-                        setAppointmentForm({ ...appointmentForm, preferredDate: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="form-field">
-                    <label>Fasting Blood Sample Preference *</label>
-                    <select
-                      value={appointmentForm.preferredTime}
-                      onChange={(e) =>
-                        setAppointmentForm({ ...appointmentForm, preferredTime: e.target.value })
-                      }
-                    >
-                      <option value="Early Morning (07:00 AM - 09:00 AM)">Early Morning (07:00 AM - 09:00 AM - Recommended)</option>
-                      <option value="Morning (09:00 AM - 11:00 AM)">Morning (09:00 AM - 11:00 AM)</option>
-                    </select>
-                  </div>
+                <div className="form-field">
+                  <label>Preferred Checkup Date *</label>
+                  <input
+                    type="date"
+                    required
+                    value={appointmentForm.preferredDate}
+                    onChange={(e) =>
+                      setAppointmentForm({ ...appointmentForm, preferredDate: e.target.value })
+                    }
+                  />
                 </div>
 
                 <div className="modal-footer-actions">
@@ -1368,7 +1012,7 @@ export default function HospitalLanding() {
                     Cancel
                   </button>
                   <button type="submit" className="btn-modal-submit">
-                    Confirm Health Package Booking
+                    Confirm Health Package
                   </button>
                 </div>
               </form>
@@ -1401,29 +1045,21 @@ export default function HospitalLanding() {
               <div className="modal-success-box emergency-success">
                 <div className="success-icon-red">🚑</div>
                 <h3>Ambulance Dispatched!</h3>
-                <p>
-                  Emergency Unit <strong>AMB-101 (ICU On Wheels)</strong> has been dispatched to <strong>{ambulanceForm.pickupLocation}</strong>.
-                </p>
+                <p>Emergency Unit AMB-101 is en route to <strong>{ambulanceForm.pickupLocation}</strong>.</p>
                 <div className="emergency-contact-highlight">
-                  <span>Emergency Coordinator:</span>
-                  <strong>Dr. Murugan / Paramedic Team: 98401-11223</strong>
-                  <small>ETA: Under 8 Minutes. Please keep phone reachable.</small>
+                  <span>Emergency Coordinator Helpline:</span>
+                  <strong>+91 452 350 3500</strong>
                 </div>
               </div>
             ) : (
               <form onSubmit={handleAmbulanceSubmit} className="modal-form">
-                <div className="emergency-alert-callout">
-                  <span>⚠️ For extreme life-threatening emergencies, call directly:</span>
-                  <a href="tel:08022065000" className="alert-direct-phone">080-22065000 / 108</a>
-                </div>
-
                 <div className="form-row-2">
                   <div className="form-field">
                     <label>Caller / Patient Name *</label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Suresh Kumar"
+                      placeholder="Full Name"
                       value={ambulanceForm.callerName}
                       onChange={(e) =>
                         setAmbulanceForm({ ...ambulanceForm, callerName: e.target.value })
@@ -1431,11 +1067,11 @@ export default function HospitalLanding() {
                     />
                   </div>
                   <div className="form-field">
-                    <label>Contact Phone (Active Number) *</label>
+                    <label>Contact Phone Number *</label>
                     <input
                       type="tel"
                       required
-                      placeholder="e.g. 9840112233"
+                      placeholder="Active Phone Number"
                       value={ambulanceForm.contactNumber}
                       onChange={(e) =>
                         setAmbulanceForm({ ...ambulanceForm, contactNumber: e.target.value })
@@ -1449,30 +1085,12 @@ export default function HospitalLanding() {
                   <textarea
                     rows={2}
                     required
-                    placeholder="Building name, street, nearby landmark, city area..."
+                    placeholder="Street name, landmark, city area..."
                     value={ambulanceForm.pickupLocation}
                     onChange={(e) =>
                       setAmbulanceForm({ ...ambulanceForm, pickupLocation: e.target.value })
                     }
                   />
-                </div>
-
-                <div className="form-field">
-                  <label>Patient Emergency Condition *</label>
-                  <select
-                    value={ambulanceForm.patientCondition}
-                    onChange={(e) =>
-                      setAmbulanceForm({ ...ambulanceForm, patientCondition: e.target.value })
-                    }
-                  >
-                    <option value="Cardiac / Chest Pain Emergency">Cardiac / Severe Chest Pain Emergency</option>
-                    <option value="Acute Stroke / Paralysis / Slurred Speech">Acute Stroke / Paralysis / Slurred Speech</option>
-                    <option value="Road Accident / Severe Trauma / Fracture">Road Accident / Severe Trauma / Fracture</option>
-                    <option value="Severe Breathing Difficulty / Asthma Attack">Severe Breathing Difficulty / Asthma Attack</option>
-                    <option value="Maternity / Emergency Labor">Maternity / Emergency Labor</option>
-                    <option value="Unconscious / Diabetic Coma / Poisoning">Unconscious / Diabetic Coma / Poisoning</option>
-                    <option value="General Critical Patient Transfer">General Critical Patient Transfer</option>
-                  </select>
                 </div>
 
                 <div className="modal-footer-actions">
@@ -1484,7 +1102,7 @@ export default function HospitalLanding() {
                     Cancel
                   </button>
                   <button type="submit" className="btn-modal-submit btn-emergency-submit">
-                    🚨 Dispatch Ambulance Now (Immediate)
+                    🚨 Dispatch Ambulance Now
                   </button>
                 </div>
               </form>
@@ -1492,28 +1110,6 @@ export default function HospitalLanding() {
           </div>
         </div>
       )}
-
-      {/* =======================================================
-          FLOATING QUICK ACTION BUTTON (BOTTOM-RIGHT)
-          ======================================================= */}
-      <div className="landing-floating-actions">
-        <button
-          type="button"
-          className="float-btn float-sos"
-          onClick={() => setSosModalOpen(true)}
-          title="24/7 Emergency Ambulance"
-        >
-          🚨 SOS
-        </button>
-        <button
-          type="button"
-          className="float-btn float-book"
-          onClick={() => setBookingModalOpen(true)}
-          title="Book Appointment"
-        >
-          📅 Book
-        </button>
-      </div>
     </div>
   );
 }
