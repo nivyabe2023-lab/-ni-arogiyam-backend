@@ -661,11 +661,278 @@
 }
 
 /* ============================================================
+   ABOUT US PAGE VIEW (EXACT MATCH TO DESIGN)
+   ============================================================ */
+.exact-about-page-view {
+  background-color: #f8fafc;
+  min-height: calc(100vh - 120px);
+  width: 100%;
+}
+
+.about-page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 36px 48px 60px;
+}
+
+/* 1. Page Header & Breadcrumb */
+.about-header-section {
+  margin-bottom: 26px;
+}
+
+.about-page-title {
+  font-size: 34px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.about-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.breadcrumb-link {
+  color: #047857;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.breadcrumb-link:hover {
+  color: #064e3b;
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  color: #059669;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.breadcrumb-current {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+/* 2. Hero Grid (2 Columns) */
+.about-hero-grid {
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr;
+  gap: 44px;
+  align-items: stretch;
+  margin-bottom: 34px;
+}
+
+.about-text-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.about-headline {
+  font-size: 28px;
+  font-weight: 800;
+  color: #065f46;
+  line-height: 1.25;
+  margin: 0 0 18px 0;
+  letter-spacing: -0.3px;
+}
+
+.about-paragraph {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #334155;
+  margin: 0 0 16px 0;
+}
+
+.about-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.about-check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.check-circle-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #065f46;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.check-circle-icon svg {
+  width: 13px;
+  height: 13px;
+  fill: #ffffff;
+}
+
+.about-image-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-image-card {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  border-top-left-radius: 80px;
+  border-bottom-left-radius: 36px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+}
+
+.about-image-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* 3. Mission & Vision Cards */
+.about-cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 34px;
+}
+
+.mission-vision-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
+}
+
+.mv-icon-wrap {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #047857;
+}
+
+.mv-icon-wrap svg {
+  width: 38px;
+  height: 38px;
+}
+
+.mv-content h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+}
+
+.mv-content p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #475569;
+  margin: 0;
+}
+
+/* 4. Bottom Horizontal Stats Row */
+.about-bottom-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding: 24px 8px 10px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.bottom-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.bottom-stat-icon-wrap {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #047857;
+  flex-shrink: 0;
+}
+
+.bottom-stat-icon-wrap svg {
+  width: 30px;
+  height: 30px;
+}
+
+.bottom-stat-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.bottom-stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.bottom-stat-desc {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+  margin-top: 3px;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1100px) {
   .specialties-cards-row {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .about-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .about-cards-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .about-bottom-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .about-image-card {
+    min-height: 280px;
   }
 }
 
@@ -693,5 +960,21 @@
   }
   .ribbon-divider-line {
     display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .about-bottom-stats {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .about-page-container {
+    padding: 24px 16px 36px;
+  }
+  .about-headline {
+    font-size: 24px;
+  }
+  .about-page-title {
+    font-size: 28px;
   }
 }

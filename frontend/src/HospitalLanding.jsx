@@ -1,9 +1,41 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./HospitalLanding.css";
+import aboutHospitalReception from "./assets/about_hospital_reception_hd.jpg";
 
-export default function HospitalLanding() {
+export default function HospitalLanding({ initialTab = "home" }) {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Active page tab: 'home' | 'about'
+  const [activeTab, setActiveTab] = useState(() => {
+    if (initialTab === "about") return "about";
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash.toLowerCase();
+      const path = window.location.pathname.toLowerCase();
+      if (hash === "#about" || hash === "#about-us" || path.includes("/about")) {
+        return "about";
+      }
+    }
+    return "home";
+  });
+
+  // Sync tab with URL hash or pathname changes
+  useEffect(() => {
+    const handleHashOrPath = () => {
+      const hash = window.location.hash.toLowerCase();
+      const path = window.location.pathname.toLowerCase();
+      if (hash === "#about" || hash === "#about-us" || path.includes("/about")) {
+        setActiveTab("about");
+      } else if (hash === "#home" || hash === "" || path === "/" || path === "/home") {
+        setActiveTab("home");
+      }
+    };
+
+    handleHashOrPath();
+    window.addEventListener("hashchange", handleHashOrPath);
+    return () => window.removeEventListener("hashchange", handleHashOrPath);
+  }, [location.pathname]);
 
   // Dropdown states
   const [specialtiesDropdown, setSpecialtiesDropdown] = useState(false);
@@ -51,6 +83,48 @@ export default function HospitalLanding() {
     }
   };
 
+  const handleNavHome = (e) => {
+    if (e) e.preventDefault();
+    setActiveTab("home");
+    window.history.pushState(null, "", "#home");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleNavAbout = (e) => {
+    if (e) e.preventDefault();
+    setActiveTab("about");
+    window.history.pushState(null, "", "#about");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSpecialtiesNavClick = (e) => {
+    if (activeTab !== "home") {
+      setActiveTab("home");
+      window.history.pushState(null, "", "#home");
+      setTimeout(() => {
+        const el = document.getElementById("specialties");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      const el = document.getElementById("specialties");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleFacilitiesNavClick = (e) => {
+    if (activeTab !== "home") {
+      setActiveTab("home");
+      window.history.pushState(null, "", "#home");
+      setTimeout(() => {
+        const el = document.getElementById("facilities");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      const el = document.getElementById("facilities");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="exact-hospital-root">
       {/* =======================================================
@@ -68,11 +142,11 @@ export default function HospitalLanding() {
 
           <div className="top-bar-right">
             <span className="emergency-label">24/7 Emergency Care</span>
-            <a href="tel:+914523503500" className="phone-link">
+            <a href="tel:+914523005300" className="phone-link">
               <svg className="phone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
               </svg>
-              <span>+91 452 350 3500</span>
+              <span>+91 452 300 5300</span>
             </a>
 
             <div className="social-links-group">
@@ -107,7 +181,7 @@ export default function HospitalLanding() {
       <header className="exact-header">
         <div className="exact-header-inner">
           {/* LOGO */}
-          <div className="logo-brand-container" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+          <div className="logo-brand-container" onClick={handleNavHome}>
             <div className="logo-graphic-wrap">
               <svg viewBox="0 0 48 48" fill="none" className="stethoscope-logo-svg">
                 <path d="M14 8C14 5.79086 15.7909 4 18 4H30C32.2091 4 34 5.79086 34 8V18C34 23.5228 29.5228 28 24 28C18.4772 28 14 23.5228 14 18V8Z" stroke="#065f46" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -118,19 +192,32 @@ export default function HospitalLanding() {
             </div>
             <div className="logo-text-wrap">
               <span className="logo-title">NI AROGIYAM</span>
-              <span className="logo-subtitle">— INTELLIGENT HEALTHCARE SYSTEM —</span>
+              <span className="logo-subtitle">HOSPITAL</span>
             </div>
           </div>
 
           {/* NAV LINKS */}
           <nav className="header-nav-menu">
-            <div className="menu-item-wrap active-wrap">
-              <a href="#home" className="menu-link active">Home</a>
-              <div className="green-indicator-bar"></div>
+            <div className={`menu-item-wrap ${activeTab === "home" ? "active-wrap" : ""}`}>
+              <a
+                href="#home"
+                className={`menu-link ${activeTab === "home" ? "active" : ""}`}
+                onClick={handleNavHome}
+              >
+                Home
+              </a>
+              {activeTab === "home" && <div className="green-indicator-bar"></div>}
             </div>
 
-            <div className="menu-item-wrap">
-              <a href="#about" className="menu-link">About Us</a>
+            <div className={`menu-item-wrap ${activeTab === "about" ? "active-wrap" : ""}`}>
+              <a
+                href="#about"
+                className={`menu-link ${activeTab === "about" ? "active" : ""}`}
+                onClick={handleNavAbout}
+              >
+                About Us
+              </a>
+              {activeTab === "about" && <div className="green-indicator-bar"></div>}
             </div>
 
             <div
@@ -138,23 +225,25 @@ export default function HospitalLanding() {
               onMouseEnter={() => setSpecialtiesDropdown(true)}
               onMouseLeave={() => setSpecialtiesDropdown(false)}
             >
-              <a href="#specialties" className="menu-link">
+              <a href="#specialties" className="menu-link" onClick={handleSpecialtiesNavClick}>
                 Specialties <span className="caret-icon">⌄</span>
               </a>
               {specialtiesDropdown && (
                 <div className="popover-dropdown">
-                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Cardiology</a>
-                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Neurology</a>
-                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Oncology</a>
-                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Orthopedics</a>
-                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Gastroenterology</a>
-                  <a href="#specialties" onClick={() => setSpecialtiesDropdown(false)}>Nephrology</a>
+                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Cardiology</a>
+                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Neurology</a>
+                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Oncology</a>
+                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Orthopedics</a>
+                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Gastroenterology</a>
+                  <a href="#specialties" onClick={() => { setSpecialtiesDropdown(false); handleSpecialtiesNavClick(); }}>Nephrology</a>
                 </div>
               )}
             </div>
 
             <div className="menu-item-wrap">
-              <a href="#facilities" className="menu-link">Facilities</a>
+              <a href="#facilities" className="menu-link" onClick={handleFacilitiesNavClick}>
+                Facilities
+              </a>
             </div>
 
             <div
@@ -163,7 +252,7 @@ export default function HospitalLanding() {
               onMouseLeave={() => setVisitorDropdown(false)}
             >
               <a href="#patients-visitors" className="menu-link">
-                Patients &amp; Visitors <span className="caret-icon">⌄</span>
+                Patient &amp; Visitors <span className="caret-icon">⌄</span>
               </a>
               {visitorDropdown && (
                 <div className="popover-dropdown">
@@ -175,11 +264,15 @@ export default function HospitalLanding() {
             </div>
 
             <div className="menu-item-wrap">
-              <a href="#doctors" className="menu-link">Our Doctors</a>
+              <Link to="/doctors" className="menu-link">
+                Our Doctors
+              </Link>
             </div>
 
             <div className="menu-item-wrap">
-              <a href="#contact" className="menu-link">Contact Us</a>
+              <a href="#contact" className="menu-link" onClick={() => setBookingModalOpen(true)}>
+                Contact Us
+              </a>
             </div>
           </nav>
 
@@ -197,9 +290,205 @@ export default function HospitalLanding() {
       </header>
 
       {/* =======================================================
-          3. HERO SECTION (PHOTO AS CRISP BACKGROUND, NO WHITE BLUR)
+          RENDER: ABOUT US PAGE VIEW (EXACT MATCH TO DESIGN)
           ======================================================= */}
-      <section id="home" className="exact-hero-section">
+      {activeTab === "about" ? (
+        <main className="exact-about-page-view">
+          <div className="about-page-container">
+            {/* 1. Header & Breadcrumb */}
+            <div className="about-header-section">
+              <h1 className="about-page-title">About Us</h1>
+              <nav className="about-breadcrumb" aria-label="Breadcrumb">
+                <a
+                  href="#home"
+                  className="breadcrumb-link"
+                  onClick={handleNavHome}
+                >
+                  Home
+                </a>
+                <span className="breadcrumb-separator">›</span>
+                <span className="breadcrumb-current">About Us</span>
+              </nav>
+            </div>
+
+            {/* 2. Main Two Column Grid */}
+            <section className="about-hero-grid">
+              {/* Left Column */}
+              <div className="about-text-column">
+                <h2 className="about-headline">
+                  Healing with Compassion.<br />
+                  Caring with Excellence.
+                </h2>
+
+                <p className="about-paragraph">
+                  NI AROGIYAM is a leading multi-speciality hospital dedicated to providing high-quality medical care with compassion and integrity.
+                </p>
+
+                <p className="about-paragraph">
+                  With state-of-the-art technology, experienced specialists, and a patient-first approach, we ensure the best possible outcomes for our patients.
+                </p>
+
+                <div className="about-checklist">
+                  <div className="about-check-item">
+                    <div className="check-circle-icon">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span>500+ Bed Tertiary Care Hospital</span>
+                  </div>
+
+                  <div className="about-check-item">
+                    <div className="check-circle-icon">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span>45+ ICUs &amp; Robotic Surgery</span>
+                  </div>
+
+                  <div className="about-check-item">
+                    <div className="check-circle-icon">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span>24/7 Emergency &amp; Trauma Care</span>
+                  </div>
+
+                  <div className="about-check-item">
+                    <div className="check-circle-icon">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span>Cashless Insurance &amp; 40+ TPAs</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Reception Photo Card */}
+              <div className="about-image-column">
+                <div className="about-image-card">
+                  <img
+                    src={aboutHospitalReception}
+                    alt="NI AROGIYAM Hospital Reception Lobby"
+                    loading="eager"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* 3. Our Mission & Our Vision Cards */}
+            <section className="about-cards-row">
+              {/* Mission Card */}
+              <div className="mission-vision-card">
+                <div className="mv-icon-wrap">
+                  <svg viewBox="0 0 32 32" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="16" cy="16" r="13" />
+                    <circle cx="16" cy="16" r="9" />
+                    <circle cx="16" cy="16" r="5" />
+                    <circle cx="16" cy="16" r="1.5" fill="#047857" />
+                    <path d="M26 6L16 16" />
+                    <path d="M23 6H26V9" />
+                  </svg>
+                </div>
+                <div className="mv-content">
+                  <h3>Our Mission</h3>
+                  <p>
+                    To deliver exceptional healthcare services through advanced technology, clinical excellence, and compassionate care.
+                  </p>
+                </div>
+              </div>
+
+              {/* Vision Card */}
+              <div className="mission-vision-card">
+                <div className="mv-icon-wrap">
+                  <svg viewBox="0 0 32 32" fill="none" stroke="#047857" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 16C3 16 8 7 16 7C24 7 29 16 29 16C29 16 24 25 16 25C8 25 3 16 3 16Z" />
+                    <circle cx="16" cy="16" r="5" />
+                    <circle cx="16" cy="16" r="2" fill="#047857" />
+                  </svg>
+                </div>
+                <div className="mv-content">
+                  <h3>Our Vision</h3>
+                  <p>
+                    To be a trusted healthcare leader recognised for innovation, patient safety, and community wellness.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* 4. Bottom Horizontal Stats Row */}
+            <section className="about-bottom-stats">
+              {/* Stat 1 */}
+              <div className="bottom-stat-item">
+                <div className="bottom-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                  </svg>
+                </div>
+                <div className="bottom-stat-text">
+                  <strong className="bottom-stat-value">11+</strong>
+                  <span className="bottom-stat-desc">Specialized Treatment</span>
+                </div>
+              </div>
+
+              {/* Stat 2 */}
+              <div className="bottom-stat-item">
+                <div className="bottom-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <polyline points="9 12 11 14 15 10" />
+                  </svg>
+                </div>
+                <div className="bottom-stat-text">
+                  <strong className="bottom-stat-value">40+</strong>
+                  <span className="bottom-stat-desc">Specialists</span>
+                </div>
+              </div>
+
+              {/* Stat 3 */}
+              <div className="bottom-stat-item">
+                <div className="bottom-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                </div>
+                <div className="bottom-stat-text">
+                  <strong className="bottom-stat-value">40+</strong>
+                  <span className="bottom-stat-desc">TPA Partners</span>
+                </div>
+              </div>
+
+              {/* Stat 4 */}
+              <div className="bottom-stat-item">
+                <div className="bottom-stat-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9" />
+                    <circle cx="6" cy="12" r="2" />
+                  </svg>
+                </div>
+                <div className="bottom-stat-text">
+                  <strong className="bottom-stat-value">500+</strong>
+                  <span className="bottom-stat-desc">Bed Capacity</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      ) : (
+        /* =======================================================
+            RENDER: HOME PAGE VIEW
+            ======================================================= */
+        <>
+          {/* =======================================================
+              3. HERO SECTION (PHOTO AS CRISP BACKGROUND, NO WHITE BLUR)
+              ======================================================= */}
+          <section id="home" className="exact-hero-section">
         <div className="hero-content-wrapper">
           <div className="hero-text-block">
             <h1 className="hero-main-heading">
@@ -436,6 +725,8 @@ export default function HospitalLanding() {
           Why Choose <span className="green-text">NI AROGIYAM?</span>
         </h2>
       </section>
+        </>
+      )}
 
       {/* =======================================================
           APPOINTMENT MODAL
