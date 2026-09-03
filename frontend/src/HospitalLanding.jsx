@@ -10,6 +10,10 @@ import facilityDiagnosticImg from "./assets/facility_diagnostic.jpg";
 import facilityRoboticImg from "./assets/facility_robotic_surgery.jpg";
 import facilityPharmacyImg from "./assets/facility_pharmacy.jpg";
 import facilityPatientRoomsImg from "./assets/facility_patient_rooms.jpg";
+import doctorSaravananImg from "./assets/doctor_saravanan.jpg";
+import doctorMeenaImg from "./assets/doctor_meena.jpg";
+import doctorArvindImg from "./assets/doctor_arvind.jpg";
+import doctorPriyaImg from "./assets/doctor_priya.jpg";
 
 // =========================================================
 // SPECIALTY DOCTORS DATA WITH FULL ACHIEVEMENTS & SLOTS
@@ -536,11 +540,12 @@ export default function HospitalLanding({ initialTab = "home" }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Active page tab: 'home' | 'about' | 'specialties' | 'facilities'
+  // Active page tab: 'home' | 'about' | 'specialties' | 'facilities' | 'doctors'
   const [activeTab, setActiveTab] = useState(() => {
     if (initialTab === "about") return "about";
     if (initialTab === "specialties") return "specialties";
     if (initialTab === "facilities") return "facilities";
+    if (initialTab === "doctors") return "doctors";
     if (typeof window !== "undefined") {
       const hash = window.location.hash.toLowerCase();
       const path = window.location.pathname.toLowerCase();
@@ -552,6 +557,9 @@ export default function HospitalLanding({ initialTab = "home" }) {
       }
       if (hash === "#facilities" || hash === "#our-facilities" || path.includes("/facilities") || path.includes("/our-facilities")) {
         return "facilities";
+      }
+      if (hash === "#doctors" || hash === "#our-doctors" || path.includes("/our-doctors") || path.includes("/doctors-list")) {
+        return "doctors";
       }
     }
     return "home";
@@ -621,6 +629,9 @@ export default function HospitalLanding({ initialTab = "home" }) {
         setSelectedSpecialtyDetail("General Surgery");
       } else if (hash === "#facilities" || hash === "#our-facilities" || path.includes("/facilities") || path.includes("/our-facilities")) {
         setActiveTab("facilities");
+        setSelectedSpecialtyDetail(null);
+      } else if (hash === "#doctors" || hash === "#our-doctors" || path.includes("/our-doctors") || path.includes("/doctors-list")) {
+        setActiveTab("doctors");
         setSelectedSpecialtyDetail(null);
       } else if (hash === "#specialties" || hash === "#specialists" || path.includes("/specialties") || path.includes("/specialists") || path.includes("/our-specialties")) {
         setActiveTab("specialties");
@@ -751,6 +762,14 @@ export default function HospitalLanding({ initialTab = "home" }) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const handleFacilitiesNavClick = handleNavFacilities;
+
+  const handleNavDoctors = (e) => {
+    if (e) e.preventDefault();
+    setActiveTab("doctors");
+    setSelectedSpecialtyDetail(null);
+    window.history.pushState(null, "", "#doctors");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="exact-hospital-root">
@@ -903,10 +922,15 @@ export default function HospitalLanding({ initialTab = "home" }) {
               )}
             </div>
 
-            <div className="menu-item-wrap">
-              <Link to="/doctors" className="menu-link">
+            <div className={`menu-item-wrap ${activeTab === "doctors" ? "active-wrap" : ""}`}>
+              <a
+                href="#doctors"
+                className={`menu-link ${activeTab === "doctors" ? "active" : ""}`}
+                onClick={handleNavDoctors}
+              >
                 Our Doctors
-              </Link>
+              </a>
+              {activeTab === "doctors" && <div className="green-indicator-bar"></div>}
             </div>
 
             <div className="menu-item-wrap">
@@ -1905,6 +1929,245 @@ export default function HospitalLanding({ initialTab = "home" }) {
                 <div className="footer-legal-links">
                   <a href="#privacy">Privacy Policy</a>
                   <span className="footer-separator">|</span>
+                  <a href="#terms">Terms &amp; Conditions</a>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </main>
+      ) : activeTab === "doctors" ? (
+        /* =======================================================
+            RENDER: OUR DOCTORS PAGE VIEW (MATCHING DESIGN)
+            ======================================================= */
+        <main className="exact-doctors-page-view">
+          <div className="doctors-page-container">
+            {/* Header & Breadcrumb */}
+            <div className="doctors-header-section">
+              <h1 className="doctors-page-title">Our Doctors</h1>
+              <nav className="doctors-breadcrumb" aria-label="Breadcrumb">
+                <a href="#home" className="breadcrumb-link" onClick={handleNavHome}>
+                  Home
+                </a>
+                <span className="breadcrumb-separator">&gt;</span>
+                <span className="breadcrumb-current">Our Doctors</span>
+              </nav>
+              <p className="doctors-page-subtitle">
+                Expert specialists dedicated to your health and well-being.
+              </p>
+            </div>
+
+            {/* 4 Doctors Cards Row */}
+            <div className="doctors-showcase-grid">
+              {/* Doctor 1: Dr. R. Saravanan */}
+              <div
+                className="doctor-showcase-card"
+                onClick={() => {
+                  setSelectedSpecialty("Cardiology");
+                  setSelectedDoctorForBooking({
+                    name: "Dr. R. Saravanan",
+                    designation: "Director & Chief Interventional Cardiologist",
+                    experience: "15+ Years Clinical Experience",
+                    room: "Suite 101, Cardiac Sciences Tower",
+                    avatarBg: "#047857",
+                    slots: ["Today: 10:30 AM", "Today: 11:45 AM", "Tomorrow: 10:00 AM"],
+                  });
+                  setAppointmentForm((prev) => ({
+                    ...prev,
+                    department: "Cardiology",
+                    doctorName: "Dr. R. Saravanan",
+                  }));
+                  setBookingModalOpen(true);
+                }}
+              >
+                <div className="doctor-showcase-photo-wrap">
+                  <img
+                    src={doctorSaravananImg}
+                    alt="Dr. R. Saravanan"
+                    className="doctor-showcase-img"
+                  />
+                </div>
+                <div className="doctor-showcase-info">
+                  <h3 className="doctor-showcase-name">Dr. R. Saravanan</h3>
+                  <span className="doctor-showcase-spec">Cardiologist</span>
+                  <span className="doctor-showcase-exp">15+ Years Experience</span>
+                </div>
+              </div>
+
+              {/* Doctor 2: Dr. Meena Krishnan */}
+              <div
+                className="doctor-showcase-card"
+                onClick={() => {
+                  setSelectedSpecialty("Neurology");
+                  setSelectedDoctorForBooking({
+                    name: "Dr. Meena Krishnan",
+                    designation: "Senior Consultant Neurologist & Stroke Specialist",
+                    experience: "10+ Years Clinical Experience",
+                    room: "Suite 204, Neuro Sciences Wing",
+                    avatarBg: "#065f46",
+                    slots: ["Today: 11:00 AM", "Today: 02:30 PM", "Tomorrow: 11:15 AM"],
+                  });
+                  setAppointmentForm((prev) => ({
+                    ...prev,
+                    department: "Neurology",
+                    doctorName: "Dr. Meena Krishnan",
+                  }));
+                  setBookingModalOpen(true);
+                }}
+              >
+                <div className="doctor-showcase-photo-wrap">
+                  <img
+                    src={doctorMeenaImg}
+                    alt="Dr. Meena Krishnan"
+                    className="doctor-showcase-img"
+                  />
+                </div>
+                <div className="doctor-showcase-info">
+                  <h3 className="doctor-showcase-name">Dr. Meena Krishnan</h3>
+                  <span className="doctor-showcase-spec">Neurologist</span>
+                  <span className="doctor-showcase-exp">10+ Years Experience</span>
+                </div>
+              </div>
+
+              {/* Doctor 3: Dr. S. Arvind */}
+              <div
+                className="doctor-showcase-card"
+                onClick={() => {
+                  setSelectedSpecialty("Oncology");
+                  setSelectedDoctorForBooking({
+                    name: "Dr. S. Arvind",
+                    designation: "Senior Surgical & Medical Oncologist",
+                    experience: "15+ Years Clinical Experience",
+                    room: "Suite 302, Comprehensive Cancer Wing",
+                    avatarBg: "#0f766e",
+                    slots: ["Today: 10:00 AM", "Today: 03:00 PM", "Tomorrow: 09:30 AM"],
+                  });
+                  setAppointmentForm((prev) => ({
+                    ...prev,
+                    department: "Oncology",
+                    doctorName: "Dr. S. Arvind",
+                  }));
+                  setBookingModalOpen(true);
+                }}
+              >
+                <div className="doctor-showcase-photo-wrap">
+                  <img
+                    src={doctorArvindImg}
+                    alt="Dr. S. Arvind"
+                    className="doctor-showcase-img"
+                  />
+                </div>
+                <div className="doctor-showcase-info">
+                  <h3 className="doctor-showcase-name">Dr. S. Arvind</h3>
+                  <span className="doctor-showcase-spec">Oncologist</span>
+                  <span className="doctor-showcase-exp">15+ Years Experience</span>
+                </div>
+              </div>
+
+              {/* Doctor 4: Dr. Priya Natarajan */}
+              <div
+                className="doctor-showcase-card"
+                onClick={() => {
+                  setSelectedSpecialty("Orthopedics");
+                  setSelectedDoctorForBooking({
+                    name: "Dr. Priya Natarajan",
+                    designation: "Consultant Orthopedic & Robotic Joint Replacement Surgeon",
+                    experience: "10+ Years Clinical Experience",
+                    room: "Suite 108, Bone & Joint Centre",
+                    avatarBg: "#047857",
+                    slots: ["Today: 11:30 AM", "Today: 04:15 PM", "Tomorrow: 10:45 AM"],
+                  });
+                  setAppointmentForm((prev) => ({
+                    ...prev,
+                    department: "Orthopedics",
+                    doctorName: "Dr. Priya Natarajan",
+                  }));
+                  setBookingModalOpen(true);
+                }}
+              >
+                <div className="doctor-showcase-photo-wrap">
+                  <img
+                    src={doctorPriyaImg}
+                    alt="Dr. Priya Natarajan"
+                    className="doctor-showcase-img"
+                  />
+                </div>
+                <div className="doctor-showcase-info">
+                  <h3 className="doctor-showcase-name">Dr. Priya Natarajan</h3>
+                  <span className="doctor-showcase-spec">Orthopedic Surgeon</span>
+                  <span className="doctor-showcase-exp">10+ Years Experience</span>
+                </div>
+              </div>
+            </div>
+
+            {/* View All Doctors Button */}
+            <div className="view-all-doctors-action-wrap">
+              <button
+                type="button"
+                className="btn-view-all-doctors"
+                onClick={handleNavSpecialties}
+              >
+                View All Doctors
+              </button>
+            </div>
+          </div>
+
+          {/* 4-Column Hospital Footer (Matching Reference Screenshot) */}
+          <footer className="exact-hospital-footer-four-col">
+            <div className="footer-four-col-inner">
+              <div className="footer-brand-col">
+                <div className="footer-brand-logo-row">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                  </svg>
+                  <span className="footer-brand-name">NI AROGIYAM</span>
+                </div>
+                <span className="footer-brand-sub">HOSPITAL</span>
+                <p className="footer-brand-desc">
+                  Advanced medicine, Compassionate healing, World-class care.
+                </p>
+              </div>
+
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">Quick Links</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#home" onClick={handleNavHome}>Home</a></li>
+                  <li><a href="#about" onClick={handleNavAbout}>About Us</a></li>
+                  <li><a href="#specialties" onClick={handleNavSpecialties}>Specialties</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Facilities</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Patient &amp; Visitors</a></li>
+                  <li><a href="#doctors" onClick={handleNavDoctors}>Our Doctors</a></li>
+                </ul>
+              </div>
+
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">Our Services</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Emergency Care</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>ICU &amp; Critical Care</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Diagnostics</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Pharmacy</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Robotic Surgery</a></li>
+                </ul>
+              </div>
+
+              <div className="footer-links-col">
+                <h4 className="footer-col-title">Support</h4>
+                <ul className="footer-links-list">
+                  <li><a href="#specialties" onClick={handleNavSpecialties}>Insurance &amp; TPAs</a></li>
+                  <li><a href="#facilities" onClick={handleNavFacilities}>Visitor Guide</a></li>
+                  <li><a href="#about" onClick={handleNavAbout}>FAQs</a></li>
+                  <li><a href="#about" onClick={handleNavAbout}>Careers</a></li>
+                  <li><a href="#contact" onClick={() => setBookingModalOpen(true)}>Contact Us</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="footer-four-col-bottom">
+              <div className="footer-bottom-inner">
+                <span>&copy; 2025 NI AROGIYAM Hospital. All Rights Reserved.</span>
+                <div className="footer-bottom-links">
+                  <a href="#privacy">Privacy Policy</a>
+                  <span className="footer-sep">|</span>
                   <a href="#terms">Terms &amp; Conditions</a>
                 </div>
               </div>
