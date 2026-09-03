@@ -1,0 +1,14 @@
+.git
+.jdk
+.idea
+.vscode
+target
+data
+node_modules
+frontend/node_modules
+frontend/dist
+*.jar
+pom.xml
+mvnw
+mvnw.cmd
+src/
