@@ -4,7 +4,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 
-.exact-hospital-root {
+.exact-page-root {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #1e293b;
   background-color: #ffffff;
@@ -16,17 +16,17 @@
 }
 
 /* ============================================================
-   1. TOPBAR STRIP
+   1. TOP BAR
    ============================================================ */
-.topbar-strip {
+.exact-top-bar {
   background-color: #ffffff;
   border-bottom: 1px solid #f1f5f9;
   padding: 8px 48px;
-  font-size: 13px;
+  font-size: 12.5px;
   color: #334155;
 }
 
-.topbar-container {
+.exact-top-bar-inner {
   max-width: 1380px;
   margin: 0 auto;
   display: flex;
@@ -34,60 +34,60 @@
   align-items: center;
 }
 
-.topbar-left-location {
+.top-left-location {
   display: flex;
   align-items: center;
   gap: 6px;
   color: #334155;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
-.loc-svg-icon {
+.pin-svg {
   width: 15px;
   height: 15px;
   flex-shrink: 0;
 }
 
-.topbar-right-info {
+.top-right-meta {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 20px;
 }
 
-.emergency-care-text {
+.emergency-text {
   color: #334155;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
-.top-phone-anchor {
+.phone-anchor {
   display: flex;
   align-items: center;
   gap: 6px;
   color: #1e293b;
   text-decoration: none;
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: 13px;
   transition: color 0.15s;
 }
 
-.top-phone-anchor:hover {
+.phone-anchor:hover {
   color: #064e3b;
 }
 
-.phone-svg-icon {
+.phone-svg {
   width: 14px;
   height: 14px;
 }
 
-.social-icons-set {
+.social-icons-tray {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.soc-link {
+.social-anchor {
   color: #1e293b;
   display: flex;
   align-items: center;
@@ -96,7 +96,7 @@
   transition: color 0.15s, transform 0.15s;
 }
 
-.soc-link:hover {
+.social-anchor:hover {
   color: #064e3b;
   transform: translateY(-1px);
 }
@@ -104,26 +104,26 @@
 /* ============================================================
    2. MAIN NAVBAR
    ============================================================ */
-.main-navbar-header {
+.exact-main-nav {
   background: #ffffff;
   padding: 12px 48px;
   border-bottom: 1px solid #f8fafc;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.navbar-container {
+.exact-nav-inner {
   max-width: 1380px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 20px;
 }
 
-.navbar-brand-block {
+.brand-logo-unit {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -131,25 +131,25 @@
   text-decoration: none;
 }
 
-.stethoscope-icon-box {
-  width: 42px;
-  height: 42px;
+.logo-svg-holder {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.stethoscope-svg {
-  width: 42px;
-  height: 42px;
+.stethoscope-svg-element {
+  width: 40px;
+  height: 40px;
 }
 
-.brand-titles {
+.brand-text-holder {
   display: flex;
   flex-direction: column;
 }
 
-.brand-main-title {
+.brand-title-text {
   font-size: 20px;
   font-weight: 900;
   color: #064e3b;
@@ -157,7 +157,7 @@
   line-height: 1;
 }
 
-.brand-sub-tag {
+.brand-subtitle-text {
   font-size: 8px;
   font-weight: 700;
   color: #0d9488;
@@ -165,20 +165,20 @@
   margin-top: 3px;
 }
 
-.nav-menu-list {
+.nav-links-menu {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 22px;
 }
 
-.nav-link-wrapper {
+.nav-item-wrap {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.nav-link-item {
+.nav-link-btn {
   color: #334155;
   text-decoration: none;
   font-weight: 500;
@@ -190,16 +190,16 @@
   gap: 3px;
 }
 
-.nav-link-item:hover {
+.nav-link-btn:hover {
   color: #064e3b;
 }
 
-.nav-link-item.active-link {
+.nav-link-btn.active-link-btn {
   color: #064e3b;
   font-weight: 700;
 }
 
-.green-active-bar {
+.active-pill-bar {
   width: 26px;
   height: 2.5px;
   background-color: #064e3b;
@@ -207,13 +207,13 @@
   margin-top: 2px;
 }
 
-.caret-arrow {
+.arrow-down {
   font-size: 11px;
   color: #64748b;
   margin-left: 2px;
 }
 
-.dropdown-flyout {
+.dropdown-flyout-menu {
   position: absolute;
   top: 100%;
   left: 0;
@@ -222,31 +222,31 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
   padding: 8px 0;
-  min-width: 200px;
+  min-width: 190px;
   z-index: 100;
   display: flex;
   flex-direction: column;
 }
 
-.dropdown-flyout a {
+.dropdown-flyout-menu a {
   padding: 8px 16px;
   color: #334155;
   text-decoration: none;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
   transition: background 0.15s, color 0.15s;
 }
 
-.dropdown-flyout a:hover {
+.dropdown-flyout-menu a:hover {
   background: #f0fdf4;
   color: #064e3b;
 }
 
-.btn-pill-appointment {
+.btn-book-appointment-solid {
   background-color: #064e3b;
   color: #ffffff;
   border: none;
-  padding: 10px 22px;
+  padding: 9px 20px;
   border-radius: 9999px;
   font-size: 13.5px;
   font-weight: 600;
@@ -255,127 +255,86 @@
   box-shadow: 0 2px 8px rgba(6, 78, 59, 0.15);
 }
 
-.btn-pill-appointment:hover {
+.btn-book-appointment-solid:hover {
   background-color: #047857;
   box-shadow: 0 4px 12px rgba(6, 78, 59, 0.25);
   transform: translateY(-1px);
 }
 
 /* ============================================================
-   3. HERO SECTION
+   3. HERO SECTION (SIDE-BY-SIDE WITH EXACT IMAGE)
    ============================================================ */
-.hero-showcase-section {
-  position: relative;
-  min-height: 480px;
+.exact-hero-stage {
+  background-color: #ffffff;
+  padding: 18px 0 28px;
+}
+
+.hero-stage-inner {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0 48px;
   display: flex;
   align-items: center;
-  background-color: #fafbfc;
-  overflow: hidden;
+  justify-content: space-between;
+  gap: 28px;
 }
 
-.hero-background-art {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
+.hero-left-text-box {
+  flex: 1;
+  max-width: 500px;
 }
 
-.hospital-building-cover {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: right center;
-  display: block;
-}
-
-.hero-left-smooth-fade {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(
-    to right,
-    #ffffff 0%,
-    #ffffff 34%,
-    rgba(255, 255, 255, 0.96) 42%,
-    rgba(255, 255, 255, 0.7) 54%,
-    rgba(255, 255, 255, 0.05) 75%,
-    transparent 100%
-  );
-}
-
-.hero-layout-grid {
-  position: relative;
-  z-index: 2;
-  max-width: 1380px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 48px 48px 56px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 20px;
-}
-
-.hero-text-content-col {
-  max-width: 540px;
-}
-
-.hero-stacked-headline {
+.hero-main-title {
   display: flex;
   flex-direction: column;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   line-height: 1.15;
 }
 
-.headline-dark {
+.text-line-dark {
   font-size: 38px;
   font-weight: 800;
   color: #1e293b;
   letter-spacing: -0.5px;
 }
 
-.headline-green {
+.text-line-green {
   font-size: 38px;
   font-weight: 800;
   color: #059669;
   letter-spacing: -0.5px;
 }
 
-.hero-summary-paragraph {
+.hero-paragraph-description {
   font-size: 13.5px;
   line-height: 1.65;
   color: #334155;
-  margin: 0 0 28px;
-  max-width: 480px;
+  margin: 0 0 26px;
 }
 
-.hero-summary-paragraph strong {
+.hero-paragraph-description strong {
   color: #0f172a;
 }
 
 /* 4 STATS ROW */
-.hero-stats-4-row {
+.hero-stats-row-4 {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
-.stat-circle-block {
+.circle-stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  min-width: 78px;
+  min-width: 76px;
 }
 
-.stat-icon-ring {
-  width: 46px;
-  height: 46px;
+.circle-icon-ring {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: #ffffff;
   border: 1.5px solid #059669;
@@ -387,35 +346,51 @@
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.stat-circle-block:hover .stat-icon-ring {
+.circle-stat-card:hover .circle-icon-ring {
   transform: translateY(-2px);
   box-shadow: 0 5px 14px rgba(5, 150, 105, 0.2);
 }
 
-.stat-value-text {
+.stat-num-value {
   font-size: 15px;
   font-weight: 800;
   color: #1e293b;
   line-height: 1.1;
 }
 
-.stat-sub-text {
+.stat-sub-label {
   font-size: 10.5px;
   color: #64748b;
   font-weight: 500;
   margin-top: 2px;
 }
 
+/* RIGHT: EXACT CRISP HOSPITAL IMAGE */
+.hero-right-image-box {
+  flex: 1.25;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.exact-hospital-image-render {
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
 /* ============================================================
    4. DARK GREEN FEATURE RIBBON
    ============================================================ */
-.forest-green-ribbon {
+.dark-emerald-ribbon {
   background-color: #064e3b;
   color: #ffffff;
-  padding: 22px 48px;
+  padding: 20px 48px;
 }
 
-.ribbon-items-container {
+.ribbon-items-wrapper {
   max-width: 1240px;
   margin: 0 auto;
   display: flex;
@@ -425,22 +400,22 @@
   gap: 20px;
 }
 
-.ribbon-card-item {
+.ribbon-column-item {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: 1;
-  min-width: 170px;
+  min-width: 160px;
 }
 
-.ribbon-svg-box {
+.ribbon-icon-circle {
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
 }
 
-.ribbon-main-heading {
+.ribbon-item-title {
   margin: 0;
   font-size: 17.5px;
   font-weight: 800;
@@ -448,48 +423,48 @@
   line-height: 1.1;
 }
 
-.ribbon-sub-caption {
+.ribbon-item-caption {
   margin: 2px 0 0;
   font-size: 11.5px;
   color: #a7f3d0;
   font-weight: 500;
 }
 
-.ribbon-line-separator {
+.ribbon-vertical-divider {
   width: 1px;
-  height: 34px;
+  height: 32px;
   background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* ============================================================
    5. OUR SPECIALTIES (7 CARDS)
    ============================================================ */
-.our-specialties-section {
-  padding: 50px 48px 40px;
+.exact-specialties-strip {
+  padding: 48px 48px 36px;
   background-color: #ffffff;
   max-width: 1380px;
   margin: 0 auto;
 }
 
-.specialties-title-centered {
+.specialties-section-heading {
   text-align: center;
   font-size: 24px;
   font-weight: 800;
   color: #1e293b;
-  margin: 0 0 28px;
+  margin: 0 0 26px;
   letter-spacing: -0.4px;
 }
 
-.specialties-cards-grid-7 {
+.specialties-cards-container-7 {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 16px;
+  gap: 14px;
 }
 
-.spec-item-box {
+.specialty-card-box {
   background: #ffffff;
   border-radius: 12px;
-  padding: 20px 8px;
+  padding: 18px 8px;
   text-align: center;
   border: 1px solid #edf2f7;
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
@@ -499,43 +474,43 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 116px;
+  min-height: 112px;
 }
 
-.spec-item-box:hover {
+.specialty-card-box:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 24px rgba(6, 78, 59, 0.1);
   border-color: #a7f3d0;
 }
 
-.spec-svg-wrapper {
-  margin-bottom: 10px;
+.specialty-svg-box {
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.spec-label-title {
+.specialty-title-label {
   margin: 0;
   font-size: 13px;
   font-weight: 700;
   color: #1e293b;
 }
 
-.text-forest-green {
+.text-deep-green {
   color: #064e3b !important;
 }
 
 /* ============================================================
    6. WHY CHOOSE SECTION HEADER ONLY
    ============================================================ */
-.why-choose-header-only-strip {
-  padding: 36px 48px 50px;
+.why-choose-header-strip {
+  padding: 30px 48px 50px;
   text-align: center;
   background-color: #ffffff;
 }
 
-.why-choose-heading-text {
+.why-choose-main-heading {
   font-size: 24px;
   font-weight: 800;
   color: #1e293b;
@@ -543,14 +518,14 @@
   letter-spacing: -0.4px;
 }
 
-.green-accent-text {
+.green-accent-word {
   color: #059669;
 }
 
 /* ============================================================
-   APPOINTMENT MODAL
+   MODAL
    ============================================================ */
-.modal-dark-overlay {
+.exact-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -565,7 +540,7 @@
   padding: 20px;
 }
 
-.modal-container-card {
+.exact-modal-card {
   background: #ffffff;
   border-radius: 16px;
   max-width: 460px;
@@ -574,27 +549,27 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-.modal-card-top {
+.exact-modal-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 18px;
 }
 
-.modal-card-top h2 {
+.exact-modal-top h2 {
   font-size: 19px;
   font-weight: 800;
   color: #064e3b;
   margin: 0 0 4px;
 }
 
-.modal-card-top p {
+.exact-modal-top p {
   font-size: 12.5px;
   color: #64748b;
   margin: 0;
 }
 
-.btn-modal-close-icon {
+.btn-modal-close-x {
   background: none;
   border: none;
   font-size: 18px;
@@ -602,39 +577,39 @@
   cursor: pointer;
 }
 
-.modal-form-grid {
+.exact-modal-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.modal-input-field {
+.modal-form-row {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.modal-input-field label {
+.modal-form-row label {
   font-size: 12px;
   font-weight: 600;
   color: #334155;
 }
 
-.modal-input-field input, .modal-input-field select {
+.modal-form-row input, .modal-form-row select {
   padding: 9px 12px;
   border: 1.5px solid #cbd5e1;
   border-radius: 8px;
   font-size: 13px;
 }
 
-.modal-action-buttons {
+.modal-actions-tray {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 8px;
 }
 
-.btn-cancel-modal {
+.btn-modal-back {
   background: #f1f5f9;
   color: #475569;
   border: none;
@@ -645,7 +620,7 @@
   cursor: pointer;
 }
 
-.btn-confirm-modal {
+.btn-modal-submit-action {
   background: #064e3b;
   color: #ffffff;
   border: none;
@@ -656,12 +631,12 @@
   cursor: pointer;
 }
 
-.modal-success-content {
+.modal-success-screen {
   text-align: center;
   padding: 20px 0;
 }
 
-.green-tick-badge {
+.green-circle-tick {
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -674,13 +649,13 @@
   margin: 0 auto 12px;
 }
 
-.modal-success-content h3 {
+.modal-success-screen h3 {
   font-size: 17px;
   color: #064e3b;
   margin: 0 0 8px;
 }
 
-.modal-success-content p {
+.modal-success-screen p {
   font-size: 12.5px;
   color: #475569;
   margin: 0 0 8px;
@@ -690,38 +665,35 @@
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1100px) {
-  .specialties-cards-grid-7 {
+  .specialties-cards-container-7 {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
 @media (max-width: 860px) {
-  .nav-menu-list {
+  .nav-links-menu {
     display: none;
   }
-  .topbar-strip {
+  .exact-top-bar {
     padding: 8px 16px;
   }
-  .main-navbar-header {
+  .exact-main-nav {
     padding: 10px 16px;
   }
-  .hero-layout-grid {
-    grid-template-columns: 1fr;
-    padding: 36px 16px;
+  .hero-stage-inner {
+    flex-direction: column;
+    padding: 24px 16px;
   }
-  .hero-left-smooth-fade {
-    background: rgba(255, 255, 255, 0.92);
+  .dark-emerald-ribbon {
+    padding: 16px 16px;
   }
-  .forest-green-ribbon {
-    padding: 18px 16px;
+  .exact-specialties-strip {
+    padding: 30px 16px;
   }
-  .our-specialties-section {
-    padding: 36px 16px;
-  }
-  .specialties-cards-grid-7 {
+  .specialties-cards-container-7 {
     grid-template-columns: repeat(2, 1fr);
   }
-  .ribbon-line-separator {
+  .ribbon-vertical-divider {
     display: none;
   }
 }
