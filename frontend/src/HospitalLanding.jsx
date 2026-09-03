@@ -3,6 +3,13 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./HospitalLanding.css";
 import aboutHospitalReception from "./assets/about_hospital_reception_hd.jpg";
 import specialtiesStethoscopeBanner from "./assets/specialties_stethoscope_banner.jpg";
+import facilityEmergencyImg from "./assets/facility_emergency.jpg";
+import facilityIcuImg from "./assets/facility_icu.jpg";
+import facilityOtImg from "./assets/facility_operation_theatre.jpg";
+import facilityDiagnosticImg from "./assets/facility_diagnostic.jpg";
+import facilityRoboticImg from "./assets/facility_robotic_surgery.jpg";
+import facilityPharmacyImg from "./assets/facility_pharmacy.jpg";
+import facilityPatientRoomsImg from "./assets/facility_patient_rooms.jpg";
 
 // =========================================================
 // SPECIALTY DOCTORS DATA WITH FULL ACHIEVEMENTS & SLOTS
@@ -529,10 +536,11 @@ export default function HospitalLanding({ initialTab = "home" }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Active page tab: 'home' | 'about' | 'specialties'
+  // Active page tab: 'home' | 'about' | 'specialties' | 'facilities'
   const [activeTab, setActiveTab] = useState(() => {
     if (initialTab === "about") return "about";
     if (initialTab === "specialties") return "specialties";
+    if (initialTab === "facilities") return "facilities";
     if (typeof window !== "undefined") {
       const hash = window.location.hash.toLowerCase();
       const path = window.location.pathname.toLowerCase();
@@ -541,6 +549,9 @@ export default function HospitalLanding({ initialTab = "home" }) {
       }
       if (hash === "#specialties" || hash === "#specialists" || path.includes("/specialties") || path.includes("/specialists") || path.includes("/our-specialties")) {
         return "specialties";
+      }
+      if (hash === "#facilities" || hash === "#our-facilities" || path.includes("/facilities") || path.includes("/our-facilities")) {
+        return "facilities";
       }
     }
     return "home";
@@ -608,6 +619,9 @@ export default function HospitalLanding({ initialTab = "home" }) {
       } else if (hash.includes("surg")) {
         setActiveTab("specialties");
         setSelectedSpecialtyDetail("General Surgery");
+      } else if (hash === "#facilities" || hash === "#our-facilities" || path.includes("/facilities") || path.includes("/our-facilities")) {
+        setActiveTab("facilities");
+        setSelectedSpecialtyDetail(null);
       } else if (hash === "#specialties" || hash === "#specialists" || path.includes("/specialties") || path.includes("/specialists") || path.includes("/our-specialties")) {
         setActiveTab("specialties");
         if (!hash.includes("/")) {
@@ -729,19 +743,14 @@ export default function HospitalLanding({ initialTab = "home" }) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleFacilitiesNavClick = (e) => {
-    if (activeTab !== "home") {
-      setActiveTab("home");
-      window.history.pushState(null, "", "#home");
-      setTimeout(() => {
-        const el = document.getElementById("facilities");
-        if (el) el.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    } else {
-      const el = document.getElementById("facilities");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    }
+  const handleNavFacilities = (e) => {
+    if (e) e.preventDefault();
+    setActiveTab("facilities");
+    setSelectedSpecialtyDetail(null);
+    window.history.pushState(null, "", "#facilities");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const handleFacilitiesNavClick = handleNavFacilities;
 
   return (
     <div className="exact-hospital-root">
@@ -866,10 +875,15 @@ export default function HospitalLanding({ initialTab = "home" }) {
               )}
             </div>
 
-            <div className="menu-item-wrap">
-              <a href="#facilities" className="menu-link" onClick={handleFacilitiesNavClick}>
+            <div className={`menu-item-wrap ${activeTab === "facilities" ? "active-wrap" : ""}`}>
+              <a
+                href="#facilities"
+                className={`menu-link ${activeTab === "facilities" ? "active" : ""}`}
+                onClick={handleNavFacilities}
+              >
                 Facilities
               </a>
+              {activeTab === "facilities" && <div className="green-indicator-bar"></div>}
             </div>
 
             <div
@@ -1740,6 +1754,163 @@ export default function HospitalLanding({ initialTab = "home" }) {
             </div>
           </main>
         )
+      ) : activeTab === "facilities" ? (
+        /* =======================================================
+            RENDER: OUR FACILITIES PAGE VIEW (MATCHING DESIGN)
+            ======================================================= */
+        <main className="exact-facilities-page-view">
+          <div className="facilities-page-container">
+            {/* Header & Breadcrumb */}
+            <div className="facilities-header-section">
+              <h1 className="facilities-page-title">Our Facilities</h1>
+              <nav className="facilities-breadcrumb" aria-label="Breadcrumb">
+                <a href="#home" className="breadcrumb-link" onClick={handleNavHome}>
+                  Home
+                </a>
+                <span className="breadcrumb-separator">&gt;</span>
+                <span className="breadcrumb-current">Facilities</span>
+              </nav>
+              <p className="facilities-page-subtitle">
+                Modern infrastructure and cutting-edge technology for better care.
+              </p>
+            </div>
+
+            {/* 3-Column Facilities Grid (6 Cards) */}
+            <div className="facilities-cards-grid">
+              {/* Card 1: Emergency */}
+              <div className="facility-card">
+                <div className="facility-card-image-wrap">
+                  <img
+                    src={facilityEmergencyImg}
+                    alt="24/7 Emergency Care"
+                    className="facility-animated-img"
+                  />
+                </div>
+                <div className="facility-card-content">
+                  <h3 className="facility-card-title">24/7 Emergency Care</h3>
+                  <p className="facility-card-desc">Round-the-clock emergency and trauma care.</p>
+                </div>
+              </div>
+
+              {/* Card 2: ICU & Critical Care */}
+              <div className="facility-card">
+                <div className="facility-card-image-wrap">
+                  <img
+                    src={facilityIcuImg}
+                    alt="ICU & Critical Care"
+                    className="facility-animated-img"
+                  />
+                </div>
+                <div className="facility-card-content">
+                  <h3 className="facility-card-title">ICU &amp; Critical Care</h3>
+                  <p className="facility-card-desc">Advanced ICUs with modern life-support systems.</p>
+                </div>
+              </div>
+
+              {/* Card 3: Operation Theatres */}
+              <div className="facility-card">
+                <div className="facility-card-image-wrap">
+                  <img
+                    src={facilityOtImg}
+                    alt="Operation Theatres"
+                    className="facility-animated-img"
+                  />
+                </div>
+                <div className="facility-card-content">
+                  <h3 className="facility-card-title">Operation Theatres</h3>
+                  <p className="facility-card-desc">State-of-the-art modular operation theatres.</p>
+                </div>
+              </div>
+
+              {/* Card 4: Diagnostic Services */}
+              <div className="facility-card">
+                <div className="facility-card-image-wrap">
+                  <img
+                    src={facilityDiagnosticImg}
+                    alt="Diagnostic Services"
+                    className="facility-animated-img"
+                  />
+                </div>
+                <div className="facility-card-content">
+                  <h3 className="facility-card-title">Diagnostic Services</h3>
+                  <p className="facility-card-desc">Advanced imaging and diagnostic facilities.</p>
+                </div>
+              </div>
+
+              {/* Card 5: Robotic Surgery */}
+              <div className="facility-card">
+                <div className="facility-card-image-wrap">
+                  <img
+                    src={facilityRoboticImg}
+                    alt="Robotic Surgery"
+                    className="facility-animated-img"
+                  />
+                </div>
+                <div className="facility-card-content">
+                  <h3 className="facility-card-title">Robotic Surgery</h3>
+                  <p className="facility-card-desc">Precision robotic surgery for better outcomes.</p>
+                </div>
+              </div>
+
+              {/* Card 6: Pharmacy */}
+              <div className="facility-card">
+                <div className="facility-card-image-wrap">
+                  <img
+                    src={facilityPharmacyImg}
+                    alt="Pharmacy"
+                    className="facility-animated-img"
+                  />
+                </div>
+                <div className="facility-card-content">
+                  <h3 className="facility-card-title">Pharmacy</h3>
+                  <p className="facility-card-desc">24/7 pharmacy with wide range of medicines.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Patient Rooms Wide Card (Spans across ~2 columns) */}
+            <div className="patient-rooms-wide-card">
+              <div className="patient-rooms-image-wrap">
+                <img
+                  src={facilityPatientRoomsImg}
+                  alt="Patient Rooms"
+                  className="facility-animated-img"
+                />
+              </div>
+              <div className="patient-rooms-content">
+                <h3 className="patient-rooms-title">Patient Rooms</h3>
+                <p className="patient-rooms-desc">Safe and spacious rooms for patients.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Hospital Footer (Matching Reference Screenshot) */}
+          <footer className="exact-hospital-footer">
+            <div className="footer-inner-container">
+              <div className="footer-top-row">
+                <div className="footer-address-info">
+                  <h4 className="footer-address-title">Madurai Bypass Road, Madurai, Tamil Nadu</h4>
+                  <p className="footer-address-sub">24/7 Emergency Care &bull; Multi-Specialty Hospital</p>
+                </div>
+                <div className="footer-social-icons">
+                  <a href="#facebook" aria-label="Facebook" className="social-icon-btn">f</a>
+                  <a href="#twitter" aria-label="Twitter" className="social-icon-btn">𝕏</a>
+                  <a href="#instagram" aria-label="Instagram" className="social-icon-btn">📸</a>
+                  <a href="#linkedin" aria-label="LinkedIn" className="social-icon-btn">in</a>
+                  <a href="#youtube" aria-label="YouTube" className="social-icon-btn">▶</a>
+                </div>
+              </div>
+              <div className="footer-bottom-row">
+                <span>&copy; 2025 NI AROGIYAM Hospital. All Rights Reserved.</span>
+                <div className="footer-legal-links">
+                  <a href="#privacy">Privacy Policy</a>
+                  <span className="footer-separator">|</span>
+                  <a href="#terms">Terms &amp; Conditions</a>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </main>
       ) : (
         /* =======================================================
             RENDER: HOME PAGE VIEW

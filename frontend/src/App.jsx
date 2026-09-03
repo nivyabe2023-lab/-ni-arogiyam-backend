@@ -1535,6 +1535,14 @@ function App() {
             path="/our-specialties"
             element={<HospitalLanding initialTab="specialties" />}
           />
+          <Route
+            path="/facilities"
+            element={<HospitalLanding initialTab="facilities" />}
+          />
+          <Route
+            path="/our-facilities"
+            element={<HospitalLanding initialTab="facilities" />}
+          />
 
           {/* LOGIN & REGISTER */}
           <Route
