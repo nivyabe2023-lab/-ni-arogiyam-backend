@@ -14,8 +14,8 @@ import doctorSaravananImg from "./assets/doctor_saravanan.jpg";
 import doctorMeenaImg from "./assets/doctor_meena.jpg";
 import doctorArvindImg from "./assets/doctor_arvind.jpg";
 import doctorPriyaImg from "./assets/doctor_priya.jpg";
-import contactBgDoctor from "./assets/contact_bg_doctor.jpg";
-import contactMapCardImg from "./assets/contact_map_card_hd.png";
+import contactBgDoctor from "./assets/contact_bg_doctor_clean.jpg";
+import contactMapCardImg from "./assets/contact_map_card_ultra_hd.png";
 
 // =========================================================
 // SPECIALTY DOCTORS DATA WITH FULL ACHIEVEMENTS & SLOTS
@@ -2405,7 +2405,13 @@ export default function HospitalLanding({ initialTab = "home" }) {
 
               {/* Column 3: Location Map Card */}
               <div className="contact-map-column">
-                <div className="contact-map-card">
+                <a
+                  href="https://maps.google.com/?q=Madurai+Bypass+Road,+Madurai,+Tamil+Nadu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-map-card"
+                  title="Click to view NI AROGIYAM Hospital on Google Maps"
+                >
                   <div className="contact-map-image-container">
                     <img
                       src={contactMapCardImg}
@@ -2425,17 +2431,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
                       <div className="pin-badge-pointer"></div>
                     </div>
                   </div>
-
-                  <a
-                    href="https://maps.google.com/?q=Madurai+Bypass+Road,+Madurai,+Tamil+Nadu"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="contact-map-link-overlay"
-                    title="Open in Google Maps"
-                  >
-                    <span>📍 View on Google Maps ↗</span>
-                  </a>
-                </div>
+                </a>
               </div>
             </div>
           </div>
