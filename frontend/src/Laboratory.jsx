@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Laboratory.css";
 import API_BASE_URL from "./config";
+import { generateLabReportPDF, getReportContentForTest } from "./labReportPdfGenerator";
 
 const API_URL = `${API_BASE_URL}/api`;
 
@@ -1190,7 +1191,70 @@ function Laboratory() {
 
           </div>
 
-          <div className="form-actions">
+          {/* Detailed Clinical Parameter Breakdown Matching Reference Report */}
+          {(() => {
+            const reportContent = getReportContentForTest(selectedLab);
+            return (
+              <div style={{ marginTop: "24px", background: "#f8fafc", padding: "18px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "8px" }}>
+                  <div>
+                    <h3 style={{ margin: "0 0 4px 0", fontSize: "15px", color: "#064e3b", fontWeight: 700 }}>
+                      Diagnostic Laboratory Report Breakdown ({reportContent.subLab})
+                    </h3>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>
+                      Department: <strong>{reportContent.department}</strong> &nbsp;•&nbsp; Specimen: <strong>{reportContent.specimen}</strong>
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="save-patient-button"
+                    style={{ background: "#065f46", color: "#fff", display: "inline-flex", alignItems: "center", gap: "6px", padding: "8px 16px", fontSize: "13px" }}
+                    onClick={() => {
+                      generateLabReportPDF(selectedLab);
+                      setSuccessMessage("Laboratory diagnostic PDF report generated and downloaded!");
+                      setTimeout(() => setSuccessMessage(""), 4000);
+                    }}
+                  >
+                    📥 Download PDF Report
+                  </button>
+                </div>
+
+                {reportContent.categories.map((cat, cIdx) => (
+                  <div key={cIdx} style={{ marginBottom: "16px" }}>
+                    <div style={{ background: "#e2f2e6", color: "#0f3f24", padding: "7px 12px", borderRadius: "6px", fontWeight: 700, fontSize: "12.5px", marginBottom: "8px" }}>
+                      {cat.name}
+                    </div>
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12.5px" }}>
+                        <thead>
+                          <tr style={{ background: "#f1f5f9", textAlign: "left", color: "#334155", borderBottom: "2px solid #cbd5e1" }}>
+                            <th style={{ padding: "7px 10px" }}>Test Name</th>
+                            <th style={{ padding: "7px 10px" }}>Result</th>
+                            <th style={{ padding: "7px 10px" }}>Unit</th>
+                            <th style={{ padding: "7px 10px" }}>Biological Reference Interval</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cat.rows.map((r, rIdx) => (
+                            <tr key={rIdx} style={{ borderBottom: "1px solid #e2e8f0" }}>
+                              <td style={{ padding: "7px 10px", whiteSpace: "pre-line" }}><strong>{r.testName}</strong></td>
+                              <td style={{ padding: "7px 10px", fontWeight: 700, color: r.flag === "H" ? "#dc2626" : r.flag === "L" ? "#2563eb" : "#0f172a" }}>
+                                {r.result}
+                              </td>
+                              <td style={{ padding: "7px 10px", color: "#475569" }}>{r.unit}</td>
+                              <td style={{ padding: "7px 10px", color: "#64748b" }}>{r.refInterval}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+
+          <div className="form-actions" style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "20px" }}>
 
             <button
               type="button"
@@ -1202,7 +1266,8 @@ function Laboratory() {
 
             <button
               type="button"
-              className="save-patient-button"
+              className="edit-button"
+              style={{ padding: "10px 18px" }}
               onClick={() => {
                 const lab =
                   selectedLab;
@@ -1212,6 +1277,19 @@ function Laboratory() {
               }}
             >
               Edit Test
+            </button>
+
+            <button
+              type="button"
+              className="save-patient-button"
+              style={{ background: "#065f46", color: "#fff", display: "inline-flex", alignItems: "center", gap: "6px" }}
+              onClick={() => {
+                generateLabReportPDF(selectedLab);
+                setSuccessMessage("Laboratory diagnostic PDF report generated and downloaded!");
+                setTimeout(() => setSuccessMessage(""), 4000);
+              }}
+            >
+              📥 Download PDF Report
             </button>
 
           </div>
@@ -1360,6 +1438,23 @@ function Laboratory() {
                             }
                           >
                             View
+                          </button>
+
+                          <button
+                            type="button"
+                            className="pdf-button"
+                            title="Download Official Diagnostic PDF Report"
+                            onClick={() => {
+                              generateLabReportPDF(laboratory);
+                              setSuccessMessage(
+                                `Laboratory diagnostic PDF for ${
+                                  laboratory.patient?.firstName || "patient"
+                                } downloaded successfully!`
+                              );
+                              setTimeout(() => setSuccessMessage(""), 4000);
+                            }}
+                          >
+                            📄 PDF
                           </button>
 
                           <button

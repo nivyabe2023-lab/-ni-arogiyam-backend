@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./HospitalLanding.css";
 import API_BASE_URL from "./config";
+import { generateLabReportPDF } from "./labReportPdfGenerator";
 import aboutHospitalReception from "./assets/about_hospital_reception_hd.jpg";
 import specialtiesStethoscopeBanner from "./assets/specialties_stethoscope_banner.jpg";
 import facilityEmergencyImg from "./assets/facility_emergency.jpg";
@@ -4358,13 +4359,34 @@ export default function HospitalLanding({ initialTab = "home" }) {
                             📅 {rep.date} &nbsp;•&nbsp; 🏛️ {rep.department} &nbsp;•&nbsp; 👨‍⚕️ {rep.doctor}
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          className="btn-view-report"
-                          onClick={() => setSelectedReportDetail(rep)}
-                        >
-                          📊 View Report
-                        </button>
+                        <div style={{ display: "flex", gap: "6px" }}>
+                          <button
+                            type="button"
+                            className="btn-view-report"
+                            onClick={() => setSelectedReportDetail(rep)}
+                          >
+                            📊 View
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-view-report"
+                            style={{ background: "#ecfdf5", color: "#065f46", border: "1px solid #a7f3d0" }}
+                            onClick={() => {
+                              generateLabReportPDF({
+                                labId: rep.id ? parseInt(String(rep.id).replace(/\D/g, "") || "1") : 1,
+                                testName: rep.testName,
+                                testType: rep.department,
+                                testDate: rep.date,
+                                result: rep.resultSummary,
+                                status: rep.status || "COMPLETED",
+                                remarks: rep.resultSummary,
+                                patient: currentPatient,
+                              });
+                            }}
+                          >
+                            📄 PDF
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -4498,7 +4520,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
               </tbody>
             </table>
 
-            <div style={{ marginTop: "16px", textAlign: "right" }}>
+            <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end", gap: "10px", flexWrap: "wrap" }}>
               <button
                 type="button"
                 className="btn-modal-cancel"
@@ -4506,6 +4528,25 @@ export default function HospitalLanding({ initialTab = "home" }) {
                 onClick={() => setSelectedReportDetail(null)}
               >
                 Close Report
+              </button>
+              <button
+                type="button"
+                className="btn-book-appointment-submit"
+                style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "8px 18px", fontSize: "13px", cursor: "pointer", background: "#065f46", color: "#fff", border: "none", borderRadius: "8px", fontWeight: 600 }}
+                onClick={() => {
+                  generateLabReportPDF({
+                    labId: selectedReportDetail.id ? parseInt(String(selectedReportDetail.id).replace(/\D/g, "") || "1") : 1,
+                    testName: selectedReportDetail.testName,
+                    testType: selectedReportDetail.department,
+                    testDate: selectedReportDetail.date,
+                    result: selectedReportDetail.resultSummary,
+                    status: selectedReportDetail.status || "COMPLETED",
+                    remarks: selectedReportDetail.resultSummary,
+                    patient: currentPatient,
+                  });
+                }}
+              >
+                📥 Download Official PDF Report
               </button>
             </div>
           </div>
