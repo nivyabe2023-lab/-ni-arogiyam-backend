@@ -33,14 +33,16 @@ function Register() {
   };
 
   const handleGoogleRegisterMock = () => {
-    setLoading(true);
-    setTimeout(() => {
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("username", "google.user@niarogiyam.org");
-      localStorage.setItem("userRole", "STAFF");
-      localStorage.setItem("loggedInUser", "Hospital Staff (Google Auth)");
-      navigate("/dashboard", { replace: true });
-    }, 600);
+    const email = window.prompt("Enter your Google account email to continue:");
+    if (!email || !email.trim()) return;
+    const trimmedEmail = email.trim();
+    const rawName = trimmedEmail.split("@")[0].replace(/[._-]/g, " ");
+    const displayName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("username", trimmedEmail);
+    localStorage.setItem("userRole", "USER");
+    localStorage.setItem("loggedInUser", `${displayName} (Google)`);
+    navigate("/dashboard", { replace: true });
   };
 
   const handleRegister = async (e) => {

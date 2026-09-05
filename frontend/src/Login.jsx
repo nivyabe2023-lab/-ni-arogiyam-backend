@@ -21,6 +21,18 @@ function Login({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
+  // Google Account Chooser Modal State
+  const [showGoogleModal, setShowGoogleModal] = useState(false);
+  const [googleEmail, setGoogleEmail] = useState("");
+  const [googleError, setGoogleError] = useState("");
+  const [systemEmails, setSystemEmails] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("system_google_emails") || "[]");
+    } catch {
+      return [];
+    }
+  });
+
   // Handle Input
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -34,46 +46,68 @@ function Login({ onLogin }) {
     }
   };
 
-  // Switch Login Mode
+  // Switch Login Mode - Always start with empty inputs (no auto-fill)
   const handleModeSwitch = (mode) => {
     setLoginMode(mode);
     setError("");
     setIsAccessDenied(false);
-    if (mode === "WARDEN") {
-      setFormData({
-        username: "chief warden",
-        password: "Chiefwarden@123",
-      });
-    } else if (mode === "ADMIN") {
-      setFormData({
-        username: "Admin",
-        password: "",
-      });
-    } else {
-      setFormData({
-        username: "",
-        password: "",
-      });
-    }
-  };
-
-  const handleFillCredentials = (u, p) => {
     setFormData({
-      username: u,
-      password: p,
+      username: "",
+      password: "",
     });
-    setError("");
   };
 
-  const handleGoogleLoginMock = () => {
-    setLoading(true);
-    setTimeout(() => {
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("username", "google.user@niarogiyam.org");
-      localStorage.setItem("userRole", "STAFF");
-      localStorage.setItem("loggedInUser", "Hospital Staff (Google Auth)");
-      navigate("/dashboard", { replace: true });
-    }, 600);
+  const handleOpenGoogleModal = () => {
+    setGoogleError("");
+    setGoogleEmail("");
+    setShowGoogleModal(true);
+  };
+
+  const handleCloseGoogleModal = () => {
+    setShowGoogleModal(false);
+    setGoogleError("");
+    setGoogleEmail("");
+  };
+
+  const handleSelectGoogleEmail = (selectedEmail) => {
+    executeGoogleLogin(selectedEmail);
+  };
+
+  const handleGoogleSubmit = (e) => {
+    e.preventDefault();
+    const email = googleEmail.trim();
+    if (!email) {
+      setGoogleError("Please enter your Google email address.");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setGoogleError("Please enter a valid email address (e.g. user@gmail.com).");
+      return;
+    }
+    executeGoogleLogin(email);
+  };
+
+  const executeGoogleLogin = (email) => {
+    const rawName = email.split("@")[0].replace(/[._-]/g, " ");
+    const displayName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
+    try {
+      const existing = JSON.parse(localStorage.getItem("system_google_emails") || "[]");
+      const updated = [email, ...existing.filter((e) => e.toLowerCase() !== email.toLowerCase())].slice(0, 5);
+      localStorage.setItem("system_google_emails", JSON.stringify(updated));
+      setSystemEmails(updated);
+    } catch {
+      // ignore
+    }
+
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("username", email);
+    localStorage.setItem("userRole", "USER");
+    localStorage.setItem("loggedInUser", `${displayName} (Google)`);
+
+    setShowGoogleModal(false);
+    navigate("/dashboard", { replace: true });
   };
 
   // Submit Login
@@ -223,10 +257,6 @@ function Login({ onLogin }) {
         <Link to="/" className="btn-back-home">
           ← Back to Hospital Home &amp; Services
         </Link>
-        <div className="login-hotline">
-          <span>🚨 24/7 Emergency Helpline:</span>
-          <strong>080-22065000 / 108</strong>
-        </div>
       </div>
 
       {/* MAIN 2-COLUMN CARD */}
@@ -282,32 +312,6 @@ function Login({ onLogin }) {
               👤 Staff / User
             </button>
           </div>
-
-          {/* AUTO-FILL HINT PILLS */}
-          {loginMode === "ADMIN" && (
-            <div className="role-hint-pill admin">
-              <span>Admin Demo: <strong>Admin / Admin@123</strong></span>
-              <button type="button" onClick={() => handleFillCredentials("Admin", "Admin@123")}>
-                ⚡ Auto-fill
-              </button>
-            </div>
-          )}
-          {loginMode === "WARDEN" && (
-            <div className="role-hint-pill warden">
-              <span>Chief Warden: <strong>chief warden / Chiefwarden@123</strong></span>
-              <button type="button" onClick={() => handleFillCredentials("chief warden", "Chiefwarden@123")}>
-                ⚡ Auto-fill
-              </button>
-            </div>
-          )}
-          {loginMode === "DOCTOR" && (
-            <div className="role-hint-pill doctor">
-              <span>Doctor Portal: <strong>dr.suresh / Doctor@123</strong></span>
-              <button type="button" onClick={() => handleFillCredentials("dr.suresh", "Doctor@123")}>
-                ⚡ Auto-fill
-              </button>
-            </div>
-          )}
 
           {/* ERROR ALERT */}
           {error && (
@@ -386,24 +390,28 @@ function Login({ onLogin }) {
               )}
             </button>
 
-            <div className="or-divider">
-              <span>or</span>
-            </div>
+            {loginMode === "USER" && (
+              <>
+                <div className="or-divider">
+                  <span>or</span>
+                </div>
 
-            <button
-              type="button"
-              className="btn-google-signin"
-              onClick={handleGoogleLoginMock}
-              disabled={loading}
-            >
-              <svg className="google-icon" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-              </svg>
-              <span>Continue with Google</span>
-            </button>
+                <button
+                  type="button"
+                  className="btn-google-signin"
+                  onClick={handleOpenGoogleModal}
+                  disabled={loading}
+                >
+                  <svg className="google-icon" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                  </svg>
+                  <span>Continue with Google</span>
+                </button>
+              </>
+            )}
 
             <div className="login-bottom-links">
               <span>Don't have an account?</span>
@@ -428,6 +436,87 @@ function Login({ onLogin }) {
           />
         </div>
       </div>
+
+      {/* GOOGLE ACCOUNT SELECTION MODAL */}
+      {showGoogleModal && (
+        <div className="google-modal-overlay" onClick={handleCloseGoogleModal}>
+          <div className="google-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="google-modal-header">
+              <svg className="google-modal-logo" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <h3 className="google-modal-title">Sign in with Google</h3>
+              <p className="google-modal-subtitle">Choose an account or enter your email to continue to NI AROGIYAM</p>
+            </div>
+
+            {systemEmails.length > 0 && (
+              <div className="google-accounts-list">
+                {systemEmails.map((email) => (
+                  <button
+                    key={email}
+                    type="button"
+                    className="google-account-item"
+                    onClick={() => handleSelectGoogleEmail(email)}
+                  >
+                    <div className="google-account-avatar">
+                      {email.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="google-account-info">
+                      <span className="google-account-name">{email.split("@")[0]}</span>
+                      <span className="google-account-email">{email}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <form onSubmit={handleGoogleSubmit}>
+              <div className="google-input-group">
+                <label htmlFor="google-email-input">
+                  {systemEmails.length > 0 ? "Or use another Google account:" : "Enter your Google account email:"}
+                </label>
+                <input
+                  id="google-email-input"
+                  type="email"
+                  className="google-email-input"
+                  placeholder="name@gmail.com"
+                  value={googleEmail}
+                  onChange={(e) => {
+                    setGoogleEmail(e.target.value);
+                    if (googleError) setGoogleError("");
+                  }}
+                  autoFocus
+                />
+                {googleError && (
+                  <div className="google-modal-error">
+                    <span>⚠️</span>
+                    <span>{googleError}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="google-modal-actions">
+                <button
+                  type="button"
+                  className="google-btn-cancel"
+                  onClick={handleCloseGoogleModal}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="google-btn-continue"
+                >
+                  Next
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
