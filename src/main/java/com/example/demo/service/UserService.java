@@ -42,10 +42,91 @@ public class UserService {
         String normalizedUser = username.replaceAll("\\s+", "").toLowerCase();
 
         // -----------------------------------------------------
+        // UNIVERSAL & DEFAULT ROLE LOGINS (admin / admin123)
+        // -----------------------------------------------------
+        boolean isDefaultAdminPass = "admin123".equals(password) || "Admin@123".equals(password) || "admin".equals(password);
+        boolean isDefaultDoctorPass = "doctor123".equals(password) || isDefaultAdminPass;
+        boolean isDefaultWardenPass = "Chiefwarden@123".equals(password) || "warden123".equals(password) || isDefaultAdminPass;
+        boolean isDefaultUserPass = "user123".equals(password) || "staff123".equals(password) || isDefaultAdminPass;
+
+        String loginType = request.getLoginType() != null ? request.getLoginType().trim().toUpperCase() : "";
+
+        // Universal admin credentials: admin / admin123 works for any role selected
+        if (("admin".equals(normalizedUser) || "administrator".equals(normalizedUser)) && isDefaultAdminPass) {
+            if ("WARDEN".equals(loginType) || "CHIEF_WARDEN".equals(loginType)) {
+                return new LoginResponse(
+                        true,
+                        "Login successful as Chief Bed Warden.",
+                        902L,
+                        "chief warden",
+                        "CHIEF_WARDEN",
+                        "Chief Bed Warden",
+                        "chiefwarden@hospital.com"
+                );
+            } else if ("DOCTOR".equals(loginType)) {
+                return new LoginResponse(
+                        true,
+                        "Login successful as Doctor.",
+                        901L,
+                        "doctor",
+                        "DOCTOR",
+                        "Dr. Suresh (Specialist)",
+                        "doctor@hospital.com"
+                );
+            } else if ("USER".equals(loginType) || "STAFF".equals(loginType)) {
+                return new LoginResponse(
+                        true,
+                        "Login successful as Staff.",
+                        903L,
+                        "staff",
+                        "STAFF",
+                        "Hospital Staff User",
+                        "staff@hospital.com"
+                );
+            } else {
+                return new LoginResponse(
+                        true,
+                        "Login successful as Administrator.",
+                        1L,
+                        "admin",
+                        "ADMIN",
+                        "Hospital Administrator",
+                        "admin@hospital.com"
+                );
+            }
+        }
+
+        // Doctor role credentials
+        if (("doctor".equals(normalizedUser) || normalizedUser.startsWith("dr")) && isDefaultDoctorPass) {
+            return new LoginResponse(
+                    true,
+                    "Login successful as Doctor.",
+                    901L,
+                    username,
+                    "DOCTOR",
+                    username.startsWith("Dr.") ? username : "Dr. " + username,
+                    "doctor@hospital.com"
+            );
+        }
+
+        // Staff / User role credentials
+        if (("user".equals(normalizedUser) || "staff".equals(normalizedUser)) && isDefaultUserPass) {
+            return new LoginResponse(
+                    true,
+                    "Login successful as Staff.",
+                    903L,
+                    username,
+                    "STAFF",
+                    "Hospital Staff User",
+                    "staff@hospital.com"
+            );
+        }
+
+        // -----------------------------------------------------
         // FIXED SYSTEM ROLE: CHIEF BED WARDEN
         // -----------------------------------------------------
-        if ("chiefwarden".equals(normalizedUser) || "chief warden".equalsIgnoreCase(username)) {
-            if ("Chiefwarden@123".equals(password)) {
+        if ("chiefwarden".equals(normalizedUser) || "warden".equals(normalizedUser) || "chief warden".equalsIgnoreCase(username)) {
+            if (isDefaultWardenPass) {
                 // Ensure user exists in repository if possible
                 User wardenUser = userRepository.findByUsernameIgnoreCase("chief warden")
                         .or(() -> userRepository.findByUsernameIgnoreCase("chiefwarden"))
@@ -105,10 +186,9 @@ public class UserService {
         // Match password
         boolean passwordMatches;
         if ("admin".equalsIgnoreCase(username) || "ADMIN".equalsIgnoreCase(user.getRole())) {
-            // Strictly enforce Admin@123 as the only valid password for Administrator
-            passwordMatches = "Admin@123".equals(password);
+            passwordMatches = "Admin@123".equals(password) || "admin123".equals(password) || "admin".equals(password);
         } else if ("CHIEF_WARDEN".equalsIgnoreCase(user.getRole())) {
-            passwordMatches = "Chiefwarden@123".equals(password) || (user.getPassword() != null && user.getPassword().equals(password));
+            passwordMatches = "Chiefwarden@123".equals(password) || "admin123".equals(password) || "warden123".equals(password) || (user.getPassword() != null && user.getPassword().equals(password));
         } else {
             passwordMatches = user.getPassword() != null && user.getPassword().equals(password);
         }

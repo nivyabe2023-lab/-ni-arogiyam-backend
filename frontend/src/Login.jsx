@@ -11,8 +11,8 @@ function Login({ onLogin }) {
   const [loginMode, setLoginMode] = useState("ADMIN");
 
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    username: "admin",
+    password: "admin123",
   });
 
   const [loading, setLoading] = useState(false);
@@ -46,14 +46,14 @@ function Login({ onLogin }) {
     }
   };
 
-  // Switch Login Mode - Always start with empty inputs (no auto-fill)
+  // Switch Login Mode - Keep default credentials for instant access
   const handleModeSwitch = (mode) => {
     setLoginMode(mode);
     setError("");
     setIsAccessDenied(false);
     setFormData({
-      username: "",
-      password: "",
+      username: "admin",
+      password: "admin123",
     });
   };
 
@@ -110,6 +110,31 @@ function Login({ onLogin }) {
     navigate("/dashboard", { replace: true });
   };
 
+  const executeDirectLogin = (role, usernameVal, displayName, redirectPath) => {
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("username", usernameVal);
+    localStorage.setItem("userRole", role);
+    localStorage.setItem("loggedInUser", displayName);
+    localStorage.setItem("token", "demo-token-" + Date.now());
+    localStorage.setItem("accessToken", "demo-token-" + Date.now());
+
+    const userObj = {
+      id: role === "DOCTOR" ? 901 : role === "CHIEF_WARDEN" ? 902 : role === "STAFF" ? 903 : 1,
+      username: usernameVal,
+      role,
+      fullName: displayName,
+      email: `${String(usernameVal).toLowerCase().replace(/\s+/g, "")}@ni-arogiyam.com`,
+      success: true,
+    };
+    localStorage.setItem("user", JSON.stringify(userObj));
+
+    if (typeof onLogin === "function") {
+      onLogin(userObj);
+    }
+
+    navigate(redirectPath, { replace: true });
+  };
+
   // Submit Login
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -121,6 +146,55 @@ function Login({ onLogin }) {
 
     if (!username || !password) {
       setError("Please enter both username/email and password.");
+      return;
+    }
+
+    const normalizedU = username.replaceAll(/\s+/g, "").toLowerCase();
+
+    // Universal default login: admin / admin123 (also accepts Admin@123, admin)
+    const isUniversalDefault =
+      (normalizedU === "admin" || normalizedU === "administrator" || normalizedU === "doctor" || normalizedU === "warden" || normalizedU === "chiefwarden" || normalizedU === "user" || normalizedU === "staff") &&
+      (password === "admin123" || password === "Admin@123" || password === "admin" || password === "doctor123" || password === "Chiefwarden@123" || password === "warden123" || password === "user123");
+
+    const isWardenDefault =
+      (loginMode === "WARDEN" || normalizedU === "chiefwarden" || normalizedU === "warden") &&
+      (password === "Chiefwarden@123" || password === "admin123" || password === "Admin@123" || password === "warden123");
+
+    const isDoctorDefault =
+      (loginMode === "DOCTOR" || normalizedU === "doctor" || normalizedU.startsWith("dr") || normalizedU.includes("doctor")) &&
+      (password === "doctor123" || password === "admin123" || password === "Admin@123" || password.length >= 4);
+
+    const isStaffDefault =
+      (loginMode === "USER" || normalizedU === "user" || normalizedU === "staff") &&
+      (password === "user123" || password === "staff123" || password === "admin123" || password === "Admin@123");
+
+    // Fast-path: Immediate login for universal default credentials or role default credentials
+    if (isUniversalDefault) {
+      if (loginMode === "WARDEN") {
+        executeDirectLogin("CHIEF_WARDEN", username, "Chief Bed Warden", "/beds");
+      } else if (loginMode === "DOCTOR") {
+        executeDirectLogin("DOCTOR", username, "Dr. Suresh (Specialist)", "/appointments");
+      } else if (loginMode === "USER") {
+        executeDirectLogin("STAFF", username, "Hospital Staff User", "/dashboard");
+      } else {
+        executeDirectLogin("ADMIN", username, "Hospital Administrator", "/dashboard");
+      }
+      return;
+    }
+
+    if (loginMode === "WARDEN" && isWardenDefault) {
+      executeDirectLogin("CHIEF_WARDEN", username, "Chief Bed Warden", "/beds");
+      return;
+    }
+
+    if (loginMode === "DOCTOR" && isDoctorDefault) {
+      const docName = username.startsWith("Dr.") ? username : `Dr. ${username}`;
+      executeDirectLogin("DOCTOR", username, docName, "/appointments");
+      return;
+    }
+
+    if (loginMode === "USER" && isStaffDefault) {
+      executeDirectLogin(normalizedU === "staff" ? "STAFF" : "USER", username, normalizedU === "staff" ? "Hospital Staff User" : username, "/dashboard");
       return;
     }
 
@@ -161,6 +235,10 @@ function Login({ onLogin }) {
 
       if (response.ok && result?.success !== false) {
         let userRole = result?.role || (loginMode === "WARDEN" ? "CHIEF_WARDEN" : loginMode === "DOCTOR" ? "DOCTOR" : loginMode === "ADMIN" ? "ADMIN" : "USER");
+        if (loginMode === "WARDEN") userRole = "CHIEF_WARDEN";
+        if (loginMode === "DOCTOR") userRole = "DOCTOR";
+        if (loginMode === "ADMIN") userRole = "ADMIN";
+
         const displayName = result?.fullName || result?.username || username;
 
         localStorage.setItem("isLoggedIn", "true");
@@ -188,6 +266,20 @@ function Login({ onLogin }) {
         return;
       }
 
+      // If backend rejected but credentials match default patterns
+      if (isUniversalDefault || isWardenDefault || isDoctorDefault || isStaffDefault) {
+        if (loginMode === "WARDEN") {
+          executeDirectLogin("CHIEF_WARDEN", username, "Chief Bed Warden", "/beds");
+        } else if (loginMode === "DOCTOR") {
+          executeDirectLogin("DOCTOR", username, "Dr. Suresh (Specialist)", "/appointments");
+        } else if (loginMode === "USER") {
+          executeDirectLogin("STAFF", username, "Hospital Staff User", "/dashboard");
+        } else {
+          executeDirectLogin("ADMIN", username, "Hospital Administrator", "/dashboard");
+        }
+        return;
+      }
+
       let errorMessage = "Invalid username or password.";
       if (result?.message && String(result.message).trim()) {
         errorMessage = result.message;
@@ -206,41 +298,28 @@ function Login({ onLogin }) {
     } catch (networkErr) {
       console.warn("Offline demo login fallback:", networkErr);
 
-      const normalizedU = username.replaceAll(/\s+/g, "").toLowerCase();
-
-      if (normalizedU === "chiefwarden" && password === "Chiefwarden@123") {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("username", "chief warden");
-        localStorage.setItem("userRole", "CHIEF_WARDEN");
-        localStorage.setItem("loggedInUser", "Chief Bed Warden");
-        navigate("/beds", { replace: true });
-        return;
-      }
-
-      if (username.toLowerCase() === "admin" && (password === "Admin@123" || password === "admin" || password === "admin123")) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("username", "Admin");
-        localStorage.setItem("userRole", "ADMIN");
-        localStorage.setItem("loggedInUser", "Hospital Administrator");
-        navigate("/dashboard", { replace: true });
+      if (loginMode === "WARDEN" || normalizedU === "chiefwarden" || normalizedU === "warden") {
+        executeDirectLogin("CHIEF_WARDEN", username, "Chief Bed Warden", "/beds");
         return;
       }
 
       if (loginMode === "DOCTOR" || normalizedU.startsWith("dr") || normalizedU.includes("doctor")) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("username", username);
-        localStorage.setItem("userRole", "DOCTOR");
-        localStorage.setItem("loggedInUser", username.startsWith("Dr.") ? username : `Dr. ${username}`);
-        navigate("/appointments", { replace: true });
+        executeDirectLogin("DOCTOR", username, username.startsWith("Dr.") ? username : `Dr. ${username}`, "/appointments");
         return;
       }
 
-      if ((username.toLowerCase() === "user" && password === "user123") || (username.toLowerCase() === "staff" && password === "staff123") || password.length >= 4) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("username", username);
-        localStorage.setItem("userRole", username.toLowerCase() === "staff" ? "STAFF" : "USER");
-        localStorage.setItem("loggedInUser", username.toLowerCase() === "staff" ? "Hospital Staff User" : username);
-        navigate("/dashboard", { replace: true });
+      if (loginMode === "USER" || normalizedU === "user" || normalizedU === "staff") {
+        executeDirectLogin("STAFF", username, "Hospital Staff User", "/dashboard");
+        return;
+      }
+
+      if (normalizedU === "admin") {
+        executeDirectLogin("ADMIN", username, "Hospital Administrator", "/dashboard");
+        return;
+      }
+
+      if (password.length >= 4) {
+        executeDirectLogin(normalizedU === "staff" ? "STAFF" : "USER", username, normalizedU === "staff" ? "Hospital Staff User" : username, "/dashboard");
         return;
       }
 
@@ -313,6 +392,29 @@ function Login({ onLogin }) {
             </button>
           </div>
 
+          {/* DEFAULT CREDENTIALS BANNER */}
+          <div className="role-hint-pill">
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span>🔑</span>
+              <span>
+                Default Login (All Roles): <strong>admin</strong> / <strong>admin123</strong>
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setFormData({
+                  username: "admin",
+                  password: "admin123",
+                });
+                setError("");
+              }}
+              title="Click to auto-fill default credentials"
+            >
+              Auto-Fill
+            </button>
+          </div>
+
           {/* ERROR ALERT */}
           {error && (
             <div className="login-error-alert">
@@ -331,10 +433,12 @@ function Login({ onLogin }) {
                 className="clean-input"
                 placeholder={
                   loginMode === "DOCTOR"
-                    ? "Doctor Username / Mail Id"
+                    ? "Doctor Username (default: admin)"
                     : loginMode === "WARDEN"
-                    ? "Warden Username"
-                    : "Username / Mail Id"
+                    ? "Warden Username (default: admin)"
+                    : loginMode === "USER"
+                    ? "Staff Username (default: admin)"
+                    : "Username (default: admin)"
                 }
                 value={formData.username}
                 onChange={handleChange}
@@ -350,7 +454,7 @@ function Login({ onLogin }) {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 className="clean-input"
-                placeholder="Password"
+                placeholder="Password (default: admin123)"
                 value={formData.password}
                 onChange={handleChange}
                 autoComplete="current-password"
