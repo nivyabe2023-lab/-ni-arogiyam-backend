@@ -84,4 +84,12 @@ public class Doctor {
     public void setAvailability(String availability) {
         this.availability = availability;
     }
+
+    @Transient
+    public String getDoctorName() {
+        String fn = firstName != null ? firstName : "";
+        String ln = lastName != null ? lastName : "";
+        String name = (fn + " " + ln).trim();
+        return name.isEmpty() ? "Dr. Specialist" : (name.startsWith("Dr.") ? name : "Dr. " + name);
+    }
 }

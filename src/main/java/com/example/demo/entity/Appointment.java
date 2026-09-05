@@ -75,4 +75,22 @@ public class Appointment {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Transient
+    public String getDoctorName() {
+        if (doctor != null) {
+            return doctor.getDoctorName();
+        }
+        return "Dr. Specialist";
+    }
+
+    @Transient
+    public String getPatientName() {
+        if (patient != null) {
+            String fn = patient.getFirstName() != null ? patient.getFirstName() : "";
+            String ln = patient.getLastName() != null ? patient.getLastName() : "";
+            return (fn + " " + ln).trim();
+        }
+        return "Patient";
+    }
 }

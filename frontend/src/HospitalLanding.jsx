@@ -844,7 +844,15 @@ export default function HospitalLanding({ initialTab = "home" }) {
   const [selectedSpecialty, setSelectedSpecialty] = useState("Cardiology");
 
   // Patient Self-Service Portal State
-  const [patientRecords, setPatientRecords] = useState(DEFAULT_PATIENT_RECORDS);
+  const [patientRecords, setPatientRecords] = useState(() => {
+    try {
+      const saved = localStorage.getItem("ni_patient_records");
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return DEFAULT_PATIENT_RECORDS;
+  });
   const [patientPortalOpen, setPatientPortalOpen] = useState(false);
   const [authenticatedPatientId, setAuthenticatedPatientId] = useState("PAT-1001");
   const [isPatientAuthenticated, setIsPatientAuthenticated] = useState(false);
@@ -893,30 +901,76 @@ export default function HospitalLanding({ initialTab = "home" }) {
     setBookingRefId(generatedRef);
     setBookingSuccess(true);
 
+    const docName = selectedDoctorForBooking?.name || appointmentForm.doctorName || "Dr. Suresh Menon";
+    const patName = appointmentForm.fullName || "Ramesh Kumar";
+    const apptDate = appointmentForm.preferredDate || new Date().toISOString().split("T")[0];
+    const apptSlot = selectedSlotForBooking || appointmentForm.preferredSlot || "10:00 AM";
+
     // Synchronize booking with the active patient's records
     const newAppointment = {
       id: generatedRef,
-      doctorName: selectedDoctorForBooking?.name || appointmentForm.doctorName || "Senior Specialist",
+      appointmentId: generatedRef,
+      patientName: patName,
+      doctorName: docName,
       department: appointmentForm.department || selectedSpecialty,
-      date: appointmentForm.preferredDate || new Date().toISOString().split("T")[0],
-      slot: selectedSlotForBooking || appointmentForm.preferredSlot || "10:00 AM",
+      date: apptDate,
+      appointmentDate: apptDate,
+      slot: apptSlot,
+      appointmentTime: apptSlot,
       room: selectedDoctorForBooking?.room || "Suite 101, Specialty Clinic OPD",
       status: "Confirmed",
-      notes: appointmentForm.notes || "Consultation appointment confirmed"
+      notes: appointmentForm.notes || "Consultation appointment confirmed",
+      source: "Patient Portal",
     };
 
     setPatientRecords((prev) => {
       const pId = authenticatedPatientId || "PAT-1001";
       const existing = prev[pId] || { ...DEFAULT_PATIENT_RECORDS["PAT-1001"] };
-      return {
+      const updated = {
         ...prev,
         [pId]: {
           ...existing,
-          name: appointmentForm.fullName || existing.name,
+          name: patName || existing.name,
           phone: appointmentForm.phoneNumber || existing.phone,
           appointments: [newAppointment, ...(existing.appointments || [])]
         }
       };
+      try {
+        localStorage.setItem("ni_patient_records", JSON.stringify(updated));
+      } catch (err) {
+        console.warn("Storage warning:", err);
+      }
+      return updated;
+    });
+
+    // Save to shared localStorage for Admin Portal background & Settings inspector
+    try {
+      const existingAppts = JSON.parse(localStorage.getItem("ni_registered_appointments") || "[]");
+      const updatedAppts = [newAppointment, ...existingAppts];
+      localStorage.setItem("ni_registered_appointments", JSON.stringify(updatedAppts));
+    } catch (err) {
+      console.warn("Could not save to registered appointments:", err);
+    }
+
+    // Attempt backend persistence
+    fetch(`${API_BASE_URL}/api/appointments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({
+        patientName: patName,
+        phoneNumber: appointmentForm.phoneNumber || "",
+        doctorName: docName,
+        department: appointmentForm.department || selectedSpecialty,
+        appointmentDate: apptDate,
+        appointmentTime: apptSlot,
+        reason: appointmentForm.notes || `Booked via Patient Portal by ${patName}`,
+        status: "CONFIRMED"
+      })
+    }).catch((err) => {
+      console.warn("Offline demo fallback - saved to local storage:", err);
     });
   };
 
