@@ -1397,10 +1397,6 @@ function App() {
             path="/patient-and-visitors"
             element={<HospitalLanding initialTab="patient-visitors" />}
           />
-          <Route
-            path="/patients"
-            element={<HospitalLanding initialTab="patient-visitors" />}
-          />
 
           {/* LOGIN & REGISTER */}
           <Route
