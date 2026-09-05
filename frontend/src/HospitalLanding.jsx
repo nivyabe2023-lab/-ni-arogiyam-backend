@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./HospitalLanding.css";
 import API_BASE_URL from "./config";
-import { generateLabReportPDF } from "./labReportPdfGenerator";
+import {
+  generateLabReportPDF,
+  generateIndividualBillPDF,
+  generatePatientConsolidatedPDF,
+} from "./labReportPdfGenerator";
 import aboutHospitalReception from "./assets/about_hospital_reception_hd.jpg";
 import specialtiesStethoscopeBanner from "./assets/specialties_stethoscope_banner.jpg";
 import facilityEmergencyImg from "./assets/facility_emergency.jpg";
@@ -4142,13 +4146,36 @@ export default function HospitalLanding({ initialTab = "home" }) {
                       </div>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className="btn-switch-patient"
-                    onClick={handlePatientLogout}
-                  >
-                    Sign Out
-                  </button>
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      style={{
+                        background: "#065f46",
+                        color: "#ffffff",
+                        border: "none",
+                        padding: "8px 14px",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        boxShadow: "0 2px 6px rgba(6, 95, 70, 0.2)"
+                      }}
+                      title="Download Complete Consolidated Patient Health &amp; Billing Record PDF"
+                      onClick={() => generatePatientConsolidatedPDF(currentPatient)}
+                    >
+                      📥 Download Complete Record (All Modules PDF)
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-switch-patient"
+                      onClick={handlePatientLogout}
+                    >
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
 
                 {/* Navigation Tabs */}
@@ -4268,6 +4295,38 @@ export default function HospitalLanding({ initialTab = "home" }) {
                       </div>
                     </div>
 
+                    {/* Consolidated PDF Download Action Bar */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "12px 16px", borderRadius: "10px", flexWrap: "wrap", gap: "10px" }}>
+                      <div>
+                        <div style={{ color: "#065f46", fontSize: "13.5px", fontWeight: 700 }}>
+                          📋 Complete Patient Healthcare &amp; Financial Record (All Modules)
+                        </div>
+                        <div style={{ fontSize: "11.5px", color: "#64748b", marginTop: "2px" }}>
+                          Generate official PDF with all itemized bills, payment receipts, active prescriptions, appointments &amp; all laboratory diagnostic modules
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        style={{
+                          background: "#065f46",
+                          color: "#ffffff",
+                          border: "none",
+                          padding: "8px 16px",
+                          borderRadius: "8px",
+                          fontSize: "12.5px",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          boxShadow: "0 2px 6px rgba(6, 95, 70, 0.2)"
+                        }}
+                        onClick={() => generatePatientConsolidatedPDF(currentPatient)}
+                      >
+                        📥 Download All Modules PDF
+                      </button>
+                    </div>
+
                     <div className="bills-table-container">
                       <table className="patient-bills-table">
                         <thead>
@@ -4298,19 +4357,41 @@ export default function HospitalLanding({ initialTab = "home" }) {
                                 </span>
                               </td>
                               <td>
-                                {bill.status === "Pending" ? (
+                                <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                                  {bill.status === "Pending" ? (
+                                    <button
+                                      type="button"
+                                      className="btn-pay-bill-action"
+                                      onClick={() => setPayingBill(bill)}
+                                    >
+                                      Pay Now
+                                    </button>
+                                  ) : (
+                                    <span style={{ fontSize: "11.5px", color: "#047857", fontWeight: 700 }}>
+                                      ✓ Paid ({bill.paymentMode || "Online"})
+                                    </span>
+                                  )}
                                   <button
                                     type="button"
-                                    className="btn-pay-bill-action"
-                                    onClick={() => setPayingBill(bill)}
+                                    title="Download Official Bill / Tax Invoice PDF"
+                                    style={{
+                                      background: "#f8fafc",
+                                      color: "#065f46",
+                                      border: "1px solid #cbd5e1",
+                                      padding: "4px 8px",
+                                      borderRadius: "6px",
+                                      fontSize: "11px",
+                                      fontWeight: 600,
+                                      cursor: "pointer",
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      gap: "3px"
+                                    }}
+                                    onClick={() => generateIndividualBillPDF(bill, currentPatient)}
                                   >
-                                    Pay Now
+                                    📄 PDF
                                   </button>
-                                ) : (
-                                  <span style={{ fontSize: "11.5px", color: "#047857", fontWeight: 700 }}>
-                                    ✓ Paid ({bill.paymentMode || "Online"})
-                                  </span>
-                                )}
+                                </div>
                               </td>
                             </tr>
                           ))}

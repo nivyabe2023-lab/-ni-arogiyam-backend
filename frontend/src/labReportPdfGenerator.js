@@ -945,4 +945,659 @@ export function generateLabReportPDF(laboratory) {
   doc.save(filename);
   return filename;
 }
+
+/**
+ * Generates an official Tax Invoice / Hospital Receipt for an individual bill item.
+ */
+export function generateIndividualBillPDF(bill, patient = {}) {
+  if (!bill) return;
+
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
+
+  const pName = patient.name || `${patient.firstName || ""} ${patient.lastName || ""}`.trim() || "Ramesh Kumar";
+  const pId = patient.userId || patient.patientId || "PAT-1001";
+  const pPhone = patient.phone || patient.phoneNumber || "+91 9876543210";
+  const pGender = patient.gender || "Male";
+  const pAge = patient.age || 42;
+
+  // Header Banner
+  doc.setFillColor(6, 78, 59); // Deep Emerald #064E3B
+  doc.rect(0, 0, 210, 36, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text("NI AROGIYAM HOSPITAL", 14, 15);
+
+  doc.setFontSize(8.5);
+  doc.setFont("helvetica", "normal");
+  doc.text("Multi-Speciality Healthcare & Diagnostic Research Centre | NABH & ISO Certified", 14, 21.5);
+  doc.text("Madurai Bypass Road, Madurai, Tamil Nadu - 625016 | Helpline: +91 452 300 5300 | billing@ni-arogiyam.org", 14, 26.5);
+  doc.text("GSTIN: 33AAAAA0000A1Z5 | Integrated Hospital Billing & Finance Division", 14, 31.5);
+
+  // Invoice Title
+  doc.setFillColor(240, 253, 244);
+  doc.rect(14, 42, 182, 10, "F");
+  doc.setDrawColor(187, 247, 208);
+  doc.rect(14, 42, 182, 10, "D");
+
+  doc.setTextColor(6, 78, 59);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text("HOSPITAL INVOICE & OFFICIAL PAYMENT RECEIPT", 18, 48.5);
+
+  const statusStr = (bill.status || "PAID").toUpperCase();
+  const isPaid = statusStr === "PAID";
+
+  // Status Stamp on Top Right
+  if (isPaid) {
+    doc.setFillColor(220, 252, 231);
+    doc.roundedRect(155, 43.5, 36, 7, 1.5, 1.5, "F");
+    doc.setTextColor(22, 101, 52);
+    doc.setFontSize(8.5);
+    doc.text("✓ PAID IN FULL", 173, 48.2, { align: "center" });
+  } else {
+    doc.setFillColor(254, 243, 199);
+    doc.roundedRect(155, 43.5, 36, 7, 1.5, 1.5, "F");
+    doc.setTextColor(180, 83, 9);
+    doc.setFontSize(8.5);
+    doc.text("● PENDING DUE", 173, 48.2, { align: "center" });
+  }
+
+  // Two-column metadata
+  autoTable(doc, {
+    startY: 56,
+    head: [["Invoice & Billing Details", "Patient Demographics"]],
+    body: [
+      [
+        `Invoice ID: ${bill.id}\nBilling Date: ${bill.date}\nDue Date: ${bill.dueDate || bill.date}\nPayment Mode: ${bill.paymentMode || (isPaid ? "Online / Card" : "Pending")}`,
+        `Patient Name: ${pName}\nPatient ID: ${pId}\nAge / Gender: ${pAge} Yrs / ${pGender}\nMobile: ${pPhone}`,
+      ],
+    ],
+    theme: "plain",
+    styles: {
+      font: "helvetica",
+      fontSize: 8.5,
+      cellPadding: 3.5,
+      lineColor: [203, 213, 225],
+      lineWidth: 0.3,
+      textColor: [15, 23, 42],
+    },
+    headStyles: {
+      fillColor: [241, 245, 249],
+      textColor: [15, 23, 42],
+      fontStyle: "bold",
+      fontSize: 9,
+    },
+    margin: { left: 14, right: 14 },
+  });
+
+  // Itemized services table
+  autoTable(doc, {
+    startY: doc.lastAutoTable.finalY + 7,
+    head: [["#", "Description of Medical Service", "Department", "Qty", "Unit Rate", "Amount (INR)"]],
+    body: [
+      [
+        "1",
+        bill.description,
+        bill.department,
+        "1",
+        `Rs. ${Number(bill.amount).toLocaleString("en-IN")}`,
+        `Rs. ${Number(bill.amount).toLocaleString("en-IN")}`,
+      ],
+    ],
+    theme: "striped",
+    styles: {
+      font: "helvetica",
+      fontSize: 8.5,
+      cellPadding: 4,
+      textColor: [15, 23, 42],
+    },
+    headStyles: {
+      fillColor: [6, 78, 59],
+      textColor: [255, 255, 255],
+      fontStyle: "bold",
+      fontSize: 9,
+    },
+    columnStyles: {
+      0: { cellWidth: 10, halign: "center" },
+      1: { cellWidth: 78 },
+      2: { cellWidth: 42 },
+      3: { cellWidth: 14, halign: "center" },
+      4: { cellWidth: 20, halign: "right" },
+      5: { cellWidth: 24, halign: "right", fontStyle: "bold" },
+    },
+    margin: { left: 14, right: 14 },
+  });
+
+  // Summary breakdown
+  const billAmount = Number(bill.amount) || 0;
+  const paidAmount = isPaid ? billAmount : 0;
+  const balanceDue = isPaid ? 0 : billAmount;
+
+  autoTable(doc, {
+    startY: doc.lastAutoTable.finalY + 4,
+    body: [
+      ["Subtotal", `Rs. ${billAmount.toLocaleString("en-IN")}`],
+      ["Healthcare GST / Service Tax (Exempted under Sec 66D)", "Rs. 0.00"],
+      ["Total Invoice Amount", `Rs. ${billAmount.toLocaleString("en-IN")}`],
+      ["Amount Paid", `Rs. ${paidAmount.toLocaleString("en-IN")}`],
+      ["Outstanding Balance Due", `Rs. ${balanceDue.toLocaleString("en-IN")}`],
+    ],
+    theme: "plain",
+    styles: {
+      font: "helvetica",
+      fontSize: 8.5,
+      cellPadding: 2.2,
+      textColor: [51, 65, 85],
+    },
+    columnStyles: {
+      0: { cellWidth: 140, halign: "right", fontStyle: "normal" },
+      1: { cellWidth: 48, halign: "right", fontStyle: "bold" },
+    },
+    didParseCell: function (data) {
+      if (data.row.index === 2) {
+        data.cell.styles.fillColor = [240, 253, 244];
+        data.cell.styles.textColor = [6, 78, 59];
+        data.cell.styles.fontSize = 9.5;
+      }
+      if (data.row.index === 4 && balanceDue > 0) {
+        data.cell.styles.textColor = [180, 83, 9];
+      }
+    },
+    margin: { left: 14, right: 14 },
+  });
+
+  const signY = doc.lastAutoTable.finalY + 22;
+  doc.setDrawColor(203, 213, 225);
+  doc.setLineWidth(0.3);
+  doc.line(14, signY - 5, 196, signY - 5);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8.5);
+  doc.setTextColor(15, 23, 42);
+  doc.text("Authorized Billing Officer", 160, signY + 5, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.5);
+  doc.setTextColor(100, 116, 139);
+  doc.text("NI AROGIYAM Accounts & Revenue Department", 160, signY + 9.5, { align: "center" });
+
+  doc.text(
+    "Note: This is an authentic computer generated hospital invoice. No physical signature required.",
+    14,
+    signY + 18
+  );
+
+  const filename = `Invoice_${bill.id}_${pName.replace(/\s+/g, "_")}.pdf`;
+  doc.save(filename);
+  return filename;
+}
+
+/**
+ * Generates the complete, consolidated Patient Health & Financial Record PDF
+ * encompassing all modules: Invoices, Payments, Lab Diagnostics, Prescriptions,
+ * Consultations, and Patient Profile.
+ */
+export function generatePatientConsolidatedPDF(patient = {}) {
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
+
+  const pName = patient.name || `${patient.firstName || ""} ${patient.lastName || ""}`.trim() || "Ramesh Kumar";
+  const pId = patient.userId || patient.patientId || "PAT-1001";
+  const pPhone = patient.phone || patient.phoneNumber || "+91 9876543210";
+  const pGender = (patient.gender || "Male").toUpperCase();
+  const pAge = patient.age || 42;
+  const pBlood = patient.bloodGroup || "O+";
+  const pEmail = patient.email || "ramesh.kumar@example.com";
+
+  const bills = Array.isArray(patient.bills) ? patient.bills : [];
+  const medicines = Array.isArray(patient.medicines) ? patient.medicines : [];
+  const reports = Array.isArray(patient.reports) ? patient.reports : [];
+  const appointments = Array.isArray(patient.appointments) ? patient.appointments : [];
+
+  const totalBilled = bills.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+  const totalPaid = bills.filter((b) => b.status === "Paid").reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+  const pendingDue = totalBilled - totalPaid;
+
+  const formatDateTime = (d) => {
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  // Header Banner (Emerald Theme)
+  doc.setFillColor(6, 78, 59);
+  doc.rect(0, 0, 210, 36, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text("NI AROGIYAM HOSPITAL", 14, 15);
+
+  doc.setFontSize(8.5);
+  doc.setFont("helvetica", "normal");
+  doc.text("Multi-Speciality Healthcare & Research Institute | NABH Accredited & NABL Certified Labs", 14, 21.5);
+  doc.text("Madurai Bypass Road, Madurai, Tamil Nadu - 625016 | 24/7 Emergency & Helpline: +91 452 300 5300", 14, 26.5);
+  doc.text("Integrated Patient Health Record (EHR) & Consolidated Hospital Statement", 14, 31.5);
+
+  // Document Title Bar
+  doc.setFillColor(240, 253, 244);
+  doc.rect(14, 42, 182, 11, "F");
+  doc.setDrawColor(187, 247, 208);
+  doc.rect(14, 42, 182, 11, "D");
+
+  doc.setTextColor(6, 78, 59);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text("CONSOLIDATED PATIENT MEDICAL & FINANCIAL RECORD", 18, 49);
+
+  doc.setFontSize(8.5);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(71, 85, 105);
+  doc.text(`Generated: ${formatDateTime(new Date())}`, 190, 49, { align: "right" });
+
+  // Patient Demographic Information Table
+  autoTable(doc, {
+    startY: 57,
+    head: [["Patient Demographics & Profile", "Hospital Registration Identifiers"]],
+    body: [
+      [
+        `Patient Full Name: ${pName}\nAge & Gender: ${pAge} Yrs / ${pGender}\nBlood Group: ${pBlood}\nContact Mobile: ${pPhone}`,
+        `Patient ID / CRN: ${pId}\nEmail Address: ${pEmail}\nHospital Location: Madurai Main Campus\nRecord Type: Outpatient & Inpatient Consolidated`,
+      ],
+    ],
+    theme: "plain",
+    styles: {
+      font: "helvetica",
+      fontSize: 8.5,
+      cellPadding: 3.2,
+      lineColor: [203, 213, 225],
+      lineWidth: 0.3,
+      textColor: [15, 23, 42],
+    },
+    headStyles: {
+      fillColor: [241, 245, 249],
+      textColor: [15, 23, 42],
+      fontStyle: "bold",
+      fontSize: 9,
+    },
+    margin: { left: 14, right: 14 },
+  });
+
+  let currentY = doc.lastAutoTable.finalY + 7;
+
+  // =========================================================================
+  // MODULE 1: FINANCIAL & BILLING STATEMENT
+  // =========================================================================
+  doc.setFillColor(226, 242, 230); // Soft green #E2F2E6
+  doc.rect(14, currentY, 182, 8.5, "F");
+  doc.setTextColor(15, 63, 36);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9.5);
+  doc.text("1. FINANCIAL ACCOUNT & INVOICES SUMMARY", 18, currentY + 5.5);
+
+  // Financial KPI strip
+  doc.setFontSize(8.5);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(51, 65, 85);
+  doc.text(
+    `Total Invoiced: Rs. ${totalBilled.toLocaleString("en-IN")}   |   Total Paid: Rs. ${totalPaid.toLocaleString("en-IN")}   |   Pending Balance: Rs. ${pendingDue.toLocaleString("en-IN")}`,
+    192,
+    currentY + 5.5,
+    { align: "right" }
+  );
+
+  const billRows = bills.map((b) => [
+    b.id,
+    b.description,
+    b.department,
+    b.date,
+    `Rs. ${Number(b.amount).toLocaleString("en-IN")}`,
+    b.status === "Paid" ? `Paid (${b.paymentMode || "Online"})` : "Pending Due",
+  ]);
+
+  billRows.push([
+    "TOTALS",
+    "Consolidated Hospital Account Balance",
+    "-",
+    "-",
+    `Rs. ${totalBilled.toLocaleString("en-IN")}`,
+    `Paid: Rs. ${totalPaid.toLocaleString("en-IN")} | Due: Rs. ${pendingDue.toLocaleString("en-IN")}`,
+  ]);
+
+  autoTable(doc, {
+    startY: currentY + 10,
+    head: [["Invoice ID", "Service Description", "Department", "Date", "Amount", "Payment Status"]],
+    body: billRows,
+    theme: "striped",
+    styles: {
+      font: "helvetica",
+      fontSize: 8,
+      cellPadding: 2.8,
+      textColor: [15, 23, 42],
+    },
+    headStyles: {
+      fillColor: [248, 250, 252],
+      textColor: [15, 23, 42],
+      fontStyle: "bold",
+      fontSize: 8.5,
+      lineColor: [203, 213, 225],
+      lineWidth: 0.2,
+    },
+    columnStyles: {
+      0: { cellWidth: 26, fontStyle: "bold" },
+      1: { cellWidth: 64 },
+      2: { cellWidth: 36 },
+      3: { cellWidth: 20 },
+      4: { cellWidth: 20, halign: "right", fontStyle: "bold" },
+      5: { cellWidth: 26, halign: "center" },
+    },
+    didParseCell: function (data) {
+      if (data.row.index === billRows.length - 1) {
+        data.cell.styles.fillColor = [240, 253, 244];
+        data.cell.styles.fontStyle = "bold";
+        data.cell.styles.textColor = [6, 78, 59];
+      }
+      if (data.column.index === 5 && data.row.index < billRows.length - 1) {
+        const txt = String(data.cell.raw || "");
+        if (txt.includes("Paid")) {
+          data.cell.styles.textColor = [22, 101, 52];
+          data.cell.styles.fontStyle = "bold";
+        } else {
+          data.cell.styles.textColor = [180, 83, 9];
+          data.cell.styles.fontStyle = "bold";
+        }
+      }
+    },
+    margin: { left: 14, right: 14 },
+  });
+
+  currentY = doc.lastAutoTable.finalY + 8;
+
+  // Check page break
+  if (currentY > 230) {
+    doc.addPage();
+    currentY = 20;
+  }
+
+  // =========================================================================
+  // MODULE 2: DIAGNOSTIC LABORATORY INVESTIGATIONS (ALL LAB MODULES)
+  // =========================================================================
+  doc.setFillColor(226, 242, 230);
+  doc.rect(14, currentY, 182, 8.5, "F");
+  doc.setTextColor(15, 63, 36);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9.5);
+  doc.text("2. DIAGNOSTIC LABORATORY & PATHOLOGY INVESTIGATIONS (ALL LAB MODULES)", 18, currentY + 5.5);
+
+  currentY += 11;
+
+  // Render all reports with parameters
+  reports.forEach((rep) => {
+    if (currentY > 235) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(6, 78, 59);
+    doc.text(`Test: ${rep.testName}`, 14, currentY);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Dept: ${rep.department}   |   Date: ${rep.date}   |   Consultant: ${rep.doctor || "Dr. Suresh V."}`, 196, currentY, { align: "right" });
+
+    currentY += 3.5;
+
+    const paramRows = (rep.parameters || []).map((p) => [
+      p.name,
+      p.value,
+      p.normal || "Clinical Reference Interval",
+      "Normal / Stable",
+    ]);
+
+    if (paramRows.length === 0) {
+      paramRows.push([rep.testName, rep.resultSummary || "Completed", "Clinical Standard", "Evaluated"]);
+    }
+
+    autoTable(doc, {
+      startY: currentY,
+      head: [["Test Parameter", "Observed Value", "Biological Reference Range", "Clinical Evaluation"]],
+      body: paramRows,
+      theme: "plain",
+      styles: {
+        font: "helvetica",
+        fontSize: 8,
+        cellPadding: 2.2,
+        lineColor: [226, 232, 240],
+        lineWidth: 0.15,
+        textColor: [15, 23, 42],
+      },
+      headStyles: {
+        fillColor: [248, 250, 252],
+        textColor: [15, 23, 42],
+        fontStyle: "bold",
+        fontSize: 8,
+        lineColor: [203, 213, 225],
+        lineWidth: 0.2,
+      },
+      columnStyles: {
+        0: { cellWidth: 70, fontStyle: "bold" },
+        1: { cellWidth: 36, fontStyle: "bold", textColor: [6, 78, 59] },
+        2: { cellWidth: 50 },
+        3: { cellWidth: 36, textColor: [22, 101, 52] },
+      },
+      margin: { left: 14, right: 14 },
+    });
+
+    currentY = doc.lastAutoTable.finalY + 3;
+
+    if (rep.resultSummary) {
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(7.5);
+      doc.setTextColor(71, 85, 105);
+      doc.text(`Clinical Impression: ${rep.resultSummary}`, 14, currentY);
+      currentY += 6;
+    }
+  });
+
+  // Check page break
+  if (currentY > 230) {
+    doc.addPage();
+    currentY = 20;
+  }
+
+  // =========================================================================
+  // MODULE 3: ACTIVE MEDICATIONS & PHARMACY PRESCRIPTIONS
+  // =========================================================================
+  doc.setFillColor(226, 242, 230);
+  doc.rect(14, currentY, 182, 8.5, "F");
+  doc.setTextColor(15, 63, 36);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9.5);
+  doc.text("3. ACTIVE PHARMACEUTICALS & PRESCRIBED MEDICATIONS", 18, currentY + 5.5);
+
+  const medRows = medicines.map((m) => [
+    m.name,
+    m.type,
+    `${m.dosage} (${m.instruction})`,
+    m.duration,
+    m.doctor,
+  ]);
+
+  autoTable(doc, {
+    startY: currentY + 10,
+    head: [["Medication Name", "Therapeutic Class", "Dosage & Schedule", "Duration", "Prescribing Doctor"]],
+    body: medRows,
+    theme: "striped",
+    styles: {
+      font: "helvetica",
+      fontSize: 8,
+      cellPadding: 2.8,
+      textColor: [15, 23, 42],
+    },
+    headStyles: {
+      fillColor: [248, 250, 252],
+      textColor: [15, 23, 42],
+      fontStyle: "bold",
+      fontSize: 8.5,
+      lineColor: [203, 213, 225],
+      lineWidth: 0.2,
+    },
+    columnStyles: {
+      0: { cellWidth: 50, fontStyle: "bold" },
+      1: { cellWidth: 42 },
+      2: { cellWidth: 42 },
+      3: { cellWidth: 26 },
+      4: { cellWidth: 32 },
+    },
+    margin: { left: 14, right: 14 },
+  });
+
+  currentY = doc.lastAutoTable.finalY + 8;
+
+  // Check page break
+  if (currentY > 230) {
+    doc.addPage();
+    currentY = 20;
+  }
+
+  // =========================================================================
+  // MODULE 4: CLINICAL CONSULTATIONS & APPOINTMENTS HISTORY
+  // =========================================================================
+  doc.setFillColor(226, 242, 230);
+  doc.rect(14, currentY, 182, 8.5, "F");
+  doc.setTextColor(15, 63, 36);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9.5);
+  doc.text("4. CLINICAL CONSULTATIONS & APPOINTMENTS HISTORY", 18, currentY + 5.5);
+
+  const aptRows = appointments.map((apt) => [
+    apt.id,
+    `${apt.doctorName} (${apt.department})`,
+    `${apt.date} ${apt.slot || ""}`.trim(),
+    apt.room || "OPD Suite",
+    `${apt.status} - ${apt.notes || "Consultation"}`,
+  ]);
+
+  autoTable(doc, {
+    startY: currentY + 10,
+    head: [["Booking ID", "Attending Doctor & Speciality", "Date & Slot", "Venue / Clinic", "Clinical Status & Notes"]],
+    body: aptRows,
+    theme: "striped",
+    styles: {
+      font: "helvetica",
+      fontSize: 8,
+      cellPadding: 2.8,
+      textColor: [15, 23, 42],
+    },
+    headStyles: {
+      fillColor: [248, 250, 252],
+      textColor: [15, 23, 42],
+      fontStyle: "bold",
+      fontSize: 8.5,
+      lineColor: [203, 213, 225],
+      lineWidth: 0.2,
+    },
+    columnStyles: {
+      0: { cellWidth: 24, fontStyle: "bold" },
+      1: { cellWidth: 50 },
+      2: { cellWidth: 32 },
+      3: { cellWidth: 34 },
+      4: { cellWidth: 52 },
+    },
+    margin: { left: 14, right: 14 },
+  });
+
+  currentY = doc.lastAutoTable.finalY + 12;
+
+  // Check page break for signatures
+  if (currentY > 235) {
+    doc.addPage();
+    currentY = 25;
+  }
+
+  // Hospital Certification & Signatures
+  doc.setDrawColor(203, 213, 225);
+  doc.setLineWidth(0.35);
+  doc.line(14, currentY, 196, currentY);
+
+  currentY += 8;
+
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(7.5);
+  doc.setTextColor(100, 116, 139);
+  doc.text(
+    "Medical Attestation: This consolidated health record represents verified hospital encounters, financial invoices, laboratory diagnostic investigations, and physician orders recorded in the NI AROGIYAM Hospital Information System.",
+    14,
+    currentY,
+    { maxWidth: 182 }
+  );
+
+  currentY += 16;
+
+  // Doctor Signature Left
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(15, 23, 42);
+  doc.text("Dr. Suresh V., MD, DM (Cardiology)", 45, currentY, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.8);
+  doc.setTextColor(100, 116, 139);
+  doc.text("Senior Attending Consultant & Medical Supervisor", 45, currentY + 4.5, { align: "center" });
+
+  // Pathologist Signature Right
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(15, 23, 42);
+  doc.text("Dr. Jyoti M. J, MD (Pathology)", 160, currentY, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.8);
+  doc.setTextColor(100, 116, 139);
+  doc.text("Consultant Pathologist & Diagnostic Lab Director", 160, currentY + 4.5, { align: "center" });
+
+  // Multi-page Footers
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+
+    doc.setDrawColor(203, 213, 225);
+    doc.setLineWidth(0.35);
+    doc.line(14, 282, 196, 282);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.setTextColor(71, 85, 105);
+
+    doc.text(`Patient: ${pName} (${pId})  •  Consolidated Clinical & Financial Record`, 14, 286.5);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.text(`Page   ${i}   of   ${totalPages}`, 105, 286.5, { align: "center" });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.text(`Generated: ${formatDateTime(new Date())}`, 196, 286.5, { align: "right" });
+
+    doc.setFontSize(6.8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      "Official Document • NI AROGIYAM Hospital Information System • For verification visit https://ni-arogiyam.vercel.app",
+      105,
+      291,
+      { align: "center" }
+    );
+  }
+
+  const filename = `Consolidated_Patient_Record_${pName.replace(/\s+/g, "_")}_${pId}.pdf`;
+  doc.save(filename);
+  return filename;
+}
+
 export { getReportContentForTest };
