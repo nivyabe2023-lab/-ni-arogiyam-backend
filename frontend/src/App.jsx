@@ -153,31 +153,6 @@ function Dashboard() {
 
   const searchItems = [
     {
-      name: "Emergency & Blood Bank (24/7)",
-      path: "/emergency",
-      icon: "🚨",
-    },
-    {
-      name: "Clinical Specialities & Departments",
-      path: "/specialities",
-      icon: "🩺",
-    },
-    {
-      name: "Health Packages (Executive Checkup)",
-      path: "/health-packages",
-      icon: "📦",
-    },
-    {
-      name: "Insurance & TPA Cashless Desk",
-      path: "/insurance-tpa",
-      icon: "💳",
-    },
-    {
-      name: "Patient & Visitor Guide / Tariffs",
-      path: "/patient-guide",
-      icon: "ℹ️",
-    },
-    {
       name: "Patients",
       path: "/patients",
       icon: "👤",
@@ -1090,68 +1065,7 @@ function Sidebar({ isOpen, onClose }) {
                 <span className="nav-text">View Public Showcase</span>
               </NavLink>
 
-              {/* SECTION 1: EMERGENCY & SPECIALITIES */}
-              <div className="sidebar-section-label">
-                <span>🚨 EMERGENCY & SERVICES</span>
-              </div>
-
-              <NavLink
-                to="/emergency"
-                onClick={handleNavClick}
-                className={({ isActive }) =>
-                  `sidebar-link emergency-nav-link ${isActive ? "active" : ""}`
-                }
-              >
-                <span className="nav-icon">🚨</span>
-                <span className="nav-text">24/7 Emergency & Blood</span>
-                <span className="nav-badge live">Live</span>
-              </NavLink>
-
-              <NavLink
-                to="/specialities"
-                onClick={handleNavClick}
-                className={({ isActive }) =>
-                  `sidebar-link ${isActive ? "active" : ""}`
-                }
-              >
-                <span className="nav-icon">🩺</span>
-                <span className="nav-text">Clinical Specialities</span>
-              </NavLink>
-
-              <NavLink
-                to="/health-packages"
-                onClick={handleNavClick}
-                className={({ isActive }) =>
-                  `sidebar-link ${isActive ? "active" : ""}`
-                }
-              >
-                <span className="nav-icon">📦</span>
-                <span className="nav-text">Health Packages</span>
-              </NavLink>
-
-              <NavLink
-                to="/insurance-tpa"
-                onClick={handleNavClick}
-                className={({ isActive }) =>
-                  `sidebar-link ${isActive ? "active" : ""}`
-                }
-              >
-                <span className="nav-icon">💳</span>
-                <span className="nav-text">Insurance & TPA Desk</span>
-              </NavLink>
-
-              <NavLink
-                to="/patient-guide"
-                onClick={handleNavClick}
-                className={({ isActive }) =>
-                  `sidebar-link ${isActive ? "active" : ""}`
-                }
-              >
-                <span className="nav-icon">ℹ️</span>
-                <span className="nav-text">Patient & Visitor Guide</span>
-              </NavLink>
-
-              {/* SECTION 2: CLINICAL OPERATIONS */}
+              {/* SECTION: CLINICAL OPERATIONS */}
               <div className="sidebar-section-label">
                 <span>🏥 CLINICAL OPERATIONS</span>
               </div>
