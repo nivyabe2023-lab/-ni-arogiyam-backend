@@ -4138,45 +4138,142 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.otp-simulation-banner {
-  background: #eff6ff;
-  border: 1.5px dashed #60a5fa;
+.otp-send-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.otp-send-row input {
+  flex: 1;
+}
+
+.btn-send-otp-pill {
+  background: #047857;
+  color: #ffffff;
+  border: none;
+  padding: 0 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-send-otp-pill:hover:not(:disabled) {
+  background: #065f46;
+}
+
+.btn-send-otp-pill:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  color: #64748b;
+}
+
+/* REAL-TIME SMS INCOMING NOTIFICATION CARD */
+.live-sms-preview-card {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-left: 4px solid #047857;
   border-radius: 10px;
   padding: 12px 16px;
   margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  animation: slideDownIn 0.3s ease;
+}
+
+@keyframes slideDownIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.live-sms-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  font-size: 13px;
-  color: #1e40af;
+  margin-bottom: 6px;
 }
 
-.otp-copy-code {
-  background: #1d4ed8;
-  color: #ffffff;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 2px;
-}
-
-.auth-helper-pill {
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  color: #334155;
-  padding: 6px 12px;
-  border-radius: 6px;
+.live-sms-sender {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
-  cursor: pointer;
-  display: inline-block;
-  margin-top: 6px;
-  transition: background 0.15s;
+  font-weight: 800;
+  color: #0f172a;
 }
 
-.auth-helper-pill:hover {
-  background: #e2e8f0;
+.live-sms-time {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.live-sms-body {
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.4;
+  margin: 0 0 8px;
+}
+
+.live-sms-code-highlight {
+  background: #ecfdf5;
+  color: #047857;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  border: 1px solid #a7f3d0;
+}
+
+.btn-autofill-otp {
+  background: #047857;
+  color: #ffffff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-autofill-otp:hover {
+  background: #065f46;
+}
+
+.otp-timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.btn-resend-otp-link {
+  background: none;
+  border: none;
+  color: #047857;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+}
+
+.btn-resend-otp-link:hover {
+  text-decoration: underline;
+}
+
+.btn-resend-otp-link:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+  text-decoration: none;
 }
 
 .patient-auth-error {
