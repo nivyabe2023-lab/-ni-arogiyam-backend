@@ -545,6 +545,147 @@ const resolveDepartmentData = (deptKeyOrName) => {
   return getDeptDoctorData(deptKeyOrName);
 };
 
+// Default Sample Patient Records Database for Patient Self-Service Portal
+const DEFAULT_PATIENT_RECORDS = {
+  "PAT-1001": {
+    userId: "PAT-1001",
+    name: "Ramesh Kumar",
+    phone: "9876543210",
+    email: "ramesh.kumar@example.com",
+    gender: "Male",
+    age: 42,
+    bloodGroup: "O+",
+    appointments: [
+      {
+        id: "APT-8821",
+        doctorName: "Dr. Suresh V.",
+        department: "Cardiology",
+        date: "2026-09-08",
+        slot: "10:30 AM",
+        room: "Suite 101, Cardiology OPD",
+        status: "Confirmed",
+        notes: "Routine Cardiac Follow-up & BP Evaluation"
+      },
+      {
+        id: "APT-7410",
+        doctorName: "Dr. Priya Arvind",
+        department: "Neurology",
+        date: "2026-08-15",
+        slot: "02:00 PM",
+        room: "Room 204, Neuro Tower",
+        status: "Completed",
+        notes: "Migraine & Tension Headache checkup"
+      }
+    ],
+    bills: [
+      {
+        id: "INV-2026-4412",
+        description: "Comprehensive Cardiac Echo & Diagnostics",
+        department: "Cardiology Diagnostic Lab",
+        date: "2026-09-02",
+        amount: 2450,
+        status: "Pending",
+        dueDate: "2026-09-12"
+      },
+      {
+        id: "INV-2026-3890",
+        description: "Doctor OPD Consultation Fee - Dr. Suresh V.",
+        department: "Outpatient Care (Cardiology)",
+        date: "2026-08-20",
+        amount: 500,
+        status: "Paid",
+        paymentMode: "UPI / PhonePe",
+        paidDate: "2026-08-20"
+      },
+      {
+        id: "INV-2026-2911",
+        description: "Pharmacy Prescription Dispensary",
+        department: "Central Hospital Pharmacy",
+        date: "2026-08-20",
+        amount: 820,
+        status: "Paid",
+        paymentMode: "Debit Card",
+        paidDate: "2026-08-20"
+      }
+    ],
+    medicines: [
+      {
+        id: "MED-1",
+        name: "Tab. Telmisartan 40mg",
+        type: "Blood Pressure / Hypertension",
+        dosage: "1 - 0 - 0 (Morning)",
+        instruction: "After Breakfast",
+        duration: "30 Days (Ongoing)",
+        doctor: "Dr. Suresh V.",
+        date: "2026-08-20"
+      },
+      {
+        id: "MED-2",
+        name: "Tab. Atorvastatin 10mg",
+        type: "Cholesterol Regulation",
+        dosage: "0 - 0 - 1 (Night)",
+        instruction: "After Dinner",
+        duration: "30 Days",
+        doctor: "Dr. Suresh V.",
+        date: "2026-08-20"
+      },
+      {
+        id: "MED-3",
+        name: "Tab. Pantoprazole 40mg",
+        type: "Antacid / Gastro-protection",
+        dosage: "1 - 0 - 0 (Morning)",
+        instruction: "Before Breakfast",
+        duration: "15 Days",
+        doctor: "Dr. Suresh V.",
+        date: "2026-08-20"
+      }
+    ],
+    reports: [
+      {
+        id: "REP-9901",
+        testName: "12-Lead Electrocardiogram (ECG)",
+        department: "Cardiology Diagnostic Lab",
+        date: "2026-08-20",
+        status: "Normal",
+        resultSummary: "Normal Sinus Rhythm, HR 72 bpm, PR interval 150ms. No ST-T segment elevation or ischemia.",
+        doctor: "Dr. Suresh V.",
+        parameters: [
+          { name: "Heart Rate", value: "72 bpm", normal: "60 - 100 bpm" },
+          { name: "PR Interval", value: "150 ms", normal: "120 - 200 ms" },
+          { name: "QRS Duration", value: "88 ms", normal: "< 100 ms" }
+        ]
+      },
+      {
+        id: "REP-9832",
+        testName: "Complete Blood Count (CBC) & Lipid Profile",
+        department: "Pathology & Biochemistry",
+        date: "2026-08-20",
+        status: "Normal",
+        resultSummary: "Hemoglobin 14.2 g/dL. Total Cholesterol 182 mg/dL. Normal renal and hepatic parameters.",
+        doctor: "Dr. Arvind S.",
+        parameters: [
+          { name: "Hemoglobin (Hb)", value: "14.2 g/dL", normal: "13.0 - 17.0 g/dL" },
+          { name: "Total Cholesterol", value: "182 mg/dL", normal: "< 200 mg/dL" },
+          { name: "Fasting Blood Sugar", value: "98 mg/dL", normal: "70 - 100 mg/dL" }
+        ]
+      },
+      {
+        id: "REP-9710",
+        testName: "Digital Chest X-Ray (PA View)",
+        department: "Radiology & Imaging",
+        date: "2026-07-12",
+        status: "Normal",
+        resultSummary: "Both lung fields appear clear. Cardiothoracic ratio is normal. Costophrenic angles sharp.",
+        doctor: "Dr. K. Saravanan",
+        parameters: [
+          { name: "Lung Fields", value: "Clear", normal: "Clear" },
+          { name: "Cardiac Silhouette", value: "Normal Size", normal: "Normal" }
+        ]
+      }
+    ]
+  }
+};
+
 export default function HospitalLanding({ initialTab = "home" }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -690,12 +831,27 @@ export default function HospitalLanding({ initialTab = "home" }) {
 
   // Dropdown states
   const [specialtiesDropdown, setSpecialtiesDropdown] = useState(false);
-  const [visitorDropdown, setVisitorDropdown] = useState(false);
 
   // Appointment Modal State
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [selectedSpecialty, setSelectedSpecialty] = useState("Cardiology");
+
+  // Patient Self-Service Portal State
+  const [patientRecords, setPatientRecords] = useState(DEFAULT_PATIENT_RECORDS);
+  const [patientPortalOpen, setPatientPortalOpen] = useState(false);
+  const [authenticatedPatientId, setAuthenticatedPatientId] = useState("PAT-1001");
+  const [isPatientAuthenticated, setIsPatientAuthenticated] = useState(false);
+  const [patientAuthTab, setPatientAuthTab] = useState("otp"); // 'otp' | 'patientId'
+  const [patientAuthPhone, setPatientAuthPhone] = useState("9876543210");
+  const [patientAuthIdInput, setPatientAuthIdInput] = useState("PAT-1001");
+  const [patientAuthOtp, setPatientAuthOtp] = useState("");
+  const [patientAuthError, setPatientAuthError] = useState("");
+  const [portalActiveTab, setPortalActiveTab] = useState("appointments"); // 'appointments' | 'bills' | 'medicines' | 'reports'
+  const [payingBill, setPayingBill] = useState(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("upi");
+  const [paymentSuccessMsg, setPaymentSuccessMsg] = useState("");
+  const [selectedReportDetail, setSelectedReportDetail] = useState(null);
 
   const [appointmentForm, setAppointmentForm] = useState({
     fullName: "",
@@ -714,6 +870,102 @@ export default function HospitalLanding({ initialTab = "home" }) {
     const generatedRef = `NIA-${deptPrefix}-${Math.floor(1000 + Math.random() * 9000)}`;
     setBookingRefId(generatedRef);
     setBookingSuccess(true);
+
+    // Synchronize booking with the active patient's records
+    const newAppointment = {
+      id: generatedRef,
+      doctorName: selectedDoctorForBooking?.name || appointmentForm.doctorName || "Senior Specialist",
+      department: appointmentForm.department || selectedSpecialty,
+      date: appointmentForm.preferredDate || new Date().toISOString().split("T")[0],
+      slot: selectedSlotForBooking || appointmentForm.preferredSlot || "10:00 AM",
+      room: selectedDoctorForBooking?.room || "Suite 101, Specialty Clinic OPD",
+      status: "Confirmed",
+      notes: appointmentForm.notes || "Consultation appointment confirmed"
+    };
+
+    setPatientRecords((prev) => {
+      const pId = authenticatedPatientId || "PAT-1001";
+      const existing = prev[pId] || { ...DEFAULT_PATIENT_RECORDS["PAT-1001"] };
+      return {
+        ...prev,
+        [pId]: {
+          ...existing,
+          name: appointmentForm.fullName || existing.name,
+          phone: appointmentForm.phoneNumber || existing.phone,
+          appointments: [newAppointment, ...(existing.appointments || [])]
+        }
+      };
+    });
+  };
+
+  const handlePatientLoginWithOtp = (e) => {
+    if (e) e.preventDefault();
+    if (!patientAuthPhone.trim()) {
+      setPatientAuthError("Please enter your registered mobile number.");
+      return;
+    }
+    if (patientAuthOtp !== "4829" && patientAuthOtp.trim() !== "1234") {
+      setPatientAuthError("Invalid OTP. For demo access, use OTP: 4829");
+      return;
+    }
+    const foundId = Object.keys(patientRecords).find(k => patientRecords[k].phone === patientAuthPhone.trim()) || "PAT-1001";
+    setAuthenticatedPatientId(foundId);
+    setIsPatientAuthenticated(true);
+    setPatientAuthError("");
+  };
+
+  const handlePatientLoginWithId = (e) => {
+    if (e) e.preventDefault();
+    const cleanId = (patientAuthIdInput || "").trim().toUpperCase();
+    if (!cleanId) {
+      setPatientAuthError("Please enter your Patient ID.");
+      return;
+    }
+    if (patientRecords[cleanId]) {
+      setAuthenticatedPatientId(cleanId);
+      setIsPatientAuthenticated(true);
+      setPatientAuthError("");
+    } else {
+      setPatientAuthError(`Patient record for '${cleanId}' not found. Try demo ID: PAT-1001`);
+    }
+  };
+
+  const handlePatientLogout = () => {
+    setIsPatientAuthenticated(false);
+    setPatientAuthOtp("");
+    setPatientAuthError("");
+  };
+
+  const handleConfirmPayBill = () => {
+    if (!payingBill) return;
+    const pId = authenticatedPatientId || "PAT-1001";
+    setPatientRecords((prev) => {
+      const patient = prev[pId];
+      if (!patient) return prev;
+      const updatedBills = (patient.bills || []).map((b) => {
+        if (b.id === payingBill.id) {
+          return {
+            ...b,
+            status: "Paid",
+            paymentMode: selectedPaymentMethod === "upi" ? "UPI / PhonePe" : selectedPaymentMethod === "card" ? "Debit / Credit Card" : selectedPaymentMethod === "netbanking" ? "Net Banking" : "Cash / Desk",
+            paidDate: new Date().toISOString().split("T")[0]
+          };
+        }
+        return b;
+      });
+      return {
+        ...prev,
+        [pId]: {
+          ...patient,
+          bills: updatedBills
+        }
+      };
+    });
+    setPaymentSuccessMsg(`Payment of ₹${payingBill.amount} completed successfully!`);
+    setTimeout(() => {
+      setPayingBill(null);
+      setPaymentSuccessMsg("");
+    }, 1500);
   };
 
   // Click on a specialty card: opens the detailed doctors view for that specialty
@@ -852,6 +1104,13 @@ export default function HospitalLanding({ initialTab = "home" }) {
     }, 500);
   };
 
+  const currentPatient = patientRecords[authenticatedPatientId] || patientRecords["PAT-1001"] || DEFAULT_PATIENT_RECORDS["PAT-1001"];
+  const patientBills = currentPatient?.bills || [];
+  const totalBilled = patientBills.reduce((acc, b) => acc + (Number(b.amount) || 0), 0);
+  const totalPaid = patientBills.filter(b => b.status === "Paid").reduce((acc, b) => acc + (Number(b.amount) || 0), 0);
+  const pendingDue = patientBills.filter(b => b.status === "Pending").reduce((acc, b) => acc + (Number(b.amount) || 0), 0);
+  const pendingCount = patientBills.filter(b => b.status === "Pending").length;
+
   return (
     <div className="exact-hospital-root">
       {/* =======================================================
@@ -986,26 +1245,15 @@ export default function HospitalLanding({ initialTab = "home" }) {
               {activeTab === "facilities" && <div className="green-indicator-bar"></div>}
             </div>
 
-            <div
-              className={`menu-item-wrap ${activeTab === "patient-visitors" ? "active-wrap" : ""}`}
-              onMouseEnter={() => setVisitorDropdown(true)}
-              onMouseLeave={() => setVisitorDropdown(false)}
-            >
+            <div className={`menu-item-wrap ${activeTab === "patient-visitors" ? "active-wrap" : ""}`}>
               <a
                 href="#patient-visitors"
                 className={`menu-link ${activeTab === "patient-visitors" ? "active" : ""}`}
                 onClick={handleNavPatientVisitors}
               >
-                Patient &amp; Visitors <span className="caret-icon">⌄</span>
+                Patient &amp; Visitors
               </a>
               {activeTab === "patient-visitors" && <div className="green-indicator-bar"></div>}
-              {visitorDropdown && (
-                <div className="popover-dropdown">
-                  <a href="#patient-visitors" onClick={(e) => { setVisitorDropdown(false); handleNavPatientVisitors(e); }}>Visitor Guidelines</a>
-                  <a href="#patient-visitors" onClick={(e) => { setVisitorDropdown(false); handleNavPatientVisitors(e); }}>Room Categories</a>
-                  <a href="#patient-visitors" onClick={(e) => { setVisitorDropdown(false); handleNavPatientVisitors(e); }}>Cashless Insurance</a>
-                </div>
-              )}
             </div>
 
             <div className={`menu-item-wrap ${activeTab === "doctors" ? "active-wrap" : ""}`}>
@@ -1031,8 +1279,19 @@ export default function HospitalLanding({ initialTab = "home" }) {
             </div>
           </nav>
 
-          {/* CTA BUTTON */}
-          <div className="header-cta-block">
+          {/* CTA BUTTONS */}
+          <div className="header-cta-block" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button
+              type="button"
+              className="btn-patient-portal-pill"
+              onClick={() => setPatientPortalOpen(true)}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Patient Portal
+            </button>
             <button
               type="button"
               className="btn-book-appointment-pill"
@@ -2684,6 +2943,23 @@ export default function HospitalLanding({ initialTab = "home" }) {
             </div>
           </div>
 
+          {/* Dedicated Patient Self-Service Portal Feature Banner */}
+          <div className="pv-portal-feature-banner">
+            <div className="pv-portal-banner-text">
+              <h2>Patient Self-Service Portal</h2>
+              <p>
+                Access your complete electronic health record, manage consultation appointments, review doctor prescriptions, view diagnostic lab reports, and securely pay hospital bills online.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="btn-open-portal-from-banner"
+              onClick={() => setPatientPortalOpen(true)}
+            >
+              Open Patient Portal →
+            </button>
+          </div>
+
           {/* Dual Reviews Section: Patients Reviews & Visitors Reviews */}
           <div className="pv-reviews-section-container">
             <div className="pv-reviews-two-col-grid">
@@ -2913,9 +3189,9 @@ export default function HospitalLanding({ initialTab = "home" }) {
                 <h4 className="footer-col-title">For Patients</h4>
                 <ul className="footer-links-list">
                   <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Patient Guide</a></li>
-                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Payment Options</a></li>
+                  <li><a href="#portal-bills" onClick={(e) => { e.preventDefault(); setPortalActiveTab("bills"); setPatientPortalOpen(true); }}>Payment Options &amp; Bills</a></li>
                   <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Insurance &amp; TPA</a></li>
-                  <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Medical Records</a></li>
+                  <li><a href="#portal-records" onClick={(e) => { e.preventDefault(); setPortalActiveTab("reports"); setPatientPortalOpen(true); }}>Medical Records &amp; Reports</a></li>
                   <li><a href="#patient-visitors" onClick={handleNavPatientVisitors}>Health Tips</a></li>
                 </ul>
               </div>
@@ -3543,6 +3819,538 @@ export default function HospitalLanding({ initialTab = "home" }) {
           </div>
         </div>
       )}
+
+      {/* =======================================================
+          PATIENT SELF-SERVICE PORTAL MODAL
+          ======================================================= */}
+      {patientPortalOpen && (
+        <div className="modal-backdrop-overlay" onClick={() => setPatientPortalOpen(false)}>
+          <div
+            className="modal-dialog-card patient-portal-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Top Bar */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span className="patient-auth-badge">🏥 Patient Self-Service Portal</span>
+              </div>
+              <button
+                type="button"
+                className="btn-close-modal"
+                onClick={() => setPatientPortalOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            {!isPatientAuthenticated ? (
+              /* ================= AUTHENTICATION GATE ================= */
+              <div className="patient-auth-container">
+                <div className="patient-auth-header">
+                  <h2 className="patient-auth-title">Welcome to Patient Portal</h2>
+                  <p className="patient-auth-sub">
+                    Access your medical records, appointments, bills, and prescriptions securely.
+                  </p>
+                </div>
+
+                <div className="patient-auth-tabs">
+                  <button
+                    type="button"
+                    className={`patient-auth-tab ${patientAuthTab === "otp" ? "active" : ""}`}
+                    onClick={() => { setPatientAuthTab("otp"); setPatientAuthError(""); }}
+                  >
+                    📱 Mobile &amp; OTP
+                  </button>
+                  <button
+                    type="button"
+                    className={`patient-auth-tab ${patientAuthTab === "patientId" ? "active" : ""}`}
+                    onClick={() => { setPatientAuthTab("patientId"); setPatientAuthError(""); }}
+                  >
+                    🆔 Patient ID
+                  </button>
+                </div>
+
+                {patientAuthError && (
+                  <div className="patient-auth-error">
+                    <span>⚠️</span> {patientAuthError}
+                  </div>
+                )}
+
+                {patientAuthTab === "otp" ? (
+                  <form onSubmit={handlePatientLoginWithOtp} className="patient-auth-form">
+                    <div className="otp-simulation-banner">
+                      <div>
+                        <strong>Demo Verification OTP:</strong>
+                        <div style={{ fontSize: "11.5px", color: "#475569" }}>Click code to auto-populate</div>
+                      </div>
+                      <button
+                        type="button"
+                        className="otp-copy-code"
+                        style={{ cursor: "pointer", border: "none" }}
+                        onClick={() => setPatientAuthOtp("4829")}
+                      >
+                        4829
+                      </button>
+                    </div>
+
+                    <div className="modal-form-group" style={{ marginBottom: "14px" }}>
+                      <label>Registered Mobile Number</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="e.g. 9876543210"
+                        value={patientAuthPhone}
+                        onChange={(e) => setPatientAuthPhone(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="auth-helper-pill"
+                        onClick={() => { setPatientAuthPhone("9876543210"); setPatientAuthOtp("4829"); }}
+                      >
+                        Quick Fill: 9876543210 (Demo Patient)
+                      </button>
+                    </div>
+
+                    <div className="modal-form-group" style={{ marginBottom: "18px" }}>
+                      <label>4-Digit Security OTP</label>
+                      <input
+                        type="text"
+                        required
+                        maxLength={6}
+                        placeholder="Enter 4-digit OTP (demo: 4829)"
+                        value={patientAuthOtp}
+                        onChange={(e) => setPatientAuthOtp(e.target.value)}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="btn-confirm-pay-now"
+                      style={{ marginTop: 0 }}
+                    >
+                      Verify OTP &amp; Access Health Records
+                    </button>
+                  </form>
+                ) : (
+                  <form onSubmit={handlePatientLoginWithId} className="patient-auth-form">
+                    <div className="modal-form-group" style={{ marginBottom: "14px" }}>
+                      <label>Hospital Patient ID</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. PAT-1001"
+                        value={patientAuthIdInput}
+                        onChange={(e) => setPatientAuthIdInput(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="auth-helper-pill"
+                        onClick={() => setPatientAuthIdInput("PAT-1001")}
+                      >
+                        Quick Fill: PAT-1001 (Ramesh Kumar)
+                      </button>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="btn-confirm-pay-now"
+                      style={{ marginTop: "12px" }}
+                    >
+                      Sign In With Patient ID
+                    </button>
+                  </form>
+                )}
+              </div>
+            ) : (
+              /* ================= AUTHENTICATED PORTAL HUB ================= */
+              <div className="patient-portal-content">
+                {/* Header Bar */}
+                <div className="patient-portal-header">
+                  <div className="patient-profile-info">
+                    <div className="patient-avatar-circle">
+                      {currentPatient.name ? currentPatient.name.split(" ").map(n => n[0]).slice(0, 2).join("") : "PT"}
+                    </div>
+                    <div className="patient-text-details">
+                      <h3>{currentPatient.name}</h3>
+                      <div className="patient-meta-badges">
+                        <span className="patient-id-badge">{currentPatient.userId}</span>
+                        <span className="patient-phone-tag">📞 {currentPatient.phone}</span>
+                        <span className="patient-phone-tag">🩸 {currentPatient.bloodGroup}</span>
+                        <span className="patient-phone-tag">🎂 {currentPatient.age} Yrs / {currentPatient.gender}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-switch-patient"
+                    onClick={handlePatientLogout}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+
+                {/* Navigation Tabs */}
+                <div className="patient-hub-tabs-row">
+                  <button
+                    type="button"
+                    className={`patient-hub-tab-btn ${portalActiveTab === "appointments" ? "active" : ""}`}
+                    onClick={() => setPortalActiveTab("appointments")}
+                  >
+                    📅 Appointments
+                    <span className="tab-count-pill">{currentPatient.appointments?.length || 0}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`patient-hub-tab-btn ${portalActiveTab === "bills" ? "active" : ""}`}
+                    onClick={() => setPortalActiveTab("bills")}
+                  >
+                    💳 Bills &amp; Payments
+                    {pendingCount > 0 ? (
+                      <span className="tab-count-pill alert">{pendingCount} Due</span>
+                    ) : (
+                      <span className="tab-count-pill">{currentPatient.bills?.length || 0}</span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className={`patient-hub-tab-btn ${portalActiveTab === "medicines" ? "active" : ""}`}
+                    onClick={() => setPortalActiveTab("medicines")}
+                  >
+                    💊 Prescriptions
+                    <span className="tab-count-pill">{currentPatient.medicines?.length || 0}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`patient-hub-tab-btn ${portalActiveTab === "reports" ? "active" : ""}`}
+                    onClick={() => setPortalActiveTab("reports")}
+                  >
+                    🔬 Lab Reports
+                    <span className="tab-count-pill">{currentPatient.reports?.length || 0}</span>
+                  </button>
+                </div>
+
+                {/* TAB 1: APPOINTMENTS */}
+                {portalActiveTab === "appointments" && (
+                  <div className="patient-appointments-list">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                      <span style={{ fontSize: "13px", fontWeight: 700, color: "#334155" }}>
+                        Your Consultations &amp; Schedules
+                      </span>
+                      <button
+                        type="button"
+                        style={{
+                          background: "#047857",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "6px",
+                          padding: "5px 12px",
+                          fontSize: "12px",
+                          fontWeight: 700,
+                          cursor: "pointer"
+                        }}
+                        onClick={() => {
+                          setPatientPortalOpen(false);
+                          setBookingModalOpen(true);
+                        }}
+                      >
+                        + Book New Appointment
+                      </button>
+                    </div>
+
+                    {(!currentPatient.appointments || currentPatient.appointments.length === 0) ? (
+                      <p style={{ textAlign: "center", padding: "20px", color: "#64748b" }}>No scheduled appointments.</p>
+                    ) : (
+                      currentPatient.appointments.map((apt, idx) => (
+                        <div key={apt.id || idx} className="patient-apt-card">
+                          <div className="patient-apt-left">
+                            <strong className="patient-apt-doctor">{apt.doctorName}</strong>
+                            <span className="patient-apt-dept">{apt.department}</span>
+                            <div className="patient-apt-meta">
+                              <span>📅 {apt.date}</span>
+                              <span>🕒 {apt.slot}</span>
+                              <span>📍 {apt.room}</span>
+                            </div>
+                            {apt.notes && (
+                              <div style={{ fontSize: "11.5px", color: "#64748b", marginTop: "4px" }}>
+                                Notes: {apt.notes}
+                              </div>
+                            )}
+                            <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
+                              Ref: <strong>{apt.id}</strong>
+                            </div>
+                          </div>
+                          <span className={`patient-apt-status ${apt.status?.toLowerCase() === "confirmed" ? "confirmed" : "completed"}`}>
+                            {apt.status}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 2: BILLS & PAYMENTS */}
+                {portalActiveTab === "bills" && (
+                  <div>
+                    <div className="bills-summary-row">
+                      <div className="bill-summary-card">
+                        <span>Total Invoiced</span>
+                        <strong>₹{totalBilled.toLocaleString("en-IN")}</strong>
+                      </div>
+                      <div className="bill-summary-card">
+                        <span>Total Paid</span>
+                        <strong style={{ color: "#047857" }}>₹{totalPaid.toLocaleString("en-IN")}</strong>
+                      </div>
+                      <div className="bill-summary-card due">
+                        <span>Pending Due</span>
+                        <strong>₹{pendingDue.toLocaleString("en-IN")}</strong>
+                      </div>
+                    </div>
+
+                    <div className="bills-table-container">
+                      <table className="patient-bills-table">
+                        <thead>
+                          <tr>
+                            <th>Invoice ID</th>
+                            <th>Description</th>
+                            <th>Dept</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {currentPatient.bills?.map((bill) => (
+                            <tr key={bill.id}>
+                              <td><strong>{bill.id}</strong></td>
+                              <td>{bill.description}</td>
+                              <td>{bill.department}</td>
+                              <td>{bill.date}</td>
+                              <td><strong>₹{bill.amount}</strong></td>
+                              <td>
+                                <span
+                                  className={`patient-apt-status ${bill.status === "Paid" ? "confirmed" : "due"}`}
+                                  style={bill.status === "Pending" ? { background: "#fef3c7", color: "#b45309" } : {}}
+                                >
+                                  {bill.status}
+                                </span>
+                              </td>
+                              <td>
+                                {bill.status === "Pending" ? (
+                                  <button
+                                    type="button"
+                                    className="btn-pay-bill-action"
+                                    onClick={() => setPayingBill(bill)}
+                                  >
+                                    Pay Now
+                                  </button>
+                                ) : (
+                                  <span style={{ fontSize: "11.5px", color: "#047857", fontWeight: 700 }}>
+                                    ✓ Paid ({bill.paymentMode || "Online"})
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 3: MEDICINES */}
+                {portalActiveTab === "medicines" && (
+                  <div className="patient-meds-grid">
+                    {currentPatient.medicines?.map((med) => (
+                      <div key={med.id} className="patient-med-card">
+                        <div className="med-info-left">
+                          <strong>{med.name}</strong>
+                          <div className="med-tags-row">
+                            <span className="med-tag">{med.type}</span>
+                            <span className="med-tag dosage">💊 {med.dosage}</span>
+                            <span className="med-tag timing">⏰ {med.instruction}</span>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: "right", fontSize: "12px", color: "#64748b" }}>
+                          <div>Duration: <strong>{med.duration}</strong></div>
+                          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
+                            Prescribed by {med.doctor}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* TAB 4: LAB REPORTS */}
+                {portalActiveTab === "reports" && (
+                  <div className="patient-reports-list">
+                    {currentPatient.reports?.map((rep) => (
+                      <div key={rep.id} className="patient-report-card">
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <span className="report-header-title">{rep.testName}</span>
+                            <span className="patient-apt-status confirmed">Normal</span>
+                          </div>
+                          <div className="report-summary-text">{rep.resultSummary}</div>
+                          <div style={{ fontSize: "11.5px", color: "#64748b", marginTop: "4px" }}>
+                            📅 {rep.date} &nbsp;•&nbsp; 🏛️ {rep.department} &nbsp;•&nbsp; 👨‍⚕️ {rep.doctor}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className="btn-view-report"
+                          onClick={() => setSelectedReportDetail(rep)}
+                        >
+                          📊 View Report
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* =======================================================
+          PAYMENT SIMULATION MODAL OVERLAY
+          ======================================================= */}
+      {payingBill && (
+        <div className="payment-modal-overlay" onClick={() => setPayingBill(null)}>
+          <div className="payment-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 800, color: "#0f172a" }}>
+                Hospital Bill Payment
+              </h3>
+              <button
+                type="button"
+                style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#64748b" }}
+                onClick={() => setPayingBill(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ background: "#f8fafc", padding: "12px 16px", borderRadius: "10px", marginBottom: "16px" }}>
+              <div style={{ fontSize: "12px", color: "#64748b" }}>Invoice Reference</div>
+              <strong style={{ fontSize: "14px", color: "#0f172a" }}>{payingBill.id} - {payingBill.description}</strong>
+              <div style={{ fontSize: "22px", fontWeight: 800, color: "#047857", marginTop: "6px" }}>
+                ₹{payingBill.amount}
+              </div>
+            </div>
+
+            <label style={{ fontSize: "13px", fontWeight: 700, color: "#334155" }}>
+              Select Payment Method:
+            </label>
+            <div className="payment-methods-grid">
+              <button
+                type="button"
+                className={`payment-method-btn ${selectedPaymentMethod === "upi" ? "active" : ""}`}
+                onClick={() => setSelectedPaymentMethod("upi")}
+              >
+                ⚡ UPI / PhonePe / GPay
+              </button>
+              <button
+                type="button"
+                className={`payment-method-btn ${selectedPaymentMethod === "card" ? "active" : ""}`}
+                onClick={() => setSelectedPaymentMethod("card")}
+              >
+                💳 Credit / Debit Card
+              </button>
+              <button
+                type="button"
+                className={`payment-method-btn ${selectedPaymentMethod === "netbanking" ? "active" : ""}`}
+                onClick={() => setSelectedPaymentMethod("netbanking")}
+              >
+                🏦 Net Banking
+              </button>
+              <button
+                type="button"
+                className={`payment-method-btn ${selectedPaymentMethod === "cash" ? "active" : ""}`}
+                onClick={() => setSelectedPaymentMethod("cash")}
+              >
+                🏥 Pay at Cash Counter
+              </button>
+            </div>
+
+            {paymentSuccessMsg ? (
+              <div style={{ textAlign: "center", color: "#047857", fontWeight: 700, padding: "10px" }}>
+                ✓ {paymentSuccessMsg}
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn-confirm-pay-now"
+                onClick={handleConfirmPayBill}
+              >
+                Pay ₹{payingBill.amount} Now
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* =======================================================
+          LAB REPORT PARAMETERS BREAKDOWN MODAL
+          ======================================================= */}
+      {selectedReportDetail && (
+        <div className="report-modal-overlay" onClick={() => setSelectedReportDetail(null)}>
+          <div className="report-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="report-modal-header">
+              <div>
+                <h3>{selectedReportDetail.testName}</h3>
+                <span style={{ fontSize: "12px", color: "#64748b" }}>
+                  ID: {selectedReportDetail.id} | Date: {selectedReportDetail.date}
+                </span>
+              </div>
+              <button
+                type="button"
+                style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#64748b" }}
+                onClick={() => setSelectedReportDetail(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p style={{ fontSize: "13px", color: "#334155", background: "#f0fdf4", padding: "10px 14px", borderRadius: "8px", border: "1px solid #bbf7d0" }}>
+              <strong>Clinical Impression:</strong> {selectedReportDetail.resultSummary}
+            </p>
+
+            <table className="report-params-table">
+              <thead>
+                <tr>
+                  <th>Test Parameter</th>
+                  <th>Observed Value</th>
+                  <th>Normal Reference Range</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedReportDetail.parameters?.map((p, idx) => (
+                  <tr key={idx}>
+                    <td><strong>{p.name}</strong></td>
+                    <td style={{ color: "#047857", fontWeight: 700 }}>{p.value}</td>
+                    <td style={{ color: "#64748b" }}>{p.normal}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div style={{ marginTop: "16px", textAlign: "right" }}>
+              <button
+                type="button"
+                className="btn-modal-cancel"
+                style={{ display: "inline-block", padding: "8px 18px", fontSize: "13px" }}
+                onClick={() => setSelectedReportDetail(null)}
+              >
+                Close Report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

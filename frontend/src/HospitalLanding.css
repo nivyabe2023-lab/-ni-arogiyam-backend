@@ -262,6 +262,28 @@
   transform: translateY(-1px);
 }
 
+.btn-patient-portal-pill {
+  background-color: #ffffff;
+  color: #064e3b;
+  border: 1.5px solid #064e3b;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.btn-patient-portal-pill:hover {
+  background-color: #ecfdf5;
+  color: #047857;
+  border-color: #047857;
+  transform: translateY(-1px);
+}
+
 /* ============================================================
    3. HERO SECTION (PHOTO AS CRISP CLEAR BACKGROUND)
    ============================================================ */
@@ -4033,6 +4055,700 @@
     justify-content: flex-start;
   }
 }
+
+/* ============================================================
+   PATIENT SELF-SERVICE PORTAL & VERIFICATION (BOOK APPOINTMENT)
+   ============================================================ */
+.modal-dialog-card.patient-portal-modal {
+  max-width: 760px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px 28px;
+  border-radius: 20px;
+  background: #ffffff;
+}
+
+/* AUTHENTICATION GATE */
+.patient-auth-container {
+  padding: 8px 0;
+}
+
+.patient-auth-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.patient-auth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.patient-auth-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px;
+}
+
+.patient-auth-sub {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+.patient-auth-tabs {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.patient-auth-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.patient-auth-tab.active {
+  background: #ffffff;
+  color: #047857;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.otp-simulation-banner {
+  background: #eff6ff;
+  border: 1.5px dashed #60a5fa;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  color: #1e40af;
+}
+
+.otp-copy-code {
+  background: #1d4ed8;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+.auth-helper-pill {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 6px;
+  transition: background 0.15s;
+}
+
+.auth-helper-pill:hover {
+  background: #e2e8f0;
+}
+
+.patient-auth-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* PATIENT PORTAL HEADER (LOGGED IN) */
+.patient-portal-header {
+  background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+  border-radius: 14px;
+  padding: 16px 20px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.patient-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.patient-avatar-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.patient-text-details h3 {
+  font-size: 16px;
+  font-weight: 800;
+  margin: 0 0 3px;
+  color: #ffffff;
+}
+
+.patient-meta-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.patient-id-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.patient-phone-tag {
+  font-size: 12px;
+  color: #a7f3d0;
+}
+
+.btn-switch-patient {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-switch-patient:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* PORTAL NAV TABS */
+.patient-hub-tabs-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 6px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.patient-hub-tab-btn {
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s ease;
+}
+
+.patient-hub-tab-btn:hover {
+  color: #047857;
+}
+
+.patient-hub-tab-btn.active {
+  color: #047857;
+  border-bottom-color: #047857;
+}
+
+.tab-count-pill {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.tab-count-pill.alert {
+  background: #fef2f2;
+  color: #dc2626;
+  font-weight: 800;
+}
+
+/* APPOINTMENTS TAB */
+.patient-appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.patient-apt-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.patient-apt-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.patient-apt-doctor {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.patient-apt-dept {
+  font-size: 12.5px;
+  color: #047857;
+  font-weight: 600;
+}
+
+.patient-apt-meta {
+  font-size: 12px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.patient-apt-status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.patient-apt-status.confirmed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.patient-apt-status.completed {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* BILLS TAB */
+.bills-summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.bill-summary-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  text-align: center;
+}
+
+.bill-summary-card.due {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.bill-summary-card span {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.bill-summary-card strong {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 2px;
+}
+
+.bill-summary-card.due strong {
+  color: #b45309;
+}
+
+.bills-table-container {
+  overflow-x: auto;
+}
+
+.patient-bills-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.patient-bills-table th {
+  background: #f1f5f9;
+  color: #475569;
+  text-align: left;
+  padding: 10px 12px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.patient-bills-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.btn-pay-bill-action {
+  background: #047857;
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-pay-bill-action:hover {
+  background: #065f46;
+}
+
+/* MEDICINES TAB */
+.patient-meds-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.patient-med-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.med-info-left strong {
+  display: block;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.med-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.med-tag {
+  background: #f1f5f9;
+  color: #334155;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.med-tag.dosage {
+  background: #ecfdf5;
+  color: #047857;
+  font-weight: 700;
+}
+
+.med-tag.timing {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+/* LAB REPORTS TAB */
+.patient-reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.patient-report-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.report-header-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.report-summary-text {
+  font-size: 12.5px;
+  color: #475569;
+  margin-top: 3px;
+}
+
+.btn-view-report {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.btn-view-report:hover {
+  background: #e2e8f0;
+}
+
+/* PAYMENT SIMULATION MODAL */
+.payment-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.payment-modal-box {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.payment-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.payment-method-btn {
+  padding: 12px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  transition: all 0.15s;
+}
+
+.payment-method-btn.active {
+  border-color: #047857;
+  background: #f0fdf4;
+  color: #047857;
+}
+
+.btn-confirm-pay-now {
+  width: 100%;
+  padding: 12px;
+  background: #047857;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 14px;
+}
+
+.btn-confirm-pay-now:hover {
+  background: #065f46;
+}
+
+/* LAB REPORT PARAMETERS MODAL */
+.report-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.report-modal-box {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 580px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.report-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 12px;
+}
+
+.report-modal-header h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.report-params-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: 13px;
+}
+
+.report-params-table th {
+  background: #f8fafc;
+  color: #475569;
+  text-align: left;
+  padding: 8px 12px;
+  font-weight: 700;
+}
+
+.report-params-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* PV PAGE DEDICATED PORTAL BANNER */
+.pv-portal-feature-banner {
+  background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+  border-radius: 16px;
+  padding: 28px 32px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 40px auto 20px;
+  max-width: 1200px;
+  width: 92%;
+  box-shadow: 0 10px 25px rgba(6, 78, 59, 0.15);
+}
+
+.pv-portal-banner-text h2 {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: #ffffff;
+}
+
+.pv-portal-banner-text p {
+  font-size: 14px;
+  color: #d1fae5;
+  margin: 0;
+  max-width: 650px;
+  line-height: 1.5;
+}
+
+.btn-open-portal-from-banner {
+  background: #ffffff;
+  color: #064e3b;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-open-portal-from-banner:hover {
+  background: #f0fdf4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .pv-portal-feature-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+}
+
 
 
 
