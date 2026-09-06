@@ -32,8 +32,13 @@ function Settings() {
     prescriptions: [],
     beds: [],
     laboratory: [],
-    appointments: []
+    appointments: [],
+    messages: []
   });
+
+  const [replyTarget, setReplyTarget] = useState(null);
+  const [replyText, setReplyText] = useState("");
+  const [isReplying, setIsReplying] = useState(false);
 
   const checkBackendData = async () => {
     setCheckingBackend(true);
@@ -48,7 +53,8 @@ function Settings() {
         { key: "prescriptions", path: "prescriptions" },
         { key: "beds", path: "beds" },
         { key: "laboratory", path: "laboratory" },
-        { key: "appointments", path: "appointments" }
+        { key: "appointments", path: "appointments" },
+        { key: "messages", path: "contact-messages" }
       ];
 
       const results = await Promise.allSettled(
@@ -109,6 +115,24 @@ function Settings() {
             }
           } catch (e) {}
         }
+
+        if (ep.key === "messages") {
+          try {
+            const storedMsgs = JSON.parse(localStorage.getItem("hospital_contact_messages") || "[]");
+            const currentList = Array.isArray(updated.messages) ? [...updated.messages] : [];
+            storedMsgs.forEach((sm) => {
+              const exists = currentList.some(
+                (m) => String(m.id) === String(sm.id) || String(m.messageId) === String(sm.messageId)
+              );
+              if (!exists) {
+                currentList.push(sm);
+              }
+            });
+            currentList.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+            updated.messages = currentList;
+            if (currentList.length > 0) anySuccess = true;
+          } catch (e) {}
+        }
       });
 
       setTableData(updated);
@@ -121,6 +145,75 @@ function Settings() {
     }
   };
 
+  const handleDeleteMessage = async (id) => {
+    if (!window.confirm("Are you sure you want to permanently delete this contact inquiry from the database?")) {
+      return;
+    }
+    const updated = (tableData.messages || []).filter(
+      (m) => String(m.id) !== String(id) && String(m.messageId) !== String(id)
+    );
+    setTableData((prev) => ({ ...prev, messages: updated }));
+    localStorage.setItem("hospital_contact_messages", JSON.stringify(updated));
+
+    try {
+      await fetch(`${API_BASE_URL}/api/contact-messages/${id}`, { method: "DELETE" });
+    } catch (err) {
+      console.warn("Delete message API error:", err);
+    }
+
+    window.dispatchEvent(new CustomEvent("hospital_messages_updated", { detail: { type: "MESSAGE_DELETED", id } }));
+    if (typeof BroadcastChannel !== "undefined") {
+      const bc = new BroadcastChannel("hospital_messages_channel");
+      bc.postMessage({ type: "MESSAGE_DELETED", id });
+      bc.close();
+    }
+  };
+
+  const handleSaveReplySubmit = async (e) => {
+    e.preventDefault();
+    if (!replyTarget || !replyText.trim()) return;
+    setIsReplying(true);
+    const adminUser = localStorage.getItem("loggedInUser") || "Administrator";
+    const nowIso = new Date().toISOString();
+    const targetId = replyTarget.id || replyTarget.messageId;
+
+    const updated = (tableData.messages || []).map((m) => {
+      if (String(m.id) === String(targetId) || String(m.messageId) === String(targetId)) {
+        return {
+          ...m,
+          reply: replyText.trim(),
+          status: "REPLIED",
+          repliedAt: nowIso,
+          repliedBy: adminUser,
+        };
+      }
+      return m;
+    });
+
+    setTableData((prev) => ({ ...prev, messages: updated }));
+    localStorage.setItem("hospital_contact_messages", JSON.stringify(updated));
+
+    try {
+      await fetch(`${API_BASE_URL}/api/contact-messages/${targetId}/reply`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reply: replyText.trim(), repliedBy: adminUser }),
+      });
+    } catch (err) {
+      console.warn("Reply message API error:", err);
+    }
+
+    window.dispatchEvent(new CustomEvent("hospital_messages_updated", { detail: { type: "MESSAGE_REPLIED", id: targetId } }));
+    if (typeof BroadcastChannel !== "undefined") {
+      const bc = new BroadcastChannel("hospital_messages_channel");
+      bc.postMessage({ type: "MESSAGE_REPLIED", id: targetId });
+      bc.close();
+    }
+    setIsReplying(false);
+    setReplyTarget(null);
+    setReplyText("");
+  };
+
   useEffect(() => {
     checkBackendData();
 
@@ -128,10 +221,20 @@ function Settings() {
       checkBackendData();
     };
     window.addEventListener("hospital_appointments_updated", handleUpdate);
+    window.addEventListener("hospital_messages_updated", handleUpdate);
     window.addEventListener("storage", handleUpdate);
+    let bc = null;
+    if (typeof BroadcastChannel !== "undefined") {
+      bc = new BroadcastChannel("hospital_messages_channel");
+      bc.onmessage = () => {
+        checkBackendData();
+      };
+    }
     return () => {
       window.removeEventListener("hospital_appointments_updated", handleUpdate);
+      window.removeEventListener("hospital_messages_updated", handleUpdate);
       window.removeEventListener("storage", handleUpdate);
+      if (bc) bc.close();
     };
   }, []);
 
@@ -305,6 +408,14 @@ function Settings() {
               onClick={() => setActiveTableTab("laboratory")}
             >
               🧪 Lab Tests ({tableData.laboratory?.length || 0})
+            </button>
+
+            <button
+              type="button"
+              className={`db-tab ${activeTableTab === "messages" ? "active" : ""}`}
+              onClick={() => setActiveTableTab("messages")}
+            >
+              📬 Contact Messages ({tableData.messages?.length || 0})
             </button>
           </div>
 
@@ -772,8 +883,162 @@ function Settings() {
                 </div>
               </div>
             )}
+
+            {activeTableTab === "messages" && (
+              <div>
+                <div className="db-viewer-info">
+                  <h4>
+                    Database Table: <code>contact_messages</code> (REST Endpoint: <code>/api/contact-messages</code>)
+                  </h4>
+                  <p>Inspect incoming public hospital contact inquiries with real-time Reply &amp; Delete actions:</p>
+                </div>
+
+                {tableData.messages.length === 0 ? (
+                  <div className="db-no-data">No contact message records found in the database yet.</div>
+                ) : (
+                  <div className="db-raw-table-wrapper">
+                    <table className="db-raw-table">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Patient / Sender</th>
+                          <th>Contact Details</th>
+                          <th>Inquiry Message</th>
+                          <th>Received Date</th>
+                          <th>Status</th>
+                          <th>Official Reply</th>
+                          <th style={{ textAlign: "center" }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tableData.messages.map((m) => {
+                          const isReplied = m.status === "REPLIED";
+                          return (
+                            <tr key={m.id || m.messageId}>
+                              <td>#{m.id || m.messageId}</td>
+                              <td>
+                                <strong>{m.name || "Anonymous"}</strong>
+                              </td>
+                              <td>
+                                <div style={{ fontSize: "12px", color: "#334155" }}>
+                                  {m.phone && <div>📞 {m.phone}</div>}
+                                  {m.email && <div>✉️ {m.email}</div>}
+                                </div>
+                              </td>
+                              <td style={{ maxWidth: "260px" }}>
+                                <div style={{ fontSize: "12.5px", color: "#1e293b", lineHeight: "1.4" }}>
+                                  "{m.message}"
+                                </div>
+                              </td>
+                              <td style={{ whiteSpace: "nowrap", fontSize: "12px", color: "#64748b" }}>
+                                {m.createdAt
+                                  ? new Date(m.createdAt).toLocaleString([], {
+                                      month: "short",
+                                      day: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })
+                                  : "Recent"}
+                              </td>
+                              <td>
+                                <span className={`db-badge ${isReplied ? "paid" : "pending"}`}>
+                                  {isReplied ? "✓ REPLIED" : "⏳ NEW"}
+                                </span>
+                              </td>
+                              <td style={{ maxWidth: "240px" }}>
+                                {m.reply ? (
+                                  <div
+                                    style={{
+                                      fontSize: "12px",
+                                      background: "#ecfdf5",
+                                      border: "1px solid #a7f3d0",
+                                      padding: "6px 8px",
+                                      borderRadius: "6px",
+                                      color: "#065f46",
+                                    }}
+                                  >
+                                    <strong>{m.repliedBy || "Admin"}:</strong> {m.reply}
+                                  </div>
+                                ) : (
+                                  <span style={{ color: "#94a3b8", fontSize: "12px" }}>No reply yet</span>
+                                )}
+                              </td>
+                              <td style={{ whiteSpace: "nowrap", textAlign: "center" }}>
+                                <div style={{ display: "flex", gap: "6px", justifyContent: "center" }}>
+                                  <button
+                                    type="button"
+                                    className="btn-db-action reply"
+                                    onClick={() => {
+                                      setReplyTarget(m);
+                                      setReplyText(m.reply || "");
+                                    }}
+                                    title="Reply to message"
+                                  >
+                                    💬 Reply
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn-db-action delete"
+                                    onClick={() => handleDeleteMessage(m.id || m.messageId)}
+                                    title="Delete message permanently"
+                                  >
+                                    🗑️ Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
+
+        {/* REPLY MODAL IN SETTINGS */}
+        {replyTarget && (
+          <div className="settings-reply-modal-overlay" onClick={() => setReplyTarget(null)}>
+            <div className="settings-reply-modal-card" onClick={(e) => e.stopPropagation()}>
+              <div className="settings-reply-modal-header">
+                <h3>💬 Reply to {replyTarget.name}</h3>
+                <button type="button" className="settings-reply-close" onClick={() => setReplyTarget(null)}>
+                  ✕
+                </button>
+              </div>
+              <form onSubmit={handleSaveReplySubmit}>
+                <div className="settings-reply-modal-body">
+                  <div>
+                    <strong>Recipient:</strong> {replyTarget.name}{" "}
+                    {replyTarget.phone ? `(${replyTarget.phone})` : ""}{" "}
+                    {replyTarget.email ? `• ${replyTarget.email}` : ""}
+                  </div>
+                  <div className="settings-reply-quote">"{replyTarget.message}"</div>
+                  <div className="settings-reply-textarea-wrap">
+                    <label>Official Hospital Reply *</label>
+                    <textarea
+                      rows="4"
+                      required
+                      placeholder="Type your response to the patient inquiry here..."
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="settings-reply-modal-footer">
+                  <button type="button" className="btn-settings-cancel-reply" onClick={() => setReplyTarget(null)}>
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={isReplying} className="btn-settings-submit-reply">
+                    {isReplying ? "Saving..." : "✓ Send & Save Reply"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </section>
       )}
 
