@@ -85,11 +85,20 @@ public class Doctor {
         this.availability = availability;
     }
 
-    @Transient
     public String getDoctorName() {
-        String fn = firstName != null ? firstName : "";
-        String ln = lastName != null ? lastName : "";
-        String name = (fn + " " + ln).trim();
-        return name.isEmpty() ? "Dr. Specialist" : (name.startsWith("Dr.") ? name : "Dr. " + name);
+        String f = firstName != null ? firstName.trim() : "";
+        String l = lastName != null ? lastName.trim() : "";
+        String full = (f + " " + l).trim();
+        if (full.isEmpty()) {
+            return "Dr. Specialist";
+        }
+        if (full.toLowerCase().startsWith("dr.") || full.toLowerCase().startsWith("dr ")) {
+            return full;
+        }
+        return "Dr. " + full;
+    }
+
+    public String getName() {
+        return getDoctorName();
     }
 }

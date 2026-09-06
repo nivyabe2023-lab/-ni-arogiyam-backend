@@ -76,21 +76,31 @@ public class Appointment {
         this.status = status;
     }
 
-    @Transient
     public String getDoctorName() {
         if (doctor != null) {
-            return doctor.getDoctorName();
+            String f = doctor.getFirstName() != null ? doctor.getFirstName().trim() : "";
+            String l = doctor.getLastName() != null ? doctor.getLastName().trim() : "";
+            String full = (f + " " + l).trim();
+            if (full.isEmpty()) {
+                return "Dr. Specialist";
+            }
+            if (full.toLowerCase().startsWith("dr.") || full.toLowerCase().startsWith("dr ")) {
+                return full;
+            }
+            return "Dr. " + full;
         }
         return "Dr. Specialist";
     }
 
-    @Transient
     public String getPatientName() {
         if (patient != null) {
-            String fn = patient.getFirstName() != null ? patient.getFirstName() : "";
-            String ln = patient.getLastName() != null ? patient.getLastName() : "";
-            return (fn + " " + ln).trim();
+            String f = patient.getFirstName() != null ? patient.getFirstName().trim() : "";
+            String l = patient.getLastName() != null ? patient.getLastName().trim() : "";
+            String full = (f + " " + l).trim();
+            if (!full.isEmpty()) {
+                return full;
+            }
         }
-        return "Patient";
+        return "Registered Patient";
     }
 }

@@ -73,25 +73,38 @@ public class AppointmentService {
         if (patientId != null) {
             patientRepository.findById(patientId).ifPresent(appointment::setPatient);
         }
-        if (appointment.getPatient() == null && map.containsKey("patientName") && map.get("patientName") != null) {
-            String pName = map.get("patientName").toString().trim();
-            if (!pName.isEmpty()) {
+        if (appointment.getPatient() == null) {
+            String pName = null;
+            if (map.containsKey("patientName") && map.get("patientName") != null) {
+                pName = map.get("patientName").toString().trim();
+            } else if (map.containsKey("fullName") && map.get("fullName") != null) {
+                pName = map.get("fullName").toString().trim();
+            }
+            if (pName != null && !pName.isEmpty()) {
+                final String searchName = pName.toLowerCase();
                 patientRepository.findAll().stream()
-                        .filter(p -> pName.equalsIgnoreCase(p.getFirstName()) || 
-                                     pName.equalsIgnoreCase(p.getFirstName() + " " + p.getLastName()) ||
-                                     pName.toLowerCase().contains(p.getFirstName().toLowerCase()))
+                        .filter(p -> (p.getFirstName() + " " + p.getLastName()).toLowerCase().contains(searchName)
+                                || searchName.contains((p.getFirstName() != null ? p.getFirstName() : "").toLowerCase()))
                         .findFirst()
                         .ifPresent(appointment::setPatient);
 
                 if (appointment.getPatient() == null) {
-                    String[] parts = pName.split("\\s+", 2);
                     Patient newP = new Patient();
+                    String[] parts = pName.split("\\s+");
                     newP.setFirstName(parts[0]);
                     newP.setLastName(parts.length > 1 ? parts[1] : "");
-                    newP.setPhoneNumber(map.containsKey("phoneNumber") ? map.get("phoneNumber").toString() : "9840001122");
+                    newP.setPhoneNumber(map.containsKey("phoneNumber") ? map.get("phoneNumber").toString() : "9876543210");
+                    newP.setAge(40);
+                    newP.setGender("Other");
                     newP.setBloodGroup("O+");
+                    newP.setDisease(map.containsKey("reason") ? map.get("reason").toString() : "Consultation");
+                    newP.setAddress("Bangalore, Karnataka");
+                    if (map.containsKey("aadharNumber")) {
+                        newP.setAadharNumber(map.get("aadharNumber").toString());
+                    }
                     try {
-                        appointment.setPatient(patientRepository.save(newP));
+                        patientRepository.save(newP);
+                        appointment.setPatient(newP);
                     } catch (Exception ignored) {}
                 }
             }
@@ -117,21 +130,17 @@ public class AppointmentService {
             doctorRepository.findById(doctorId).ifPresent(appointment::setDoctor);
         }
         if (appointment.getDoctor() == null && map.containsKey("doctorName") && map.get("doctorName") != null) {
-            String dName = map.get("doctorName").toString().trim().replace("Dr.", "").replace("Dr", "").trim();
-            if (!dName.isEmpty()) {
-                doctorRepository.findAll().stream()
-                        .filter(d -> dName.equalsIgnoreCase(d.getFirstName()) ||
-                                     dName.equalsIgnoreCase(d.getFirstName() + " " + d.getLastName()) ||
-                                     d.getFirstName().toLowerCase().contains(dName.toLowerCase()) ||
-                                     dName.toLowerCase().contains(d.getFirstName().toLowerCase()))
-                        .findFirst()
-                        .ifPresent(appointment::setDoctor);
-            }
+            String cleanDoc = map.get("doctorName").toString().replace("Dr.", "").replace("Dr ", "").trim().toLowerCase();
+            doctorRepository.findAll().stream()
+                    .filter(d -> (cleanDoc.contains((d.getFirstName() != null ? d.getFirstName() : "").toLowerCase())
+                            || cleanDoc.contains((d.getLastName() != null ? d.getLastName() : "").toLowerCase())))
+                    .findFirst()
+                    .ifPresent(appointment::setDoctor);
         }
         if (appointment.getDoctor() == null && map.containsKey("department") && map.get("department") != null) {
-            String dept = map.get("department").toString().trim();
+            String dept = map.get("department").toString().trim().toLowerCase();
             doctorRepository.findAll().stream()
-                    .filter(d -> d.getSpecialization() != null && d.getSpecialization().toLowerCase().contains(dept.toLowerCase()))
+                    .filter(d -> d.getSpecialization() != null && d.getSpecialization().toLowerCase().contains(dept))
                     .findFirst()
                     .ifPresent(appointment::setDoctor);
         }

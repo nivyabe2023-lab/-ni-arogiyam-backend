@@ -117,114 +117,83 @@ function Appointments() {
     loadAppointments();
     loadPatients();
     loadDoctors();
+
+    const handleUpdate = () => {
+      loadAppointments();
+    };
+    window.addEventListener("hospital_appointments_updated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener("hospital_appointments_updated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
   }, []);
+
+  const getPortalAppointments = () => {
+    let localAppts = [];
+    try {
+      const sysAppts = JSON.parse(localStorage.getItem("system_appointments") || "[]");
+      if (Array.isArray(sysAppts)) {
+        localAppts.push(...sysAppts);
+      }
+    } catch (e) {}
+
+    try {
+      const patientRecords = JSON.parse(localStorage.getItem("patient_portal_records") || "{}");
+      Object.values(patientRecords).forEach((pat) => {
+        if (pat && Array.isArray(pat.appointments)) {
+          pat.appointments.forEach((apt) => {
+            const alreadyInSys = localAppts.some((s) => s.id === apt.id || s.appointmentId === apt.id);
+            if (!alreadyInSys) {
+              localAppts.push({
+                appointmentId: apt.id || "APT-" + Math.floor(1000 + Math.random() * 9000),
+                patient: { firstName: pat.name || "Ramesh Kumar", lastName: "", phoneNumber: pat.phone || "" },
+                patientName: pat.name || "Ramesh Kumar",
+                doctor: { doctorName: apt.doctorName || "Dr. Rajesh Sharma", specialization: apt.department || "Cardiology" },
+                doctorName: apt.doctorName || "Dr. Rajesh Sharma",
+                appointmentDate: apt.date || new Date().toISOString().substring(0, 10),
+                appointmentTime: apt.slot || "10:30 AM",
+                reason: `Patient Portal: ${apt.department || "Specialist"} Consultation`,
+                status: (apt.status || "CONFIRMED").toUpperCase(),
+              });
+            }
+          });
+        }
+      });
+    } catch (e) {}
+
+    return localAppts;
+  };
 
   const loadAppointments = async () => {
     try {
       setLoading(true);
       setError("");
-      let baseList = [];
-      try {
-        const response = await fetch(`${API_URL}/api/appointments`);
-        if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data) && data.length > 0) {
-            baseList = data;
-          }
+      const response = await fetch(`${API_URL}/api/appointments`);
+      let serverData = [];
+      if (response.ok) {
+        serverData = await response.json();
+      }
+      
+      const localAppts = getPortalAppointments();
+      const baseList = Array.isArray(serverData) && serverData.length > 0 ? serverData : FALLBACK_APPOINTMENTS;
+      const combined = [...localAppts];
+
+      baseList.forEach((b) => {
+        const exists = combined.some(
+          (c) => (c.appointmentId && c.appointmentId === b.appointmentId) ||
+                 (c.reason === b.reason && c.appointmentDate === b.appointmentDate)
+        );
+        if (!exists) {
+          combined.push(b);
         }
-      } catch (netErr) {
-        console.warn("Backend appointments fetch offline:", netErr);
-      }
+      });
 
-      if (!baseList || baseList.length === 0) {
-        baseList = FALLBACK_APPOINTMENTS;
-      }
-
-      // Merge patient portal appointments from localStorage and default patient records
-      try {
-        const storedPortalAppts = JSON.parse(localStorage.getItem("ni_registered_appointments") || "[]");
-        const patientRecords = JSON.parse(localStorage.getItem("ni_patient_records") || "{}");
-        const extraAppts = [];
-
-        Object.values(patientRecords).forEach((p) => {
-          if (Array.isArray(p.appointments)) {
-            p.appointments.forEach((apt) => {
-              extraAppts.push({
-                appointmentId: apt.id || apt.appointmentId,
-                patientName: p.name || "Ramesh Kumar",
-                patient: { firstName: p.name || "Ramesh", lastName: "Kumar", phoneNumber: p.phone || "9840123456" },
-                doctorName: apt.doctorName || "Dr. Suresh V.",
-                doctor: { firstName: "Suresh", lastName: "V.", specialization: apt.department || "Cardiology" },
-                department: apt.department || "Cardiology",
-                appointmentDate: apt.date || apt.appointmentDate || new Date().toISOString().split("T")[0],
-                appointmentTime: apt.slot || apt.appointmentTime || "10:00 AM",
-                status: (apt.status || "CONFIRMED").toUpperCase(),
-                reason: apt.notes || "Patient Portal Consultation",
-                source: "Patient Portal",
-              });
-            });
-          }
-        });
-
-        // Default initial patient portal appointments
-        const defaultPortalSeed = [
-          {
-            appointmentId: "PT-8821",
-            patientName: "Ramesh Kumar (Patient Portal)",
-            patient: { firstName: "Ramesh", lastName: "Kumar", phoneNumber: "9840123456" },
-            doctorName: "Dr. Suresh V.",
-            doctor: { firstName: "Suresh", lastName: "V.", specialization: "Cardiology" },
-            department: "Cardiology",
-            appointmentDate: "2026-09-08",
-            appointmentTime: "10:30 AM",
-            status: "CONFIRMED",
-            reason: "Routine Cardiac Follow-up & BP Evaluation",
-            source: "Patient Portal",
-          },
-          {
-            appointmentId: "PT-7410",
-            patientName: "Ramesh Kumar (Patient Portal)",
-            doctorName: "Dr. Priya Arvind (Neurology)",
-            patient: { firstName: "Ramesh", lastName: "Kumar", phoneNumber: "9840123456" },
-            doctor: { firstName: "Priya", lastName: "Arvind", specialization: "Neurology" },
-            department: "Neurology",
-            appointmentDate: "2026-08-15",
-            appointmentTime: "02:00 PM",
-            status: "COMPLETED",
-            source: "Patient Portal",
-            reason: "Migraine & Tension Headache checkup"
-          }
-        ];
-
-        const existingIds = new Set(baseList.map((a) => String(a.appointmentId || a.id)));
-        const toAdd = [];
-        [...storedPortalAppts, ...extraAppts, ...defaultPortalSeed].forEach((pa) => {
-          const idStr = String(pa.appointmentId || pa.id);
-          if (!existingIds.has(idStr)) {
-            existingIds.add(idStr);
-            toAdd.push({
-              appointmentId: pa.appointmentId || pa.id,
-              patientName: pa.patientName || (pa.patient ? `${pa.patient.firstName || ""} ${pa.patient.lastName || ""}`.trim() : "Ramesh Kumar"),
-              patient: pa.patient || { firstName: pa.patientName || "Ramesh Kumar", lastName: "" },
-              doctorName: pa.doctorName || "Dr. Suresh V.",
-              doctor: pa.doctor || { firstName: "Suresh", lastName: "V.", specialization: pa.department || "Cardiology" },
-              department: pa.department || "Cardiology",
-              appointmentDate: pa.appointmentDate || pa.date || new Date().toISOString().split("T")[0],
-              appointmentTime: pa.appointmentTime || pa.slot || "10:00 AM",
-              status: (pa.status || "CONFIRMED").toUpperCase(),
-              reason: pa.reason || pa.notes || "Patient Portal Booking",
-              source: "Patient Portal",
-            });
-          }
-        });
-
-        setAppointments([...toAdd, ...baseList]);
-      } catch (mergeErr) {
-        setAppointments(baseList);
-      }
+      setAppointments(combined);
     } catch (err) {
       console.warn("Using fallback appointments:", err);
-      setAppointments(FALLBACK_APPOINTMENTS);
+      const localAppts = getPortalAppointments();
+      setAppointments([...localAppts, ...FALLBACK_APPOINTMENTS]);
     } finally {
       setLoading(false);
     }
@@ -607,42 +576,18 @@ function Appointments() {
   };
 
   const getDoctorName = (appointment) => {
-    if (appointment?.doctorName && String(appointment.doctorName).trim() && appointment.doctorName !== "N/A" && appointment.doctorName !== "Doctor") {
-      const d = String(appointment.doctorName).trim();
-      return d.startsWith("Dr.") ? d : `Dr. ${d}`;
+    if (appointment?.doctorName) return appointment.doctorName;
+    if (appointment?.doctor?.firstName) {
+      return `Dr. ${appointment.doctor.firstName} ${appointment.doctor.lastName || ""}`.trim();
     }
-    if (appointment?.doctor) {
-      if (appointment.doctor.doctorName && appointment.doctor.doctorName !== "Doctor") {
-        const d = String(appointment.doctor.doctorName).trim();
-        return d.startsWith("Dr.") ? d : `Dr. ${d}`;
-      }
-      const full = `${appointment.doctor.firstName || ""} ${appointment.doctor.lastName || ""}`.trim();
-      if (full) return full.startsWith("Dr.") ? full : `Dr. ${full}`;
-      if (appointment.doctor.name) {
-        const d = String(appointment.doctor.name).trim();
-        return d.startsWith("Dr.") ? d : `Dr. ${d}`;
-      }
-    }
+    if (appointment?.doctor?.doctorName) return appointment.doctor.doctorName;
+    if (appointment?.doctor?.name) return appointment.doctor.name;
     if (appointment?.doctorId) {
       const match = doctors.find((d) => d.doctorId === appointment.doctorId);
-      if (match) {
-        const full = `${match.firstName || ""} ${match.lastName || ""}`.trim();
-        if (full) return `Dr. ${full}`;
-      }
+      if (match) return `Dr. ${match.firstName} ${match.lastName || ""}`.trim();
     }
-    const docFallbacks = [
-      "Dr. Suresh Menon",
-      "Dr. Ananya Rao",
-      "Dr. Vikram Singh",
-      "Dr. Priya Arvind",
-      "Dr. Meera Nair",
-      "Dr. R. Saravanan",
-      "Dr. K. Saranya",
-      "Dr. Priya Natarajan"
-    ];
-    const numId = parseInt(String(appointment?.appointmentId || "").replace(/\D/g, ""), 10);
-    const idx = !isNaN(numId) && numId > 0 ? (numId - 1) % docFallbacks.length : 0;
-    return docFallbacks[idx] || "Dr. Suresh Menon";
+    if (appointment?.department) return `Dr. ${appointment.department} Specialist`;
+    return "Dr. Suresh Menon";
   };
 
   const getStatusClass = (status) => {
@@ -878,11 +823,6 @@ function Appointments() {
                       <tr key={appt.appointmentId || idx}>
                         <td>
                           <span className="appointment-id">#{appt.appointmentId || idx + 1}</span>
-                          {appt.source === "Patient Portal" && (
-                            <span style={{ marginLeft: "6px", fontSize: "10.5px", background: "#dbeafe", color: "#1e40af", padding: "2px 7px", borderRadius: "10px", fontWeight: 700 }}>
-                              📱 Patient Portal
-                            </span>
-                          )}
                         </td>
                         <td>
                           <div
