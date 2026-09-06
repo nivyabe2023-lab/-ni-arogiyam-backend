@@ -501,7 +501,7 @@
 /* HISTORY TABS */
 .history-tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   background: #f1f5f9;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -904,4 +904,216 @@
   .history-tabs {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* =========================================================
+   DOSSIER LAB & DIAGNOSTIC REPORTS STYLING
+   ========================================================= */
+.patient-lab-reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dossier-lab-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 18px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.dossier-lab-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+}
+
+.dossier-lab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.dossier-lab-title-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.lab-card-icon {
+  width: 38px;
+  height: 38px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.dossier-lab-title-group h5 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.lab-id-pill {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.lab-meta-sub {
+  margin: 4px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.dossier-lab-status-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lab-flag-badge {
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+.lab-flag-badge.normal {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.lab-flag-badge.alert {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.lab-flag-badge.warning {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.btn-download-lab-pdf {
+  background: #047857;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.15s ease;
+}
+
+.btn-download-lab-pdf:hover {
+  background: #065f46;
+}
+
+.lab-clinical-summary-box {
+  background: #f8fafc;
+  border-left: 3px solid #2563eb;
+  padding: 8px 12px;
+  border-radius: 4px 8px 8px 4px;
+  font-size: 12.5px;
+  color: #334155;
+  margin-bottom: 12px;
+}
+
+.lab-param-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 10px;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+}
+
+.dossier-lab-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.dossier-lab-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dossier-lab-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.dossier-lab-table tr:last-child td {
+  border-bottom: none;
+}
+
+.dossier-lab-table tr.abnormal-row {
+  background: #fffbeb;
+}
+
+.param-name-cell {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.param-val-cell strong {
+  color: #0f172a;
+}
+
+.param-ref-cell {
+  color: #64748b;
+  font-family: monospace;
+  font-size: 11.5px;
+}
+
+.param-status-dot.normal {
+  color: #059669;
+  font-weight: 700;
+}
+
+.param-status-dot.flagged {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.dossier-lab-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: #64748b;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+  gap: 8px;
 }

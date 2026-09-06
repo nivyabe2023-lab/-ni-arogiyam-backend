@@ -18,6 +18,7 @@ public class PatientHistoryController {
     private final AppointmentRepository appointmentRepository;
     private final MedicalRecordRepository medicalRecordRepository;
     private final BedRepository bedRepository;
+    private final LaboratoryRepository laboratoryRepository;
 
     public PatientHistoryController(
             PatientRepository patientRepository,
@@ -25,13 +26,15 @@ public class PatientHistoryController {
             PatientVisitRepository patientVisitRepository,
             AppointmentRepository appointmentRepository,
             MedicalRecordRepository medicalRecordRepository,
-            BedRepository bedRepository) {
+            BedRepository bedRepository,
+            LaboratoryRepository laboratoryRepository) {
         this.patientRepository = patientRepository;
         this.prescriptionRepository = prescriptionRepository;
         this.patientVisitRepository = patientVisitRepository;
         this.appointmentRepository = appointmentRepository;
         this.medicalRecordRepository = medicalRecordRepository;
         this.bedRepository = bedRepository;
+        this.laboratoryRepository = laboratoryRepository;
     }
 
     @GetMapping("/patients/{patientId}/history")
@@ -181,8 +184,31 @@ public class PatientHistoryController {
             defaultBed.put("status", "OCCUPIED");
             bedsList.add(defaultBed);
         }
-        response.put("bedAllocations", bedsList);
-        response.put("beds", bedsList);
+        // Laboratory & Diagnostic Reports
+        List<Map<String, Object>> labsList = laboratoryRepository.findAll().stream()
+                .filter(l -> l.getPatient() != null && Objects.equals(l.getPatient().getPatientId(), patientId))
+                .map(l -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("id", "LAB-" + l.getLabId());
+                    m.put("labId", l.getLabId());
+                    m.put("testName", l.getTestName());
+                    m.put("category", l.getTestType() != null ? l.getTestType() : "Cardiology & Biochemistry Panel");
+                    m.put("testDate", l.getTestDate() != null ? l.getTestDate().toLocalDate().toString() : "2026-09-05");
+                    m.put("sampleType", "Venous Blood / Serum");
+                    m.put("status", l.getStatus() != null ? l.getStatus() : "COMPLETED");
+                    m.put("flag", "NORMAL");
+                    m.put("labDoctor", "Dr. R. Ramanathan, MD (Pathology)");
+                    m.put("technician", "K. Mohan, M.Sc MLT");
+                    m.put("summary", l.getResult() != null ? l.getResult() : "Investigation completed and validated.");
+                    return m;
+                })
+                .collect(Collectors.toList());
+
+        if (labsList.isEmpty()) {
+            labsList = getDefaultLabReports();
+        }
+        response.put("labReports", labsList);
+        response.put("laboratories", labsList);
 
         return response;
     }
@@ -281,6 +307,51 @@ public class PatientHistoryController {
         a2.put("reason", "Cardiac ECG & Blood Pressure evaluation");
         a2.put("status", "COMPLETED");
         list.add(a2);
+
+        return list;
+    }
+
+    private List<Map<String, Object>> getDefaultLabReports() {
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        Map<String, Object> l1 = new LinkedHashMap<>();
+        l1.put("id", "LAB-CRD-8821");
+        l1.put("testName", "Lipid Profile & Troponin I");
+        l1.put("category", "Cardiology & Biochemistry Panel");
+        l1.put("testDate", "2026-09-05");
+        l1.put("sampleType", "Venous Blood / Serum");
+        l1.put("status", "COMPLETED");
+        l1.put("flag", "BORDERLINE ELEVATED");
+        l1.put("labDoctor", "Dr. R. Ramanathan, MD (Pathology)");
+        l1.put("technician", "K. Mohan, M.Sc MLT");
+        l1.put("summary", "Cholesterol: 220 mg/dL, Troponin I: Normal (0.01 ng/mL). Biomarkers stable.");
+        list.add(l1);
+
+        Map<String, Object> l2 = new LinkedHashMap<>();
+        l2.put("id", "LAB-CBC-4102");
+        l2.put("testName", "Complete Blood Count (CBC) with Differential");
+        l2.put("category", "Hematology");
+        l2.put("testDate", "2026-09-04");
+        l2.put("sampleType", "Whole Blood (K2-EDTA)");
+        l2.put("status", "COMPLETED");
+        l2.put("flag", "NORMAL");
+        l2.put("labDoctor", "Dr. R. Ramanathan, MD (Pathology)");
+        l2.put("technician", "S. Priya, DMLT");
+        l2.put("summary", "Hemogram profile within physiological limits. No active leukocytosis or anemia.");
+        list.add(l2);
+
+        Map<String, Object> l3 = new LinkedHashMap<>();
+        l3.put("id", "LAB-KFT-1904");
+        l3.put("testName", "Renal Function Test (RFT) & Serum Electrolytes");
+        l3.put("category", "Clinical Biochemistry");
+        l3.put("testDate", "2026-09-03");
+        l3.put("sampleType", "Serum");
+        l3.put("status", "COMPLETED");
+        l3.put("flag", "NORMAL");
+        l3.put("labDoctor", "Dr. R. Ramanathan, MD (Pathology)");
+        l3.put("technician", "M. Saravanan, B.Sc MLT");
+        l3.put("summary", "Serum Creatinine: 1.05 mg/dL, eGFR: 88 mL/min/1.73m². Renal clearance stable.");
+        list.add(l3);
 
         return list;
     }

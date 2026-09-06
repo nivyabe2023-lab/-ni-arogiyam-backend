@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Appointments.css";
 import API_BASE_URL from "./config";
+import { generateLabReportPDF } from "./labReportPdfGenerator";
 
 const API_URL = API_BASE_URL;
 
@@ -34,7 +35,7 @@ function Appointments() {
   const [selectedPatientForHistory, setSelectedPatientForHistory] = useState(null);
   const [patientHistoryData, setPatientHistoryData] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const [activeHistoryTab, setActiveHistoryTab] = useState("medicines"); // "medicines", "visits", "appointments", "beds"
+  const [activeHistoryTab, setActiveHistoryTab] = useState("medicines"); // "medicines", "visits", "appointments", "beds", "labs"
 
   // Quick In-Modal New Appointment Form
   const [showQuickBookForm, setShowQuickBookForm] = useState(false);
@@ -54,6 +55,16 @@ function Appointments() {
     instructions: "After Meals",
     prescribedBy: "Dr. Suresh Menon",
     duration: "10 Days",
+  });
+
+  // Quick In-Modal Order Lab Test Form
+  const [showAddLabForm, setShowAddLabForm] = useState(false);
+  const [newLabData, setNewLabData] = useState({
+    testName: "",
+    category: "Cardiology & Biochemistry Panel",
+    sampleType: "Venous Blood / Serum",
+    priority: "Routine",
+    summary: "Physician ordered diagnostic evaluation",
   });
 
   const userRole = (localStorage.getItem("userRole") || "ADMIN").toUpperCase();
@@ -326,6 +337,7 @@ function Appointments() {
     setHistoryLoading(true);
     setShowQuickBookForm(false);
     setShowAddMedicineForm(false);
+    setShowAddLabForm(false);
     setActiveHistoryTab("medicines");
 
     const patId = patObj.patientId || patObj.id || 1;
@@ -334,7 +346,49 @@ function Appointments() {
       const res = await fetch(`${API_URL}/api/patients/${patId}/history`);
       if (res.ok) {
         const data = await res.json();
-        setPatientHistoryData(data);
+
+        // Also fetch live laboratory records from /api/laboratory
+        let liveLabs = [];
+        try {
+          const labRes = await fetch(`${API_URL}/api/laboratory`);
+          if (labRes.ok) {
+            const allLabs = await labRes.json();
+            if (Array.isArray(allLabs)) {
+              liveLabs = allLabs
+                .filter((l) => Number(l.patient?.patientId) === Number(patId) || Number(l.patientId) === Number(patId))
+                .map((l) => ({
+                  id: `LAB-${l.labId || l.id || Math.floor(1000 + Math.random() * 9000)}`,
+                  testName: l.testName,
+                  category: l.testType || "Cardiology & Biochemistry Panel",
+                  testDate: l.testDate ? String(l.testDate).substring(0, 10) : new Date().toISOString().substring(0, 10),
+                  sampleType: "Venous Blood / Serum",
+                  status: l.status || "COMPLETED",
+                  flag: l.status === "COMPLETED" ? "NORMAL" : "IN PROGRESS",
+                  labDoctor: "Dr. R. Ramanathan, MD (Pathology)",
+                  technician: "Central Diagnostic Laboratory",
+                  summary: l.remarks || l.result || "Investigation validated by clinical pathologist.",
+                  parameters: [
+                    { name: l.testName, value: l.result || "Normal", unit: "", refRange: "Physiological Reference", status: "NORMAL" },
+                  ],
+                }));
+            }
+          }
+        } catch (e) {
+          console.warn("Could not fetch /api/laboratory:", e);
+        }
+
+        const generated = generatePatientClinicalHistory(patObj, appointmentContext);
+        const mergedLabs = [...liveLabs, ...(data.labReports || [])];
+        (generated.labReports || []).forEach((gl) => {
+          if (!mergedLabs.some((ml) => ml.testName === gl.testName)) {
+            mergedLabs.push(gl);
+          }
+        });
+
+        setPatientHistoryData({
+          ...data,
+          labReports: mergedLabs,
+        });
       } else {
         throw new Error("Failed to fetch history");
       }
@@ -351,22 +405,135 @@ function Appointments() {
     setPatientHistoryData(null);
     setShowQuickBookForm(false);
     setShowAddMedicineForm(false);
+    setShowAddLabForm(false);
   };
 
   const generatePatientClinicalHistory = (patient, appointmentContext) => {
     const fullName = `${patient.firstName || "Patient"} ${patient.lastName || ""}`.trim();
     const patId = patient.patientId || 1;
 
+    let savedLabs = [];
+    try {
+      const stored = localStorage.getItem(`patient_labs_${patId}`);
+      if (stored) savedLabs = JSON.parse(stored);
+    } catch (e) {}
+
+    const defaultLabs = [
+      {
+        id: "LAB-CRD-8821",
+        testName: "Lipid Profile & Troponin I",
+        category: "Cardiology & Biochemistry Panel",
+        testDate: "2026-09-05",
+        sampleType: "Venous Blood / Serum",
+        status: "COMPLETED",
+        flag: "BORDERLINE ELEVATED",
+        labDoctor: "Dr. R. Ramanathan, MD (Pathology)",
+        technician: "K. Mohan, M.Sc MLT",
+        summary: "Cholesterol: 220 mg/dL, Troponin I: Normal (0.01 ng/mL). Biomarkers stable.",
+        parameters: [
+          { name: "High-Sensitivity Troponin-I (hs-cTnI)", value: "0.01", unit: "ng/mL", refRange: "< 0.04 ng/mL", status: "NORMAL" },
+          { name: "Total Cholesterol", value: "220", unit: "mg/dL", refRange: "< 200 mg/dL", status: "HIGH" },
+          { name: "LDL Cholesterol (Direct)", value: "142", unit: "mg/dL", refRange: "< 100 mg/dL", status: "HIGH" },
+          { name: "HDL Cholesterol", value: "38", unit: "mg/dL", refRange: "> 40 mg/dL", status: "LOW" },
+          { name: "Serum Triglycerides", value: "190", unit: "mg/dL", refRange: "< 150 mg/dL", status: "HIGH" },
+          { name: "Creatine Kinase-MB (CK-MB)", value: "16.2", unit: "U/L", refRange: "< 25 U/L", status: "NORMAL" },
+        ],
+      },
+      {
+        id: "LAB-CBC-4102",
+        testName: "Complete Blood Count (CBC) with Differential",
+        category: "Hematology",
+        testDate: "2026-09-04",
+        sampleType: "Whole Blood (K2-EDTA)",
+        status: "COMPLETED",
+        flag: "NORMAL",
+        labDoctor: "Dr. R. Ramanathan, MD (Pathology)",
+        technician: "S. Priya, DMLT",
+        summary: "Hemogram profile within physiological limits. No active leukocytosis or anemia.",
+        parameters: [
+          { name: "Hemoglobin (Hb)", value: "14.5", unit: "g/dL", refRange: "13.0 - 17.0", status: "NORMAL" },
+          { name: "Total WBC Count", value: "7,400", unit: "/µL", refRange: "4,000 - 11,000", status: "NORMAL" },
+          { name: "Platelet Count", value: "245,000", unit: "/µL", refRange: "150,000 - 450,000", status: "NORMAL" },
+          { name: "Packed Cell Volume (PCV)", value: "43.2", unit: "%", refRange: "40.0 - 50.0", status: "NORMAL" },
+          { name: "ESR (Westergren)", value: "12", unit: "mm/hr", refRange: "0 - 15", status: "NORMAL" },
+          { name: "Neutrophils", value: "62", unit: "%", refRange: "40 - 75", status: "NORMAL" },
+          { name: "Lymphocytes", value: "30", unit: "%", refRange: "20 - 45", status: "NORMAL" },
+        ],
+      },
+      {
+        id: "LAB-KFT-1904",
+        testName: "Renal Function Test (RFT) & Serum Electrolytes",
+        category: "Clinical Biochemistry",
+        testDate: "2026-09-03",
+        sampleType: "Serum",
+        status: "COMPLETED",
+        flag: "NORMAL",
+        labDoctor: "Dr. R. Ramanathan, MD (Pathology)",
+        technician: "M. Saravanan, B.Sc MLT",
+        summary: "Serum Creatinine: 1.05 mg/dL, eGFR: 88 mL/min/1.73m². Renal clearance stable.",
+        parameters: [
+          { name: "Serum Creatinine", value: "1.05", unit: "mg/dL", refRange: "0.70 - 1.30", status: "NORMAL" },
+          { name: "Blood Urea Nitrogen (BUN)", value: "18.2", unit: "mg/dL", refRange: "8.0 - 23.0", status: "NORMAL" },
+          { name: "Serum Sodium (Na+)", value: "139", unit: "mEq/L", refRange: "135 - 145", status: "NORMAL" },
+          { name: "Serum Potassium (K+)", value: "4.3", unit: "mEq/L", refRange: "3.5 - 5.1", status: "NORMAL" },
+          { name: "eGFR", value: "88", unit: "mL/min/1.73m²", refRange: "> 60", status: "NORMAL" },
+        ],
+      },
+      {
+        id: "LAB-DIA-3301",
+        testName: "HbA1c & Fasting Plasma Glucose",
+        category: "Diabetic & Endocrine Panel",
+        testDate: "2026-08-28",
+        sampleType: "Whole Blood & Fluoride Plasma",
+        status: "COMPLETED",
+        flag: "BORDERLINE ELEVATED",
+        labDoctor: "Dr. R. Ramanathan, MD (Pathology)",
+        technician: "K. Mohan, M.Sc MLT",
+        summary: "HbA1c: 6.4%, Fasting Glucose: 118 mg/dL. Pre-diabetic metabolic profile.",
+        parameters: [
+          { name: "HbA1c (Glycosylated Hb)", value: "6.4", unit: "%", refRange: "< 5.7 (Normal), 5.7-6.4 (Pre-diabetic)", status: "ELEVATED" },
+          { name: "Fasting Blood Glucose", value: "118", unit: "mg/dL", refRange: "70 - 99 mg/dL", status: "ELEVATED" },
+          { name: "Estimated Average Glucose", value: "137", unit: "mg/dL", refRange: "< 126 mg/dL", status: "ELEVATED" },
+        ],
+      },
+      {
+        id: "LAB-ECG-7719",
+        testName: "12-Lead Electrocardiogram (ECG) & 2D Echo",
+        category: "Cardiology Diagnostic",
+        testDate: "2026-08-28",
+        sampleType: "Electrocardiographic Trace",
+        status: "COMPLETED",
+        flag: "NORMAL",
+        labDoctor: "Dr. Suresh Menon, DM (Cardio)",
+        technician: "R. Anitha, Echo Tech",
+        summary: "Normal sinus rhythm (74 bpm). LVEF 58%. No acute ST-elevation.",
+        parameters: [
+          { name: "Ventricular Rate", value: "74", unit: "bpm", refRange: "60 - 100 bpm", status: "NORMAL" },
+          { name: "PR Interval", value: "162", unit: "ms", refRange: "120 - 200 ms", status: "NORMAL" },
+          { name: "QRS Duration", value: "88", unit: "ms", refRange: "80 - 120 ms", status: "NORMAL" },
+          { name: "QTc Interval", value: "418", unit: "ms", refRange: "< 440 ms", status: "NORMAL" },
+          { name: "LVEF (Echo)", value: "58", unit: "%", refRange: "55 - 70 %", status: "NORMAL" },
+        ],
+      },
+    ];
+
+    const finalLabs = [...savedLabs];
+    defaultLabs.forEach((dl) => {
+      if (!finalLabs.some((fl) => fl.testName === dl.testName)) {
+        finalLabs.push(dl);
+      }
+    });
+
     return {
       patientId: patId,
       fullName: fullName,
-      age: patient.age || 34,
+      age: patient.age || 52,
       gender: patient.gender || "Male",
       bloodGroup: patient.bloodGroup || "O+",
-      phoneNumber: patient.phoneNumber || "+91 98765 43210",
+      phoneNumber: patient.phoneNumber || "+91 9840123456",
       emergencyContact: "+91 98123 45678 (Spouse)",
-      allergies: "Penicillin (Mild rash), Sulfa drugs",
-      chronicConditions: "Hypertension (Stage 1), Mild Type-2 Diabetes",
+      allergies: "Penicillin (Mild), Sulfa drugs",
+      chronicConditions: patient.disease || "Coronary Artery Disease (CAD)",
       medicinesTaken: [
         {
           id: 1,
@@ -490,14 +657,95 @@ function Appointments() {
       ],
       bedAllocations: [
         {
-          bedNumber: "B-101",
-          ward: "General Ward A (Medical)",
-          admissionDate: "2026-08-28",
-          dischargeDate: "Current (Admitted)",
+          bedNumber: "CCU-101",
+          ward: "Cardiology Critical Unit",
+          admissionDate: "2026-09-05",
+          dischargeDate: "Admitted",
           status: "OCCUPIED",
         },
       ],
+      labReports: finalLabs,
     };
+  };
+
+  const handleDownloadLabPDF = (report) => {
+    try {
+      const p = patientHistoryData || {};
+      const fullName = p.fullName || `${selectedPatientForHistory?.firstName || "Rajesh"} ${selectedPatientForHistory?.lastName || "Kumar"}`.trim();
+      const nameParts = fullName.split(" ");
+      const labPayload = {
+        labId: report.id?.replace(/\D/g, "") || "101",
+        laboratoryId: report.id?.replace(/\D/g, "") || "101",
+        testName: report.testName,
+        testType: report.category || "Cardiology & Biochemistry",
+        testDate: report.testDate || new Date().toISOString().substring(0, 10),
+        result: report.summary || "Investigation completed and validated.",
+        status: report.status || "COMPLETED",
+        remarks: report.summary || "Clinically reviewed and signed by Attending Pathologist.",
+        patient: {
+          patientId: p.patientId || selectedPatientForHistory?.patientId || 1,
+          firstName: nameParts[0] || "Rajesh",
+          lastName: nameParts.slice(1).join(" ") || "Kumar",
+          age: p.age || 52,
+          gender: p.gender || "Male",
+          bloodGroup: p.bloodGroup || "O+",
+          phoneNumber: p.phoneNumber || "9840123456",
+          name: fullName,
+        },
+      };
+      generateLabReportPDF(labPayload);
+    } catch (err) {
+      console.error("Failed to generate lab report PDF:", err);
+      window.print();
+    }
+  };
+
+  const handleAddLabReportSubmit = (e) => {
+    e.preventDefault();
+    if (!newLabData.testName.trim() || !selectedPatientForHistory) return;
+
+    const patId = patientHistoryData?.patientId || selectedPatientForHistory.patientId || 1;
+    const generatedId = `LAB-ORD-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newReport = {
+      id: generatedId,
+      testName: newLabData.testName.trim(),
+      category: newLabData.category,
+      testDate: new Date().toISOString().split("T")[0],
+      sampleType: newLabData.sampleType || "Venous Blood (Serum)",
+      status: "SAMPLE COLLECTED",
+      flag: newLabData.priority === "Stat / Emergency" ? "EMERGENCY" : "IN PROGRESS",
+      labDoctor: `Ordered by ${loggedInName || "Attending Physician"}`,
+      technician: "Automated Diagnostic Analyzer",
+      summary: newLabData.summary || `Investigation ordered on ${new Date().toLocaleDateString()}`,
+      parameters: [
+        { name: "Sample Intake Verification", value: "Verified", unit: "", refRange: "Intact", status: "NORMAL" },
+        { name: "Processing Priority", value: newLabData.priority, unit: "", refRange: "Standard TAT", status: "NORMAL" },
+      ],
+    };
+
+    const updatedList = [newReport, ...(patientHistoryData?.labReports || [])];
+    const updated = {
+      ...patientHistoryData,
+      labReports: updatedList,
+    };
+    setPatientHistoryData(updated);
+
+    try {
+      localStorage.setItem(`patient_labs_${patId}`, JSON.stringify(updatedList));
+    } catch (err) {
+      console.warn(err);
+    }
+
+    setShowAddLabForm(false);
+    setNewLabData({
+      testName: "",
+      category: "Cardiology & Biochemistry Panel",
+      sampleType: "Venous Blood / Serum",
+      priority: "Routine",
+      summary: "Physician ordered diagnostic evaluation",
+    });
+    setSuccess("New diagnostic lab test ordered successfully!");
+    setTimeout(() => setSuccess(""), 4000);
   };
 
   const handleQuickBookAppointment = (e) => {
@@ -951,6 +1199,13 @@ function Appointments() {
               >
                 🛏️ Bed &amp; Ward Stays
               </button>
+              <button
+                type="button"
+                className={`history-tab-btn ${activeHistoryTab === "labs" ? "active" : ""}`}
+                onClick={() => setActiveHistoryTab("labs")}
+              >
+                🔬 Lab Reports ({patientHistoryData?.labReports?.length || 0})
+              </button>
             </div>
 
             {/* DOSSIER BODY */}
@@ -1235,7 +1490,7 @@ function Appointments() {
                     )}
                   </div>
                 </div>
-              ) : (
+              ) : activeHistoryTab === "beds" ? (
                 /* ===========================================
                    TAB 4: BED & WARD STAYS
                    =========================================== */
@@ -1268,6 +1523,175 @@ function Appointments() {
                       ))
                     ) : (
                       <p className="no-records">No inpatient bed stays recorded for this patient.</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                /* ===========================================
+                   TAB 5: LAB & DIAGNOSTIC REPORTS
+                   =========================================== */
+                <div className="history-tab-pane">
+                  <div className="tab-pane-header">
+                    <div>
+                      <h4>Laboratory &amp; Diagnostic Pathology Reports</h4>
+                      <p>Clinical investigation findings, biomarkers, and pathology reports for this patient</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="add-med-btn"
+                      onClick={() => setShowAddLabForm(!showAddLabForm)}
+                    >
+                      {showAddLabForm ? "✕ Cancel" : "🔬 Order New Lab Test"}
+                    </button>
+                  </div>
+
+                  {/* ORDER LAB TEST INLINE FORM */}
+                  {showAddLabForm && (
+                    <form onSubmit={handleAddLabReportSubmit} className="add-medicine-inline-form">
+                      <h5>🔬 Order Diagnostic Investigation / Lab Test</h5>
+                      <div className="form-grid-3">
+                        <div className="form-group">
+                          <label>Investigation / Test Name *</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Serum Troponin-I, Liver Function Test (LFT)"
+                            value={newLabData.testName}
+                            onChange={(e) => setNewLabData({ ...newLabData, testName: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Diagnostic Category *</label>
+                          <select
+                            value={newLabData.category}
+                            onChange={(e) => setNewLabData({ ...newLabData, category: e.target.value })}
+                          >
+                            <option value="Cardiology & Biochemistry Panel">Cardiology &amp; Biochemistry Panel</option>
+                            <option value="Hematology">Hematology</option>
+                            <option value="Clinical Biochemistry">Clinical Biochemistry</option>
+                            <option value="Diabetic & Endocrine Panel">Diabetic &amp; Endocrine Panel</option>
+                            <option value="Microbiology & Serology">Microbiology &amp; Serology</option>
+                            <option value="Radiology & Imaging">Radiology &amp; Imaging</option>
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label>Sample / Specimen Type</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Venous Blood (EDTA), Serum"
+                            value={newLabData.sampleType}
+                            onChange={(e) => setNewLabData({ ...newLabData, sampleType: e.target.value })}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Priority / Urgency</label>
+                          <select
+                            value={newLabData.priority}
+                            onChange={(e) => setNewLabData({ ...newLabData, priority: e.target.value })}
+                          >
+                            <option value="Routine">Routine (Within 4 Hours)</option>
+                            <option value="Stat / Emergency">Stat / Emergency (Immediate)</option>
+                            <option value="Urgent">Urgent (Within 1 Hour)</option>
+                          </select>
+                        </div>
+                        <div className="form-group" style={{ gridColumn: "span 2" }}>
+                          <label>Clinical Indication / Reason for Investigation</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Evaluate chest tightness, cardiac markers post CCU admission"
+                            value={newLabData.summary}
+                            onChange={(e) => setNewLabData({ ...newLabData, summary: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-actions-end">
+                        <button type="submit" className="save-med-btn">
+                          Confirm &amp; Dispatch Order to Laboratory
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* LAB REPORTS LIST */}
+                  <div className="patient-lab-reports-list">
+                    {patientHistoryData?.labReports && patientHistoryData.labReports.length > 0 ? (
+                      patientHistoryData.labReports.map((report) => (
+                        <div key={report.id} className="dossier-lab-card">
+                          <div className="dossier-lab-header">
+                            <div className="dossier-lab-title-group">
+                              <span className="lab-card-icon">🔬</span>
+                              <div>
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                                  <h5>{report.testName}</h5>
+                                  <span className="lab-id-pill">{report.id}</span>
+                                </div>
+                                <p className="lab-meta-sub">
+                                  <span>🏷️ {report.category}</span>
+                                  <span>📅 {report.testDate}</span>
+                                  <span>🩸 Specimen: {report.sampleType || "Venous Blood"}</span>
+                                </p>
+                              </div>
+                            </div>
+                            <div className="dossier-lab-status-actions">
+                              <span className={`lab-flag-badge ${report.flag === "NORMAL" ? "normal" : report.flag?.includes("ELEVATED") ? "alert" : "warning"}`}>
+                                {report.flag || report.status}
+                              </span>
+                              <button
+                                type="button"
+                                className="btn-download-lab-pdf"
+                                onClick={() => handleDownloadLabPDF(report)}
+                                title="Download Official Signed Lab Report PDF"
+                              >
+                                📥 PDF Report
+                              </button>
+                            </div>
+                          </div>
+
+                          {report.summary && (
+                            <div className="lab-clinical-summary-box">
+                              <strong>Clinical Impression &amp; Remarks:</strong> {report.summary}
+                            </div>
+                          )}
+
+                          {report.parameters && report.parameters.length > 0 && (
+                            <div className="lab-param-table-wrapper">
+                              <table className="dossier-lab-table">
+                                <thead>
+                                  <tr>
+                                    <th>Test Parameter</th>
+                                    <th>Observed Value</th>
+                                    <th>Reference Range</th>
+                                    <th>Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {report.parameters.map((param, pIdx) => (
+                                    <tr key={pIdx} className={param.status !== "NORMAL" ? "abnormal-row" : ""}>
+                                      <td className="param-name-cell">{param.name}</td>
+                                      <td className="param-val-cell">
+                                        <strong>{param.value}</strong> {param.unit && <small>{param.unit}</small>}
+                                      </td>
+                                      <td className="param-ref-cell">{param.refRange}</td>
+                                      <td>
+                                        <span className={`param-status-dot ${param.status === "NORMAL" ? "normal" : "flagged"}`}>
+                                          {param.status === "NORMAL" ? "✓ Normal" : `⚠️ ${param.status}`}
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+
+                          <div className="dossier-lab-footer-row">
+                            <span>👨‍⚕️ Verified: <strong>{report.labDoctor || "Dr. R. Ramanathan, MD (Pathology)"}</strong></span>
+                            {report.technician && <span>🔬 Analyzed By: <strong>{report.technician}</strong></span>}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-records">No laboratory investigation records found for this patient.</p>
                     )}
                   </div>
                 </div>
