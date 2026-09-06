@@ -1625,21 +1625,135 @@ export default function HospitalLanding({ initialTab = "home" }) {
   });
   const [contactSubmitted, setContactSubmitted] = useState(false);
   const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactTab, setContactTab] = useState("form"); // "form" | "track"
+  const [inquiriesList, setInquiriesList] = useState([]);
+  const [inquirySearch, setInquirySearch] = useState("");
 
-  const handleContactFormSubmit = (e) => {
+  const loadInquiries = async () => {
+    let local = [];
+    try {
+      const stored = localStorage.getItem("hospital_contact_messages");
+      if (stored) local = JSON.parse(stored);
+    } catch (e) {}
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/contact-messages`);
+      if (res.ok) {
+        const remote = await res.json();
+        if (Array.isArray(remote)) {
+          const merged = [...local];
+          remote.forEach((rm) => {
+            const exists = merged.some(
+              (m) => String(m.id) === String(rm.id) || String(m.messageId) === String(rm.messageId)
+            );
+            if (!exists) merged.push(rm);
+          });
+          merged.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          setInquiriesList(merged);
+          localStorage.setItem("hospital_contact_messages", JSON.stringify(merged));
+          return;
+        }
+      }
+    } catch (err) {}
+
+    if (local && local.length > 0) {
+      setInquiriesList(local);
+    }
+  };
+
+  useEffect(() => {
+    loadInquiries();
+
+    const handleUpdate = () => {
+      loadInquiries();
+    };
+
+    window.addEventListener("hospital_messages_updated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+
+    let bc = null;
+    if (typeof BroadcastChannel !== "undefined") {
+      bc = new BroadcastChannel("hospital_messages_channel");
+      bc.onmessage = () => {
+        loadInquiries();
+      };
+    }
+
+    const interval = setInterval(loadInquiries, 3000);
+
+    return () => {
+      window.removeEventListener("hospital_messages_updated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+      if (bc) bc.close();
+      clearInterval(interval);
+    };
+  }, []);
+
+  const handleContactFormSubmit = async (e) => {
     e.preventDefault();
+    if (!contactForm.name.trim() || !contactForm.message.trim()) return;
+
     setContactSubmitting(true);
-    setTimeout(() => {
-      setContactSubmitting(false);
-      setContactSubmitted(true);
-      setContactForm({
-        name: "",
-        phone: "",
-        email: "",
-        message: "",
+
+    const newMsg = {
+      id: Date.now(),
+      messageId: Date.now(),
+      name: contactForm.name.trim(),
+      phone: contactForm.phone.trim(),
+      email: contactForm.email.trim(),
+      message: contactForm.message.trim(),
+      status: "NEW",
+      createdAt: new Date().toISOString(),
+      reply: null,
+      repliedAt: null,
+      repliedBy: null,
+    };
+
+    // 1. Save permanently to localStorage
+    try {
+      const stored = localStorage.getItem("hospital_contact_messages");
+      let list = stored ? JSON.parse(stored) : [];
+      list = [newMsg, ...list.filter(m => String(m.id) !== String(newMsg.id))];
+      localStorage.setItem("hospital_contact_messages", JSON.stringify(list));
+      setInquiriesList(list);
+
+      // 2. Real-time broadcast across all tabs/windows
+      window.dispatchEvent(new CustomEvent("hospital_messages_updated", { detail: newMsg }));
+      if (typeof BroadcastChannel !== "undefined") {
+        const bc = new BroadcastChannel("hospital_messages_channel");
+        bc.postMessage({ type: "NEW_MESSAGE", message: newMsg });
+        bc.close();
+      }
+    } catch (err) {
+      console.warn("Local storage save error:", err);
+    }
+
+    // 3. Post to Spring Boot backend database permanently
+    try {
+      await fetch(`${API_BASE_URL}/api/contact-messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: contactForm.name.trim(),
+          phone: contactForm.phone.trim(),
+          email: contactForm.email.trim(),
+          message: contactForm.message.trim(),
+        }),
       });
-      setTimeout(() => setContactSubmitted(false), 6000);
-    }, 500);
+    } catch (err) {
+      console.warn("Backend API sync error:", err);
+    }
+
+    setContactSubmitting(false);
+    setContactSubmitted(true);
+    setContactForm({
+      name: "",
+      phone: "",
+      email: "",
+      message: "",
+    });
+    loadInquiries();
+    setTimeout(() => setContactSubmitted(false), 8000);
   };
 
   const currentPatient = patientRecords[authenticatedPatientId] || patientRecords["PAT-1001"] || DEFAULT_PATIENT_RECORDS["PAT-1001"];
@@ -3178,68 +3292,204 @@ export default function HospitalLanding({ initialTab = "home" }) {
                 </div>
               </div>
 
-              {/* Column 2: Contact Form Card */}
+              {/* Column 2: Contact Form & Live Inquiry Tracking Card */}
               <div className="contact-form-column">
                 <div className="contact-form-card">
-                  {contactSubmitted && (
-                    <div className="contact-success-toast">
-                      <span className="toast-check">✓</span>
-                      <span>Thank you! Your message has been sent. We will get back to you shortly.</span>
+                  {/* TABS: Send Message vs. Track Inquiries */}
+                  <div className="contact-card-nav-tabs">
+                    <button
+                      type="button"
+                      className={`contact-nav-tab-btn ${contactTab === "form" ? "active" : ""}`}
+                      onClick={() => setContactTab("form")}
+                    >
+                      ✍️ Send Message
+                    </button>
+                    <button
+                      type="button"
+                      className={`contact-nav-tab-btn ${contactTab === "track" ? "active" : ""}`}
+                      onClick={() => setContactTab("track")}
+                    >
+                      📬 Track Responses ({inquiriesList.length})
+                      {inquiriesList.some((m) => m.status === "REPLIED") && (
+                        <span className="live-pulse-tiny" title="Official replies available"></span>
+                      )}
+                    </button>
+                  </div>
+
+                  {contactTab === "form" ? (
+                    <>
+                      {contactSubmitted && (
+                        <div className="contact-success-toast">
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <span className="toast-check">✓</span>
+                            <span>Thank you! Your message has been sent. We will get back to you shortly.</span>
+                          </div>
+                          <button
+                            type="button"
+                            className="btn-toast-view-track"
+                            onClick={() => setContactTab("track")}
+                          >
+                            View Live Status &rarr;
+                          </button>
+                        </div>
+                      )}
+                      <form onSubmit={handleContactFormSubmit} className="contact-fields-form">
+                        <div className="contact-field-wrap">
+                          <input
+                            type="text"
+                            required
+                            placeholder="Your Name"
+                            className="contact-input-field"
+                            value={contactForm.name}
+                            onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="contact-field-wrap">
+                          <input
+                            type="tel"
+                            required
+                            placeholder="Phone Number"
+                            className="contact-input-field"
+                            value={contactForm.phone}
+                            onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="contact-field-wrap">
+                          <input
+                            type="email"
+                            required
+                            placeholder="Email Address"
+                            className="contact-input-field"
+                            value={contactForm.email}
+                            onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="contact-field-wrap">
+                          <textarea
+                            required
+                            rows="4"
+                            placeholder="Your Message"
+                            className="contact-textarea-field"
+                            value={contactForm.message}
+                            onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                          ></textarea>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={contactSubmitting}
+                          className="btn-contact-send-message"
+                        >
+                          {contactSubmitting ? "Sending..." : "Send Message"}
+                        </button>
+                      </form>
+                    </>
+                  ) : (
+                    /* Track Inquiries & Live Admin Replies */
+                    <div className="contact-track-container">
+                      <div className="contact-track-search">
+                        <span>🔍</span>
+                        <input
+                          type="text"
+                          placeholder="Filter your inquiries by name, phone, or message..."
+                          value={inquirySearch}
+                          onChange={(e) => setInquirySearch(e.target.value)}
+                        />
+                      </div>
+
+                      {inquiriesList
+                        .filter((msg) => {
+                          const q = inquirySearch.toLowerCase().trim();
+                          if (!q) return true;
+                          return (
+                            (msg.name && msg.name.toLowerCase().includes(q)) ||
+                            (msg.phone && msg.phone.toLowerCase().includes(q)) ||
+                            (msg.email && msg.email.toLowerCase().includes(q)) ||
+                            (msg.message && msg.message.toLowerCase().includes(q)) ||
+                            (msg.reply && msg.reply.toLowerCase().includes(q))
+                          );
+                        })
+                        .map((msg) => {
+                          const isReplied = msg.status === "REPLIED" && msg.reply;
+                          const dateText = msg.createdAt
+                            ? new Date(msg.createdAt).toLocaleString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                hour: "numeric",
+                                minute: "2-digit",
+                              })
+                            : "Recent";
+
+                          return (
+                            <div
+                              key={msg.id || msg.messageId}
+                              className={`contact-inquiry-item ${isReplied ? "replied" : ""}`}
+                            >
+                              <div className="inquiry-item-top">
+                                <span className="inquiry-sender-title">
+                                  👤 {msg.name || "Patient Visitor"}
+                                </span>
+                                <span className="inquiry-time-badge">🕒 {dateText}</span>
+                              </div>
+
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                                <span style={{ fontSize: "11px", color: "#64748b" }}>
+                                  {msg.phone ? `📞 ${msg.phone.replace(/(\d{2})\d{4}(\d{4})/, "$1****$2")}` : ""}
+                                </span>
+                                <span
+                                  className={`inquiry-status-pill ${
+                                    isReplied ? "replied" : "pending"
+                                  }`}
+                                >
+                                  {isReplied ? "✓ Official Reply Available" : "⏳ Under Hospital Review"}
+                                </span>
+                              </div>
+
+                              <div className="inquiry-question-box">
+                                "{msg.message}"
+                              </div>
+
+                              {isReplied && (
+                                <div className="inquiry-admin-response-box">
+                                  <div className="inquiry-response-header">
+                                    <span>
+                                      💬 Official Response &bull;{" "}
+                                      <strong>{msg.repliedBy || "Hospital Administrator"}</strong>
+                                    </span>
+                                    {msg.repliedAt && (
+                                      <span>
+                                        {new Date(msg.repliedAt).toLocaleTimeString([], {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                        })}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="inquiry-response-text">{msg.reply}</p>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+
+                      {inquiriesList.length === 0 && (
+                        <div className="contact-empty-inquiries">
+                          <p>📭 No inquiries found yet.</p>
+                          <button
+                            type="button"
+                            className="btn-toast-view-track"
+                            style={{ margin: "10px auto 0 auto", display: "inline-block" }}
+                            onClick={() => setContactTab("form")}
+                          >
+                            Send First Inquiry &rarr;
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
-                  <form onSubmit={handleContactFormSubmit} className="contact-fields-form">
-                    <div className="contact-field-wrap">
-                      <input
-                        type="text"
-                        required
-                        placeholder="Your Name"
-                        className="contact-input-field"
-                        value={contactForm.name}
-                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="contact-field-wrap">
-                      <input
-                        type="tel"
-                        required
-                        placeholder="Phone Number"
-                        className="contact-input-field"
-                        value={contactForm.phone}
-                        onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="contact-field-wrap">
-                      <input
-                        type="email"
-                        required
-                        placeholder="Email Address"
-                        className="contact-input-field"
-                        value={contactForm.email}
-                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="contact-field-wrap">
-                      <textarea
-                        required
-                        rows="4"
-                        placeholder="Your Message"
-                        className="contact-textarea-field"
-                        value={contactForm.message}
-                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                      ></textarea>
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={contactSubmitting}
-                      className="btn-contact-send-message"
-                    >
-                      {contactSubmitting ? "Sending..." : "Send Message"}
-                    </button>
-                  </form>
                 </div>
               </div>
 

@@ -76,6 +76,7 @@ import Billing from "./Billing";
 import AIPrediction from "./AIPrediction";
 import Reports from "./Reports";
 import Settings from "./Settings";
+import Messages from "./Messages";
 
 // St. John's Hospital Enhanced Modules
 import EmergencyServices from "./EmergencyServices";
@@ -196,6 +197,11 @@ function Dashboard() {
       name: "Reports",
       path: "/reports",
       icon: "📊",
+    },
+    {
+      name: "Messages & Inquiries",
+      path: "/messages",
+      icon: "📬",
     },
     {
       name: "Settings",
@@ -889,6 +895,22 @@ function Dashboard() {
 
             </NavLink>
 
+            <NavLink
+              to="/messages"
+              className="summary-item"
+            >
+
+              <div className="summary-icon">
+                📬
+              </div>
+
+              <div>
+                <strong>Inquiries</strong>
+                <span>Contact Messages</span>
+              </div>
+
+            </NavLink>
+
           </div>
 
         </div>
@@ -1179,6 +1201,23 @@ function Sidebar({ isOpen, onClose }) {
               >
                 <span className="nav-icon">📊</span>
                 <span className="nav-text">Reports</span>
+              </NavLink>
+
+              {/* SECTION: PATIENT COMMUNICATION */}
+              <div className="sidebar-section-label">
+                <span>📬 PATIENT INQUIRIES</span>
+              </div>
+
+              <NavLink
+                to="/messages"
+                onClick={handleNavClick}
+                className={({ isActive }) =>
+                  `sidebar-link ${isActive ? "active" : ""}`
+                }
+              >
+                <span className="nav-icon">📬</span>
+                <span className="nav-text">Contact Messages</span>
+                <span className="nav-badge live">Live Real-time</span>
               </NavLink>
 
               {/* SECTION 3: SYSTEM ADMINISTRATION */}
@@ -1530,6 +1569,14 @@ function App() {
               element={
                 <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
                   <Reports />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/messages"
+              element={
+                <RoleRoute allowedRoles={["ADMIN", "STAFF", "USER"]}>
+                  <Messages />
                 </RoleRoute>
               }
             />
