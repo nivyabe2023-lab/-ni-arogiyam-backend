@@ -860,7 +860,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
   const [patientPortalOpen, setPatientPortalOpen] = useState(false);
   const [authenticatedPatientId, setAuthenticatedPatientId] = useState("PAT-1001");
   const [isPatientAuthenticated, setIsPatientAuthenticated] = useState(false);
-  const [patientAuthTab, setPatientAuthTab] = useState("aadhar"); // 'aadhar' | 'otp' | 'patientId'
+  const [patientAuthTab, setPatientAuthTab] = useState("aadhar"); // 'aadhar' | 'patientId'
   const [patientAuthPhone, setPatientAuthPhone] = useState("");
   const [patientAuthIdInput, setPatientAuthIdInput] = useState("");
   const [patientAuthOtp, setPatientAuthOtp] = useState("");
@@ -4559,20 +4559,28 @@ export default function HospitalLanding({ initialTab = "home" }) {
                   </p>
                 </div>
 
+                <div className="patient-auth-instruction-banner">
+                  <div className="instruction-item new-apt">
+                    <span className="inst-badge">New Appointment</span>
+                    <p>
+                      If you are booking a new appointment, please use <strong>Aadhaar verification</strong> and book the appointment.
+                    </p>
+                  </div>
+                  <div className="instruction-item existing-user">
+                    <span className="inst-badge">Already User</span>
+                    <p>
+                      Already a registered patient? Please use your <strong>Patient ID</strong> to access your records directly.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="patient-auth-tabs">
                   <button
                     type="button"
                     className={`patient-auth-tab ${patientAuthTab === "aadhar" ? "active" : ""}`}
                     onClick={() => { setPatientAuthTab("aadhar"); setPatientAuthError(""); }}
                   >
-                    🪪 Aadhaar &amp; OTP
-                  </button>
-                  <button
-                    type="button"
-                    className={`patient-auth-tab ${patientAuthTab === "otp" ? "active" : ""}`}
-                    onClick={() => { setPatientAuthTab("otp"); setPatientAuthError(""); }}
-                  >
-                    📱 Mobile &amp; OTP
+                    🪪 Aadhaar Verification
                   </button>
                   <button
                     type="button"
@@ -4729,94 +4737,31 @@ export default function HospitalLanding({ initialTab = "home" }) {
                     >
                       Verify Aadhaar &amp; Access Health Records
                     </button>
-                  </form>
-                ) : patientAuthTab === "otp" ? (
-                  <form onSubmit={handlePatientLoginWithOtp} className="patient-auth-form">
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "8px 12px", borderRadius: "8px", marginBottom: "14px" }}>
-                      <span style={{ fontSize: "12px", color: "#166534", display: "flex", alignItems: "center", gap: "6px", fontWeight: 600 }}>
-                        <span>🪪</span> Login via Aadhaar Card Verification
-                      </span>
-                      <button
-                        type="button"
-                        style={{ background: "#059669", color: "#fff", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11.5px", fontWeight: 700, cursor: "pointer" }}
-                        onClick={() => { setPatientAuthTab("aadhar"); setPatientAuthError(""); }}
-                      >
-                        Use Aadhaar &amp; OTP
-                      </button>
-                    </div>
 
-                    {otpSuccessMsg && (
-                      <div style={{ background: "#ecfdf5", border: "1px solid #a7f3d0", color: "#065f46", padding: "10px 14px", borderRadius: "8px", fontSize: "13px", fontWeight: "600", marginBottom: "14px" }}>
-                        ✓ {otpSuccessMsg}
-                      </div>
-                    )}
-
-                    <div className="modal-form-group" style={{ marginBottom: "14px" }}>
-                      <label>Registered Mobile Number *</label>
-                      <div className="otp-send-row">
-                        <input
-                          type="tel"
-                          required
-                          maxLength={10}
-                          placeholder="Enter 10-digit mobile number"
-                          value={patientAuthPhone}
-                          onChange={(e) => {
-                            setPatientAuthPhone(e.target.value.replace(/\D/g, ""));
-                            setPatientAuthError("");
-                          }}
-                        />
+                    <div style={{ marginTop: "14px", textAlign: "center" }}>
+                      <span style={{ fontSize: "12.5px", color: "#64748b" }}>
+                        New patient needing to book an appointment?{" "}
                         <button
                           type="button"
-                          className="btn-send-otp-pill"
-                          disabled={otpSending || (otpCountdown > 0 && otpSent)}
-                          onClick={handleSendPatientOtp}
+                          onClick={() => {
+                            setPatientPortalOpen(false);
+                            setBookingModalOpen(true);
+                          }}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#059669",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            textDecoration: "underline",
+                            padding: 0,
+                            fontSize: "12.5px"
+                          }}
                         >
-                          {otpSending ? "Sending..." : otpCountdown > 0 ? `Resend (${otpCountdown}s)` : otpSent ? "Resend OTP" : "Send OTP"}
+                          Book Appointment Now →
                         </button>
-                      </div>
-                      <div style={{ marginTop: "6px" }}>
-                        <span style={{ fontSize: "11.5px", color: "#64748b" }}>
-                          Enter your mobile number to receive live 6-digit OTP
-                        </span>
-                      </div>
+                      </span>
                     </div>
-
-                    <div className="modal-form-group" style={{ marginBottom: "18px" }}>
-                      <label>6-Digit Security OTP *</label>
-                      <input
-                        type="text"
-                        required
-                        maxLength={6}
-                        placeholder={otpSent ? "Enter 6-digit OTP received on mobile" : "Click 'Send OTP' first"}
-                        value={patientAuthOtp}
-                        onChange={(e) => {
-                          setPatientAuthOtp(e.target.value.replace(/\D/g, ""));
-                          setPatientAuthError("");
-                        }}
-                      />
-                      {otpSent && (
-                        <div className="otp-timer-row">
-                          <span>OTP expires in 5 minutes</span>
-                          {otpCountdown === 0 && (
-                            <button
-                              type="button"
-                              className="btn-resend-otp-link"
-                              onClick={handleSendPatientOtp}
-                            >
-                              Resend OTP
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="btn-confirm-pay-now"
-                      style={{ marginTop: 0 }}
-                    >
-                      Verify OTP &amp; Access Health Records
-                    </button>
                   </form>
                 ) : (
                   <form onSubmit={handlePatientLoginWithId} className="patient-auth-form">
@@ -4833,11 +4778,16 @@ export default function HospitalLanding({ initialTab = "home" }) {
                         }}
                       />
                     </div>
+                    <div style={{ marginTop: "4px", marginBottom: "14px" }}>
+                      <span style={{ fontSize: "11.5px", color: "#64748b" }}>
+                        Already registered users can enter their assigned Patient ID (e.g. <strong>PAT-1001</strong>) to view consultations, prescriptions, reports, and bills.
+                      </span>
+                    </div>
 
                     <button
                       type="submit"
                       className="btn-confirm-pay-now"
-                      style={{ marginTop: "12px" }}
+                      style={{ marginTop: "4px" }}
                     >
                       Sign In With Patient ID
                     </button>
