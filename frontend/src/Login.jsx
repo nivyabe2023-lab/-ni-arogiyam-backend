@@ -392,29 +392,6 @@ function Login({ onLogin }) {
             </button>
           </div>
 
-          {/* DEFAULT CREDENTIALS BANNER */}
-          <div className="role-hint-pill">
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span>🔑</span>
-              <span>
-                Default Login (All Roles): <strong>admin</strong> / <strong>admin123</strong>
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setFormData({
-                  username: "admin",
-                  password: "admin123",
-                });
-                setError("");
-              }}
-              title="Click to auto-fill default credentials"
-            >
-              Auto-Fill
-            </button>
-          </div>
-
           {/* ERROR ALERT */}
           {error && (
             <div className="login-error-alert">
