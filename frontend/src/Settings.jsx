@@ -81,38 +81,55 @@ function Settings() {
           try {
             const portalAppts = JSON.parse(localStorage.getItem("system_appointments") || "[]");
             const patientRecords = JSON.parse(localStorage.getItem("patient_portal_records") || "{}");
-            const fromRecords = [];
+            const localList = Array.isArray(portalAppts) ? [...portalAppts] : [];
+
             Object.values(patientRecords).forEach((pat) => {
               if (pat && Array.isArray(pat.appointments)) {
                 pat.appointments.forEach((apt) => {
-                  fromRecords.push({
-                    appointmentId: apt.id || "APT-" + Math.floor(1000 + Math.random() * 9000),
-                    patientName: pat.name || "Ramesh Kumar",
-                    doctorName: apt.doctorName || "Dr. Rajesh Sharma",
-                    department: apt.department || "Cardiology",
-                    appointmentDate: apt.date || new Date().toISOString().substring(0, 10),
-                    appointmentTime: apt.slot || "10:30 AM",
-                    reason: `Patient Portal: ${apt.department || "Specialist"} Consultation`,
-                    status: (apt.status || "CONFIRMED").toUpperCase(),
-                  });
+                  const already = localList.some((s) => 
+                    (s.id && apt.id && String(s.id) === String(apt.id)) ||
+                    (s.appointmentId && apt.appointmentId && String(s.appointmentId) === String(apt.appointmentId)) ||
+                    (s.id && apt.appointmentId && String(s.id) === String(apt.appointmentId)) ||
+                    (s.appointmentId && apt.id && String(s.appointmentId) === String(apt.id))
+                  );
+                  if (!already) {
+                    localList.push({
+                      id: apt.id || `NIA-CARD-${Math.floor(1000 + Math.random() * 9000)}`,
+                      appointmentId: apt.appointmentId || apt.id,
+                      patientName: pat.name || "Ramesh Kumar",
+                      doctorName: apt.doctorName || "Dr. Rajesh Sharma",
+                      department: apt.department || "Cardiology",
+                      appointmentDate: apt.date || apt.appointmentDate || new Date().toISOString().substring(0, 10),
+                      appointmentTime: apt.slot || apt.appointmentTime || "10:30 AM",
+                      reason: apt.notes || apt.reason || "Consultation",
+                      status: (apt.status || "CONFIRMED").toUpperCase(),
+                    });
+                  }
                 });
               }
             });
 
-            const combinedAppts = [...(Array.isArray(portalAppts) ? portalAppts : []), ...fromRecords];
-            if (combinedAppts.length > 0) {
-              const currentList = Array.isArray(updated.appointments) ? [...updated.appointments] : [];
-              combinedAppts.forEach((p) => {
-                const exists = currentList.some(
-                  (item) => item.appointmentId === p.appointmentId || (item.reason === p.reason && item.appointmentDate === p.appointmentDate)
-                );
-                if (!exists) {
-                  currentList.unshift(p);
-                }
+            const currentList = Array.isArray(updated.appointments) ? [...updated.appointments] : [];
+            localList.forEach((p) => {
+              const exists = currentList.some((item) => {
+                if (item.appointmentId && p.appointmentId && String(item.appointmentId) === String(p.appointmentId)) return true;
+                if (item.id && p.id && String(item.id) === String(p.id)) return true;
+                if (item.id && p.appointmentId && String(item.id) === String(p.appointmentId)) return true;
+                if (item.appointmentId && p.id && String(item.appointmentId) === String(p.id)) return true;
+                
+                const itemPat = (item.patientName || (item.patient ? `${item.patient.firstName || ""} ${item.patient.lastName || ""}` : "")).toLowerCase().trim();
+                const pPat = (p.patientName || (p.patient ? `${p.patient.firstName || ""} ${p.patient.lastName || ""}` : "")).toLowerCase().trim();
+                const itemDate = String(item.appointmentDate || item.date || "").substring(0, 10);
+                const pDate = String(p.appointmentDate || p.date || "").substring(0, 10);
+                return itemPat && pPat && itemPat === pPat && itemDate === pDate;
               });
-              updated.appointments = currentList;
-              anySuccess = true;
-            }
+
+              if (!exists) {
+                currentList.unshift(p);
+              }
+            });
+            updated.appointments = currentList;
+            if (currentList.length > 0) anySuccess = true;
           } catch (e) {}
         }
 
@@ -214,6 +231,108 @@ function Settings() {
     setReplyText("");
   };
 
+  const handleQuickUpdateAppointmentStatus = async (appointment, newStatus) => {
+    const aptId = appointment.appointmentId || appointment.id;
+    const updated = (tableData.appointments || []).map((a) => {
+      if (String(a.appointmentId) === String(aptId) || String(a.id) === String(aptId)) {
+        return { ...a, status: newStatus };
+      }
+      return a;
+    });
+    setTableData((prev) => ({ ...prev, appointments: updated }));
+
+    try {
+      const sys = JSON.parse(localStorage.getItem("system_appointments") || "[]");
+      const updatedSys = sys.map((s) => {
+        if (String(s.appointmentId) === String(aptId) || String(s.id) === String(aptId)) {
+          return { ...s, status: newStatus };
+        }
+        return s;
+      });
+      localStorage.setItem("system_appointments", JSON.stringify(updatedSys));
+    } catch (e) {}
+
+    try {
+      const records = JSON.parse(localStorage.getItem("patient_portal_records") || "{}");
+      let recChanged = false;
+      Object.keys(records).forEach((k) => {
+        if (records[k] && Array.isArray(records[k].appointments)) {
+          records[k].appointments = records[k].appointments.map((a) => {
+            if (String(a.id) === String(aptId) || String(a.appointmentId) === String(aptId)) {
+              recChanged = true;
+              return { ...a, status: newStatus };
+            }
+            return a;
+          });
+        }
+      });
+      if (recChanged) {
+        localStorage.setItem("patient_portal_records", JSON.stringify(records));
+      }
+    } catch (e) {}
+
+    window.dispatchEvent(new CustomEvent("hospital_appointments_updated", { detail: { id: aptId, status: newStatus } }));
+    if (typeof BroadcastChannel !== "undefined") {
+      const bc = new BroadcastChannel("hospital_appointments_channel");
+      bc.postMessage({ type: "APPOINTMENT_STATUS", id: aptId, status: newStatus });
+      bc.close();
+    }
+
+    try {
+      await fetch(`${API_BASE_URL}/api/appointments/${aptId}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+    } catch (err) {
+      console.warn("Status update API error:", err);
+    }
+  };
+
+  const handleDeleteAppointment = async (id) => {
+    if (!window.confirm("Are you sure you want to permanently delete this appointment from the database?")) {
+      return;
+    }
+    const updated = (tableData.appointments || []).filter(
+      (a) => String(a.appointmentId) !== String(id) && String(a.id) !== String(id)
+    );
+    setTableData((prev) => ({ ...prev, appointments: updated }));
+
+    try {
+      const sys = JSON.parse(localStorage.getItem("system_appointments") || "[]");
+      const updatedSys = sys.filter(s => String(s.appointmentId) !== String(id) && String(s.id) !== String(id));
+      localStorage.setItem("system_appointments", JSON.stringify(updatedSys));
+    } catch (e) {}
+
+    try {
+      const records = JSON.parse(localStorage.getItem("patient_portal_records") || "{}");
+      let recChanged = false;
+      Object.keys(records).forEach((k) => {
+        if (records[k] && Array.isArray(records[k].appointments)) {
+          const origLen = records[k].appointments.length;
+          records[k].appointments = records[k].appointments.filter(a => String(a.id) !== String(id) && String(a.appointmentId) !== String(id));
+          if (records[k].appointments.length !== origLen) recChanged = true;
+        }
+      });
+      if (recChanged) {
+        localStorage.setItem("patient_portal_records", JSON.stringify(records));
+      }
+    } catch (e) {}
+
+    window.dispatchEvent(new CustomEvent("hospital_appointments_updated", { detail: { id, type: "DELETED" } }));
+    if (typeof BroadcastChannel !== "undefined") {
+      const bc = new BroadcastChannel("hospital_appointments_channel");
+      bc.postMessage({ type: "APPOINTMENT_DELETED", id });
+      bc.close();
+    }
+
+    try {
+      await fetch(`${API_BASE_URL}/api/appointments/${id}`, { method: "DELETE" });
+    } catch (err) {
+      console.warn("Delete appointment API error:", err);
+    }
+  };
+
   useEffect(() => {
     checkBackendData();
 
@@ -224,17 +343,26 @@ function Settings() {
     window.addEventListener("hospital_messages_updated", handleUpdate);
     window.addEventListener("storage", handleUpdate);
     let bc = null;
+    let bcAppt = null;
     if (typeof BroadcastChannel !== "undefined") {
       bc = new BroadcastChannel("hospital_messages_channel");
       bc.onmessage = () => {
         checkBackendData();
       };
+      bcAppt = new BroadcastChannel("hospital_appointments_channel");
+      bcAppt.onmessage = () => {
+        checkBackendData();
+      };
     }
+    const interval = setInterval(checkBackendData, 3000);
+
     return () => {
       window.removeEventListener("hospital_appointments_updated", handleUpdate);
       window.removeEventListener("hospital_messages_updated", handleUpdate);
       window.removeEventListener("storage", handleUpdate);
       if (bc) bc.close();
+      if (bcAppt) bcAppt.close();
+      clearInterval(interval);
     };
   }, []);
 
@@ -392,6 +520,7 @@ function Settings() {
               onClick={() => setActiveTableTab("appointments")}
             >
               📅 Appointments ({tableData.appointments?.length || 0})
+              <span className="nav-badge live" style={{ marginLeft: "6px", fontSize: "10px", padding: "1px 5px", display: "inline-block" }}>LIVE REAL-TIME</span>
             </button>
 
             <button
@@ -742,71 +871,136 @@ function Settings() {
 
             {activeTableTab === "appointments" && (
               <div>
-                <div className="db-viewer-info">
-                  <h4>
-                    Database Table: <code>appointment</code> (REST Endpoint: <code>/api/appointments</code>)
-                  </h4>
+                <div className="db-viewer-info" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+                  <div>
+                    <h4>
+                      Database Table: <code>appointment</code> (REST Endpoint: <code>/api/appointments</code>)
+                    </h4>
+                    <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#64748b" }}>
+                      Real-time live permanent storage. Changes made here or booked in patient portal update instantly across all tabs.
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#047857", fontWeight: 700, background: "#ecfdf5", border: "1px solid #a7f3d0", padding: "3px 10px", borderRadius: "12px" }}>
+                    <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981" }}></span>
+                    LIVE REAL-TIME SYNCED
+                  </div>
                 </div>
-                <div className="db-raw-table-wrapper">
-                  <table className="db-raw-table">
-                    <thead>
-                      <tr>
-                        <th>appointment_id</th>
-                        <th>Patient</th>
-                        <th>Doctor</th>
-                        <th>Date & Time</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tableData.appointments.map((a, idx) => {
-                        const patientDisplay =
-                          a.patientName ||
-                          (a.patient ? `${a.patient.firstName || ""} ${a.patient.lastName || ""}`.trim() : "") ||
-                          "Rajesh Kumar";
 
-                        const doctorDisplay =
-                          a.doctorName ||
-                          (a.doctor
-                            ? (a.doctor.doctorName ||
-                               (a.doctor.firstName
-                                 ? `Dr. ${a.doctor.firstName} ${a.doctor.lastName || ""}`.trim()
-                                 : a.doctor.name || ""))
-                            : "") ||
-                          (a.department ? `Dr. ${a.department} Specialist` : "") ||
-                          (idx % 4 === 0
-                            ? "Dr. Arvind Swaminathan (Cardiology)"
-                            : idx % 4 === 1
-                            ? "Dr. Suresh Menon (General Medicine)"
-                            : idx % 4 === 2
-                            ? "Dr. Meera Nair (Pediatrics)"
-                            : "Dr. Vikram Singh (Orthopedics)");
+                {tableData.appointments.length === 0 ? (
+                  <div className="db-no-data">No appointment records found in the database yet.</div>
+                ) : (
+                  <div className="db-raw-table-wrapper">
+                    <table className="db-raw-table">
+                      <thead>
+                        <tr>
+                          <th>appointment_id</th>
+                          <th>Patient</th>
+                          <th>Doctor</th>
+                          <th>Date &amp; Time</th>
+                          <th>Status</th>
+                          <th style={{ textAlign: "center" }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tableData.appointments.map((a, idx) => {
+                          const patientDisplay =
+                            a.patientName ||
+                            (a.patient ? `${a.patient.firstName || ""} ${a.patient.lastName || ""}`.trim() : "") ||
+                            "Rajesh Kumar";
 
-                        const dateDisplay = a.appointmentDate
-                          ? (String(a.appointmentDate).includes("T")
-                              ? a.appointmentDate
-                              : `${a.appointmentDate} ${a.appointmentTime || ""}`.trim())
-                          : (a.date ? `${a.date} ${a.slot || ""}`.trim() : "Scheduled");
+                          const doctorDisplay =
+                            a.doctorName ||
+                            (a.doctor
+                              ? (a.doctor.doctorName ||
+                                 (a.doctor.firstName
+                                   ? `Dr. ${a.doctor.firstName} ${a.doctor.lastName || ""}`.trim()
+                                   : a.doctor.name || ""))
+                              : "") ||
+                            (a.department ? `Dr. ${a.department} Specialist` : "") ||
+                            (idx % 4 === 0
+                              ? "Dr. Arvind Swaminathan (Cardiology)"
+                              : idx % 4 === 1
+                              ? "Dr. Suresh Menon (General Medicine)"
+                              : idx % 4 === 2
+                              ? "Dr. Meera Nair (Pediatrics)"
+                              : "Dr. Vikram Singh (Orthopedics)");
 
-                        return (
-                          <tr key={a.appointmentId || a.id || idx}>
-                            <td>#{a.appointmentId || a.id || idx + 1}</td>
-                            <td>{patientDisplay}</td>
-                            <td>
-                              <strong style={{ color: "#065f46" }}>
-                                {doctorDisplay}
-                              </strong>
-                            </td>
-                            <td>{dateDisplay}</td>
-                            <td>
-                              <span className="db-badge paid">{a.status || "CONFIRMED"}</span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                          const dateDisplay = a.appointmentDate
+                            ? (String(a.appointmentDate).includes("T")
+                                ? a.appointmentDate
+                                : `${a.appointmentDate} ${a.appointmentTime || ""}`.trim())
+                            : (a.date ? `${a.date} ${a.slot || ""}`.trim() : "Scheduled");
+
+                          const currentStatus = (a.status || "CONFIRMED").toUpperCase();
+
+                          return (
+                            <tr key={a.appointmentId || a.id || idx}>
+                              <td>#{a.appointmentId || a.id || idx + 1}</td>
+                              <td>
+                                <strong>{patientDisplay}</strong>
+                              </td>
+                              <td>
+                                <strong style={{ color: "#065f46" }}>
+                                  {doctorDisplay}
+                                </strong>
+                              </td>
+                              <td>{dateDisplay}</td>
+                              <td>
+                                <span className={`db-badge ${currentStatus === "CONFIRMED" || currentStatus === "COMPLETED" ? "paid" : "pending"}`}>
+                                  {currentStatus}
+                                </span>
+                              </td>
+                              <td style={{ whiteSpace: "nowrap", textAlign: "center" }}>
+                                <div style={{ display: "flex", gap: "5px", justifyContent: "center", flexWrap: "nowrap" }}>
+                                  {currentStatus !== "CONFIRMED" && (
+                                    <button
+                                      type="button"
+                                      className="btn-db-action reply"
+                                      onClick={() => handleQuickUpdateAppointmentStatus(a, "CONFIRMED")}
+                                      title="Confirm Appointment"
+                                    >
+                                      ✓ Confirm
+                                    </button>
+                                  )}
+                                  {currentStatus !== "COMPLETED" && (
+                                    <button
+                                      type="button"
+                                      className="btn-db-action reply"
+                                      style={{ background: "#eff6ff", color: "#1d4ed8", borderColor: "#bfdbfe" }}
+                                      onClick={() => handleQuickUpdateAppointmentStatus(a, "COMPLETED")}
+                                      title="Mark Completed"
+                                    >
+                                      ✓ Done
+                                    </button>
+                                  )}
+                                  {currentStatus !== "CANCELLED" && (
+                                    <button
+                                      type="button"
+                                      className="btn-db-action delete"
+                                      style={{ background: "#fef2f2", color: "#b91c1c", borderColor: "#fecaca" }}
+                                      onClick={() => handleQuickUpdateAppointmentStatus(a, "CANCELLED")}
+                                      title="Cancel Appointment"
+                                    >
+                                      ✕ Cancel
+                                    </button>
+                                  )}
+                                  <button
+                                    type="button"
+                                    className="btn-db-action delete"
+                                    onClick={() => handleDeleteAppointment(a.appointmentId || a.id)}
+                                    title="Delete appointment permanently"
+                                  >
+                                    🗑️ Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
 

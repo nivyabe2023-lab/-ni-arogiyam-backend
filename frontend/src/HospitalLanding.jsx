@@ -855,8 +855,17 @@ export default function HospitalLanding({ initialTab = "home" }) {
   const [bookingOtpError, setBookingOtpError] = useState("");
   const [bookingOtpSuccess, setBookingOtpSuccess] = useState("");
 
-  // Patient Self-Service Portal State
-  const [patientRecords, setPatientRecords] = useState(DEFAULT_PATIENT_RECORDS);
+  // Patient Self-Service Portal State with Permanent Storage
+  const [patientRecords, setPatientRecords] = useState(() => {
+    try {
+      const saved = localStorage.getItem("patient_portal_records");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return { ...DEFAULT_PATIENT_RECORDS, ...parsed };
+      }
+    } catch (e) {}
+    return DEFAULT_PATIENT_RECORDS;
+  });
   const [patientPortalOpen, setPatientPortalOpen] = useState(false);
   const [authenticatedPatientId, setAuthenticatedPatientId] = useState("PAT-1001");
   const [isPatientAuthenticated, setIsPatientAuthenticated] = useState(false);
@@ -913,6 +922,151 @@ export default function HospitalLanding({ initialTab = "home" }) {
     }
     return () => clearTimeout(timer);
   }, [patientAadharOtpCountdown]);
+
+  // Real-Time Permanent Synchronization for Patient Appointments
+  const syncPatientAppointmentsFromBackend = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/appointments`);
+      if (res.ok) {
+        const remoteAppts = await res.json();
+        if (Array.isArray(remoteAppts) && remoteAppts.length > 0) {
+          setPatientRecords((prev) => {
+            let changed = false;
+            const updated = { ...prev };
+            const pId = authenticatedPatientId || "PAT-1001";
+            const patient = updated[pId];
+            if (patient) {
+              const currentList = Array.isArray(patient.appointments) ? [...patient.appointments] : [];
+              const patName = (patient.name || "").toLowerCase();
+              const patPhone = (patient.phone || "").replace(/\D/g, "").slice(-10);
+
+              remoteAppts.forEach((ra) => {
+                const raName = (ra.patientName || (ra.patient ? `${ra.patient.firstName || ""} ${ra.patient.lastName || ""}` : "")).toLowerCase();
+                const raPhone = (ra.phoneNumber || (ra.patient?.phoneNumber || "")).replace(/\D/g, "").slice(-10);
+                const isMatch = (patName && raName && (raName.includes(patName) || patName.includes(raName))) ||
+                                (patPhone && raPhone && patPhone === raPhone) ||
+                                (String(ra.id).startsWith("NIA-") && currentList.some(c => String(c.id) === String(ra.id) || String(c.appointmentId) === String(ra.appointmentId)));
+
+                if (isMatch) {
+                  const existingIdx = currentList.findIndex(c => 
+                    (c.id && (String(c.id) === String(ra.id) || String(c.id) === String(ra.appointmentId))) ||
+                    (c.appointmentId && (String(c.appointmentId) === String(ra.appointmentId) || String(c.appointmentId) === String(ra.id)))
+                  );
+
+                  if (existingIdx >= 0) {
+                    if (currentList[existingIdx].status !== ra.status) {
+                      currentList[existingIdx] = { ...currentList[existingIdx], status: ra.status || "CONFIRMED" };
+                      changed = true;
+                    }
+                  } else {
+                    currentList.unshift({
+                      id: ra.id || ra.appointmentId || `NIA-CARD-${Math.floor(1000 + Math.random() * 9000)}`,
+                      appointmentId: ra.appointmentId || ra.id,
+                      doctorName: ra.doctorName || "Dr. Rajesh Sharma",
+                      department: ra.department || "Cardiology",
+                      date: ra.appointmentDate ? String(ra.appointmentDate).substring(0, 10) : new Date().toISOString().substring(0, 10),
+                      slot: ra.appointmentTime || "10:30 AM",
+                      room: ra.room || "Suite 101, Specialty Clinic OPD",
+                      status: ra.status || "CONFIRMED",
+                      notes: ra.reason || "Consultation appointment confirmed"
+                    });
+                    changed = true;
+                  }
+                }
+              });
+
+              if (changed) {
+                updated[pId] = { ...patient, appointments: currentList };
+                try {
+                  localStorage.setItem("patient_portal_records", JSON.stringify(updated));
+                } catch (e) {}
+                return updated;
+              }
+            }
+            return prev;
+          });
+        }
+      }
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    syncPatientAppointmentsFromBackend();
+
+    const handleUpdate = () => {
+      syncPatientAppointmentsFromBackend();
+    };
+
+    window.addEventListener("hospital_appointments_updated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+
+    let bc = null;
+    if (typeof BroadcastChannel !== "undefined") {
+      bc = new BroadcastChannel("hospital_appointments_channel");
+      bc.onmessage = () => {
+        syncPatientAppointmentsFromBackend();
+      };
+    }
+
+    const interval = setInterval(syncPatientAppointmentsFromBackend, 3000);
+
+    return () => {
+      window.removeEventListener("hospital_appointments_updated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+      if (bc) bc.close();
+      clearInterval(interval);
+    };
+  }, [authenticatedPatientId]);
+
+  const handleCancelPatientAppointment = async (aptId) => {
+    if (!window.confirm("Are you sure you want to cancel this scheduled appointment?")) return;
+
+    const pId = authenticatedPatientId || "PAT-1001";
+    setPatientRecords((prev) => {
+      const patient = prev[pId];
+      if (!patient) return prev;
+      const updatedAppts = (patient.appointments || []).map((a) => {
+        if (String(a.id) === String(aptId) || String(a.appointmentId) === String(aptId)) {
+          return { ...a, status: "CANCELLED" };
+        }
+        return a;
+      });
+      const updated = {
+        ...prev,
+        [pId]: { ...patient, appointments: updatedAppts }
+      };
+      try {
+        localStorage.setItem("patient_portal_records", JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    try {
+      const sysAppts = JSON.parse(localStorage.getItem("system_appointments") || "[]");
+      const updatedSys = sysAppts.map((a) => {
+        if (String(a.id) === String(aptId) || String(a.appointmentId) === String(aptId)) {
+          return { ...a, status: "CANCELLED" };
+        }
+        return a;
+      });
+      localStorage.setItem("system_appointments", JSON.stringify(updatedSys));
+    } catch (e) {}
+
+    window.dispatchEvent(new CustomEvent("hospital_appointments_updated", { detail: { id: aptId, status: "CANCELLED" } }));
+    if (typeof BroadcastChannel !== "undefined") {
+      const bc = new BroadcastChannel("hospital_appointments_channel");
+      bc.postMessage({ type: "APPOINTMENT_STATUS", id: aptId, status: "CANCELLED" });
+      bc.close();
+    }
+
+    try {
+      await fetch(`${API_BASE_URL}/api/appointments/${aptId}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "CANCELLED" }),
+      });
+    } catch (e) {}
+  };
 
   const [appointmentForm, setAppointmentForm] = useState({
     fullName: "",
@@ -1141,7 +1295,12 @@ export default function HospitalLanding({ initialTab = "home" }) {
       const existing = JSON.parse(localStorage.getItem("system_appointments") || "[]");
       const updatedList = [newAppointment, ...existing.filter(a => a.id !== newAppointment.id)];
       localStorage.setItem("system_appointments", JSON.stringify(updatedList));
-      window.dispatchEvent(new Event("hospital_appointments_updated"));
+      window.dispatchEvent(new CustomEvent("hospital_appointments_updated", { detail: newAppointment }));
+      if (typeof BroadcastChannel !== "undefined") {
+        const bc = new BroadcastChannel("hospital_appointments_channel");
+        bc.postMessage({ type: "NEW_APPOINTMENT", appointment: newAppointment });
+        bc.close();
+      }
     } catch (err) {}
 
     // 3. Post to backend REST API /api/appointments
@@ -1150,6 +1309,8 @@ export default function HospitalLanding({ initialTab = "home" }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          id: newAppointment.id,
+          appointmentId: newAppointment.appointmentId,
           patientName: appointmentForm.fullName,
           doctorName: docName,
           department: newAppointment.department,
@@ -4940,10 +5101,16 @@ export default function HospitalLanding({ initialTab = "home" }) {
                 {/* TAB 1: APPOINTMENTS */}
                 {portalActiveTab === "appointments" && (
                   <div className="patient-appointments-list">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                      <span style={{ fontSize: "13px", fontWeight: 700, color: "#334155" }}>
-                        Your Consultations &amp; Schedules
-                      </span>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                      <div>
+                        <span style={{ fontSize: "13px", fontWeight: 700, color: "#334155" }}>
+                          Your Consultations &amp; Schedules
+                        </span>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#047857", fontWeight: 700, background: "#ecfdf5", border: "1px solid #a7f3d0", padding: "2px 8px", borderRadius: "12px", width: "fit-content", marginTop: "3px" }}>
+                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981" }}></span>
+                          LIVE REAL-TIME SYNCED
+                        </div>
+                      </div>
                       <button
                         type="button"
                         style={{
@@ -4951,7 +5118,7 @@ export default function HospitalLanding({ initialTab = "home" }) {
                           color: "#fff",
                           border: "none",
                           borderRadius: "6px",
-                          padding: "5px 12px",
+                          padding: "6px 14px",
                           fontSize: "12px",
                           fontWeight: 700,
                           cursor: "pointer"
@@ -4984,12 +5151,33 @@ export default function HospitalLanding({ initialTab = "home" }) {
                               </div>
                             )}
                             <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
-                              Ref: <strong>{apt.id}</strong>
+                              Ref: <strong>{apt.id || apt.appointmentId}</strong>
                             </div>
                           </div>
-                          <span className={`patient-apt-status ${apt.status?.toLowerCase() === "confirmed" ? "confirmed" : "completed"}`}>
-                            {apt.status}
-                          </span>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px" }}>
+                            <span className={`patient-apt-status ${(apt.status || "CONFIRMED").toLowerCase()}`}>
+                              {apt.status || "CONFIRMED"}
+                            </span>
+                            {apt.status !== "CANCELLED" && apt.status !== "COMPLETED" && (
+                              <button
+                                type="button"
+                                style={{
+                                  background: "#fee2e2",
+                                  color: "#b91c1c",
+                                  border: "1px solid #fecaca",
+                                  borderRadius: "5px",
+                                  padding: "3px 8px",
+                                  fontSize: "11px",
+                                  fontWeight: 600,
+                                  cursor: "pointer"
+                                }}
+                                onClick={() => handleCancelPatientAppointment(apt.id || apt.appointmentId)}
+                                title="Cancel this appointment"
+                              >
+                                ✕ Cancel Booking
+                              </button>
+                            )}
+                          </div>
                         </div>
                       ))
                     )}

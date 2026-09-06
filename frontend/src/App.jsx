@@ -1053,7 +1053,7 @@ function Sidebar({ isOpen, onClose }) {
               >
                 <span className="nav-icon">📅</span>
                 <span className="nav-text">Appointments & Patient History</span>
-                <span className="nav-badge live">Live</span>
+                <span className="nav-badge live">Live Real-time</span>
               </NavLink>
 
               <NavLink
@@ -1135,6 +1135,7 @@ function Sidebar({ isOpen, onClose }) {
               >
                 <span className="nav-icon">📅</span>
                 <span className="nav-text">Appointments</span>
+                <span className="nav-badge live">Live Real-time</span>
               </NavLink>
 
               <NavLink
