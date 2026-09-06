@@ -211,6 +211,144 @@ public class BedScheduleController {
 
         sched.put("foodSchedule", foods);
 
+        // Default In-Patient Prescribed Medicines
+        List<Map<String, Object>> medicines = new ArrayList<>();
+
+        Map<String, Object> m1 = new LinkedHashMap<>();
+        m1.put("id", 1);
+        m1.put("medicineName", "Tab. Telmisartan 40mg");
+        m1.put("category", "Cardiology / Antihypertensive");
+        m1.put("dosage", "1 Tablet (Oral)");
+        m1.put("frequency", "Once Daily (1-0-0)");
+        m1.put("instructions", "Morning Before Breakfast");
+        m1.put("prescribedBy", "Dr. Suresh Menon (Cardiology)");
+        m1.put("datePrescribed", "2026-08-28");
+        m1.put("duration", "30 Days");
+        m1.put("status", "ACTIVE");
+        medicines.add(m1);
+
+        Map<String, Object> m2 = new LinkedHashMap<>();
+        m2.put("id", 2);
+        m2.put("medicineName", "Tab. Metformin 500mg SR");
+        m2.put("category", "Diabetology / Glycemic Control");
+        m2.put("dosage", "1 Tablet (Oral)");
+        m2.put("frequency", "Twice Daily (1-0-1)");
+        m2.put("instructions", "With Meals (Breakfast & Dinner)");
+        m2.put("prescribedBy", "Dr. Ananya Rao (General Medicine)");
+        m2.put("datePrescribed", "2026-08-28");
+        m2.put("duration", "30 Days");
+        m2.put("status", "ACTIVE");
+        medicines.add(m2);
+
+        Map<String, Object> m3 = new LinkedHashMap<>();
+        m3.put("id", 3);
+        m3.put("medicineName", "Tab. Atorvastatin 20mg");
+        m3.put("category", "Lipid Lowering / Statin");
+        m3.put("dosage", "1 Tablet (Oral)");
+        m3.put("frequency", "Once Nightly (0-0-1)");
+        m3.put("instructions", "After Dinner (Bedtime)");
+        m3.put("prescribedBy", "Dr. Suresh Menon (Cardiology)");
+        m3.put("datePrescribed", "2026-09-01");
+        m3.put("duration", "60 Days");
+        m3.put("status", "ACTIVE");
+        medicines.add(m3);
+
+        Map<String, Object> m4 = new LinkedHashMap<>();
+        m4.put("id", 4);
+        m4.put("medicineName", "Inj. Pantoprazole 40mg IV");
+        m4.put("category", "Gastroenterology / PPI");
+        m4.put("dosage", "40mg IV Infusion");
+        m4.put("frequency", "Once Daily (OD)");
+        m4.put("instructions", "Slow IV injection with NS flush");
+        m4.put("prescribedBy", "Dr. Suresh Menon");
+        m4.put("datePrescribed", "2026-09-05");
+        m4.put("duration", "5 Days");
+        m4.put("status", "ACTIVE");
+        medicines.add(m4);
+
+        Map<String, Object> m5 = new LinkedHashMap<>();
+        m5.put("id", 5);
+        m5.put("medicineName", "Cap. Augmentin 625mg (Amoxicillin + Clavulanic)");
+        m5.put("category", "Antibiotics / Anti-infective");
+        m5.put("dosage", "1 Capsule (Oral)");
+        m5.put("frequency", "Twice Daily (1-0-1)");
+        m5.put("instructions", "After Food with water");
+        m5.put("prescribedBy", "Dr. Ananya Rao");
+        m5.put("datePrescribed", "2026-08-25");
+        m5.put("duration", "7 Days");
+        m5.put("status", "COMPLETED");
+        medicines.add(m5);
+
+        sched.put("medicines", medicines);
+
+        // Default Laboratory & Diagnostic Reports
+        List<Map<String, Object>> labReports = new ArrayList<>();
+
+        Map<String, Object> l1 = new LinkedHashMap<>();
+        l1.put("id", "LAB-CRD-8821");
+        l1.put("testName", "Lipid Profile & Troponin I");
+        l1.put("category", "Cardiology & Biochemistry Panel");
+        l1.put("testDate", "2026-09-05");
+        l1.put("sampleType", "Venous Blood / Serum");
+        l1.put("status", "COMPLETED");
+        l1.put("flag", "BORDERLINE ELEVATED");
+        l1.put("labDoctor", "Dr. R. Ramanathan, MD (Pathology)");
+        l1.put("technician", "K. Mohan, M.Sc MLT");
+        l1.put("summary", "Cholesterol: 220 mg/dL, Troponin I: Normal (0.01 ng/mL). Cardiac enzymes stable; lipid fraction elevated.");
+        List<Map<String, Object>> l1Params = new ArrayList<>();
+        l1Params.add(Map.of("name", "High-Sensitivity Troponin-I (hs-cTnI)", "value", "0.01", "unit", "ng/mL", "refRange", "< 0.04 ng/mL", "status", "NORMAL"));
+        l1Params.add(Map.of("name", "Total Cholesterol", "value", "220", "unit", "mg/dL", "refRange", "< 200 mg/dL", "status", "HIGH"));
+        l1Params.add(Map.of("name", "LDL Cholesterol (Direct)", "value", "142", "unit", "mg/dL", "refRange", "< 100 mg/dL", "status", "HIGH"));
+        l1Params.add(Map.of("name", "HDL Cholesterol", "value", "38", "unit", "mg/dL", "refRange", "> 40 mg/dL", "status", "LOW"));
+        l1Params.add(Map.of("name", "Serum Triglycerides", "value", "190", "unit", "mg/dL", "refRange", "< 150 mg/dL", "status", "HIGH"));
+        l1Params.add(Map.of("name", "Creatine Kinase-MB (CK-MB)", "value", "16.2", "unit", "U/L", "refRange", "< 25 U/L", "status", "NORMAL"));
+        l1.put("parameters", l1Params);
+        labReports.add(l1);
+
+        Map<String, Object> l2 = new LinkedHashMap<>();
+        l2.put("id", "LAB-CBC-4102");
+        l2.put("testName", "Complete Blood Count (CBC) with Differential");
+        l2.put("category", "Hematology");
+        l2.put("testDate", "2026-09-04");
+        l2.put("sampleType", "Whole Blood (K2-EDTA)");
+        l2.put("status", "COMPLETED");
+        l2.put("flag", "NORMAL");
+        l2.put("labDoctor", "Dr. R. Ramanathan, MD (Pathology)");
+        l2.put("technician", "S. Priya, DMLT");
+        l2.put("summary", "Hemogram profile within physiological limits. Leucocyte count and platelets normal.");
+        List<Map<String, Object>> l2Params = new ArrayList<>();
+        l2Params.add(Map.of("name", "Hemoglobin (Hb)", "value", "14.5", "unit", "g/dL", "refRange", "13.0 - 17.0", "status", "NORMAL"));
+        l2Params.add(Map.of("name", "Total WBC Count", "value", "7,400", "unit", "/µL", "refRange", "4,000 - 11,000", "status", "NORMAL"));
+        l2Params.add(Map.of("name", "Platelet Count", "value", "245,000", "unit", "/µL", "refRange", "150,000 - 450,000", "status", "NORMAL"));
+        l2Params.add(Map.of("name", "Packed Cell Volume (PCV)", "value", "43.2", "unit", "%", "refRange", "40.0 - 50.0", "status", "NORMAL"));
+        l2Params.add(Map.of("name", "ESR (Westergren)", "value", "12", "unit", "mm/hr", "refRange", "0 - 15", "status", "NORMAL"));
+        l2Params.add(Map.of("name", "Neutrophils", "value", "62", "unit", "%", "refRange", "40 - 75", "status", "NORMAL"));
+        l2Params.add(Map.of("name", "Lymphocytes", "value", "30", "unit", "%", "refRange", "20 - 45", "status", "NORMAL"));
+        l2.put("parameters", l2Params);
+        labReports.add(l2);
+
+        Map<String, Object> l3 = new LinkedHashMap<>();
+        l3.put("id", "LAB-KFT-1904");
+        l3.put("testName", "Renal Function Test (RFT) & Serum Electrolytes");
+        l3.put("category", "Clinical Biochemistry");
+        l3.put("testDate", "2026-09-03");
+        l3.put("sampleType", "Serum");
+        l3.put("status", "COMPLETED");
+        l3.put("flag", "NORMAL");
+        l3.put("labDoctor", "Dr. R. Ramanathan, MD (Pathology)");
+        l3.put("technician", "M. Saravanan, B.Sc MLT");
+        l3.put("summary", "Serum Creatinine: 1.05 mg/dL, eGFR: 88 mL/min/1.73m². Adequate renal clearance.");
+        List<Map<String, Object>> l3Params = new ArrayList<>();
+        l3Params.add(Map.of("name", "Serum Creatinine", "value", "1.05", "unit", "mg/dL", "refRange", "0.70 - 1.30", "status", "NORMAL"));
+        l3Params.add(Map.of("name", "Blood Urea Nitrogen (BUN)", "value", "18.2", "unit", "mg/dL", "refRange", "8.0 - 23.0", "status", "NORMAL"));
+        l3Params.add(Map.of("name", "Serum Sodium (Na+)", "value", "139", "unit", "mEq/L", "refRange", "135 - 145", "status", "NORMAL"));
+        l3Params.add(Map.of("name", "Serum Potassium (K+)", "value", "4.3", "unit", "mEq/L", "refRange", "3.5 - 5.1", "status", "NORMAL"));
+        l3Params.add(Map.of("name", "eGFR", "value", "88", "unit", "mL/min/1.73m²", "refRange", "> 60", "status", "NORMAL"));
+        l3.put("parameters", l3Params);
+        labReports.add(l3);
+
+        sched.put("labReports", labReports);
+
         return sched;
     }
 }
