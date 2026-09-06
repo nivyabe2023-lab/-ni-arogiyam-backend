@@ -1306,9 +1306,6 @@ function Patients() {
                         <span>📲</span>
                         <div>
                           <strong>{otpSuccess}</strong>
-                          {generatedOtp && (
-                            <small>Fallback Test Code: <strong>{generatedOtp}</strong></small>
-                          )}
                         </div>
                       </div>
                     )}
