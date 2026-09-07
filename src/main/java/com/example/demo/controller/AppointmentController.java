@@ -11,13 +11,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @RestController
 @RequestMapping("/api/appointments")
-@CrossOrigin(origins = "*")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
     // Fail-safe in-memory cache so appointments are never lost even during offline DB
     private static final List<Map<String, Object>> IN_MEMORY_APPOINTMENTS = new CopyOnWriteArrayList<>();
+    private static final Set<String> DELETED_IDS = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     public AppointmentController(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
@@ -121,17 +121,27 @@ public class AppointmentController {
             if (dbList != null && !dbList.isEmpty()) {
                 for (Appointment a : dbList) {
                     Map<String, Object> map = convertAppointmentToMap(a);
+                    String idStr = String.valueOf(map.get("id"));
+                    String aptIdStr = String.valueOf(map.get("appointmentId"));
+                    if (DELETED_IDS.contains(idStr) || DELETED_IDS.contains(aptIdStr)) {
+                        continue;
+                    }
                     String dedupeKey = getAppointmentKey(map);
                     if (dedupeKey != null && seenKeys.add(dedupeKey)) {
                         result.add(map);
                     }
                 }
             }
-        } catch (Exception e) {
-            System.err.println("DB query fallback to in-memory appointments: " + e.getMessage());
+        } catch (Throwable t) {
+            System.err.println("DB query fallback to in-memory appointments: " + t.getMessage());
         }
 
         for (Map<String, Object> mem : IN_MEMORY_APPOINTMENTS) {
+            String idStr = String.valueOf(mem.get("id"));
+            String aptIdStr = String.valueOf(mem.get("appointmentId"));
+            if (DELETED_IDS.contains(idStr) || DELETED_IDS.contains(aptIdStr)) {
+                continue;
+            }
             String dedupeKey = getAppointmentKey(mem);
             if (dedupeKey != null && seenKeys.add(dedupeKey)) {
                 result.add(0, mem);
@@ -156,8 +166,13 @@ public class AppointmentController {
             if (savedEntity != null && savedEntity.getAppointmentId() != null) {
                 generatedId = savedEntity.getAppointmentId();
             }
-        } catch (Exception e) {
-            System.err.println("DB save fallback for appointment: " + e.getMessage());
+        } catch (Throwable t) {
+            System.err.println("DB save fallback for appointment: " + t.getMessage());
+        }
+
+        DELETED_IDS.remove(String.valueOf(generatedId));
+        if (savedEntity != null && savedEntity.getAppointmentId() != null) {
+            DELETED_IDS.remove(String.valueOf(savedEntity.getAppointmentId()));
         }
 
         Map<String, Object> memItem = new LinkedHashMap<>();
@@ -314,7 +329,9 @@ public class AppointmentController {
         try {
             Long numId = Long.valueOf(id);
             appointmentService.deleteAppointment(numId);
-        } catch (Exception ignored) {}
+        } catch (Throwable ignored) {}
+
+        DELETED_IDS.add(id);
 
         IN_MEMORY_APPOINTMENTS.removeIf(mem -> 
             id.equalsIgnoreCase(String.valueOf(mem.get("id"))) || 

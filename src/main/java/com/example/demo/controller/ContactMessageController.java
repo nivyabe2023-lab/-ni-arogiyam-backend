@@ -11,13 +11,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @RestController
 @RequestMapping("/api/contact-messages")
-@CrossOrigin(origins = "*")
 public class ContactMessageController {
 
     private final ContactMessageRepository repository;
 
     // Fail-safe persistent in-memory storage so messages are never lost even during offline DB
     private static final List<Map<String, Object>> IN_MEMORY_MESSAGES = new CopyOnWriteArrayList<>();
+    private static final Set<String> DELETED_IDS = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     public ContactMessageController(ContactMessageRepository repository) {
         this.repository = repository;
@@ -60,9 +60,12 @@ public class ContactMessageController {
     public ResponseEntity<List<Map<String, Object>>> getAllMessages() {
         try {
             List<ContactMessage> dbList = repository.findAllByOrderByCreatedAtDesc();
-            if (!dbList.isEmpty()) {
+            if (dbList != null && !dbList.isEmpty()) {
                 List<Map<String, Object>> result = new ArrayList<>();
                 for (ContactMessage cm : dbList) {
+                    if (DELETED_IDS.contains(String.valueOf(cm.getMessageId()))) {
+                        continue;
+                    }
                     Map<String, Object> map = new LinkedHashMap<>();
                     map.put("id", cm.getMessageId());
                     map.put("messageId", cm.getMessageId());
@@ -79,10 +82,18 @@ public class ContactMessageController {
                 }
                 return ResponseEntity.ok(result);
             }
-        } catch (Exception e) {
-            System.err.println("DB query fallback to in-memory: " + e.getMessage());
+        } catch (Throwable t) {
+            System.err.println("DB query fallback to in-memory: " + t.getMessage());
         }
-        return ResponseEntity.ok(IN_MEMORY_MESSAGES);
+
+        List<Map<String, Object>> fallback = new ArrayList<>();
+        for (Map<String, Object> mem : IN_MEMORY_MESSAGES) {
+            if (DELETED_IDS.contains(String.valueOf(mem.get("id"))) || DELETED_IDS.contains(String.valueOf(mem.get("messageId")))) {
+                continue;
+            }
+            fallback.add(mem);
+        }
+        return ResponseEntity.ok(fallback);
     }
 
     @PostMapping
@@ -97,9 +108,11 @@ public class ContactMessageController {
         try {
             ContactMessage saved = repository.save(cm);
             newId = saved.getMessageId();
-        } catch (Exception e) {
-            System.err.println("DB save fallback: " + e.getMessage());
+        } catch (Throwable t) {
+            System.err.println("DB save fallback: " + t.getMessage());
         }
+
+        DELETED_IDS.remove(String.valueOf(newId));
 
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id", newId);
@@ -118,8 +131,7 @@ public class ContactMessageController {
         return ResponseEntity.ok(res);
     }
 
-    @PutMapping("/{id}/reply")
-    @PostMapping("/{id}/reply")
+    @RequestMapping(value = "/{id}/reply", method = {RequestMethod.PUT, RequestMethod.POST})
     public ResponseEntity<Map<String, Object>> replyToMessage(@PathVariable Long id, @RequestBody Map<String, Object> body) {
         String replyText = String.valueOf(body.getOrDefault("reply", "")).trim();
         String repliedBy = String.valueOf(body.getOrDefault("repliedBy", "Administrator")).trim();
@@ -134,8 +146,8 @@ public class ContactMessageController {
                 cm.setStatus("REPLIED");
                 repository.save(cm);
             }
-        } catch (Exception e) {
-            System.err.println("DB reply fallback: " + e.getMessage());
+        } catch (Throwable t) {
+            System.err.println("DB reply fallback: " + t.getMessage());
         }
 
         for (Map<String, Object> item : IN_MEMORY_MESSAGES) {
@@ -160,9 +172,11 @@ public class ContactMessageController {
     public ResponseEntity<Map<String, Object>> deleteMessage(@PathVariable Long id) {
         try {
             repository.deleteById(id);
-        } catch (Exception e) {
-            System.err.println("DB delete fallback: " + e.getMessage());
+        } catch (Throwable t) {
+            System.err.println("DB delete fallback: " + t.getMessage());
         }
+
+        DELETED_IDS.add(String.valueOf(id));
 
         IN_MEMORY_MESSAGES.removeIf(item ->
             Objects.equals(String.valueOf(item.get("id")), String.valueOf(id)) ||
