@@ -1370,10 +1370,37 @@ function ApplicationLayout() {
 function App() {
   useEffect(() => {
     document.title = "NI-AROGIYAM Hospital";
-    // Dynamic cache-busting to ensure browser tab instantly displays the hospital stethoscope logo
-    const link = document.querySelector("link[rel~='icon']");
-    if (link) {
-      link.href = "/favicon.svg?t=" + Date.now();
+
+    try {
+      // Inline hospital stethoscope SVG Data URI for immediate, cache-proof tab icon display
+      const hospitalSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect width="64" height="64" rx="14" fill="#ffffff"/><rect width="62" height="62" x="1" y="1" rx="13" fill="none" stroke="#d1fae5" stroke-width="2"/><g transform="translate(32, 32) scale(1.16) translate(-28.25, -24)"><path d="M14 8C14 5.79086 15.7909 4 18 4H30C32.2091 4 34 5.79086 34 8V18C34 23.5228 29.5228 28 24 28C18.4772 28 14 23.5228 14 18V8Z" stroke="#065f46" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M24 28V36C24 40.4183 27.5817 44 32 44C36.4183 44 40 40.4183 40 36V30" stroke="#065f46" stroke-width="3.2" stroke-linecap="round" fill="none"/><circle cx="40" cy="30" r="4.2" fill="#10b981"/><path d="M24 12C22 10 19 11 19 14C19 18 24 21 24 21C24 21 29 18 29 14C29 11 26 10 24 12Z" fill="#10b981"/></g></svg>`;
+      const dataUri = "data:image/svg+xml;utf8," + encodeURIComponent(hospitalSvg);
+
+      // Clean out any stale favicon links
+      document.querySelectorAll("link[rel*='icon']").forEach((el) => el.remove());
+
+      // 1. Primary SVG Data URI icon (updates tab instantly in Chromium/Firefox/WebKit)
+      const iconSvg = document.createElement("link");
+      iconSvg.rel = "icon";
+      iconSvg.type = "image/svg+xml";
+      iconSvg.href = dataUri;
+      document.head.appendChild(iconSvg);
+
+      // 2. High-res 32x32 PNG icon with timestamp to bypass disk cache
+      const iconPng = document.createElement("link");
+      iconPng.rel = "icon";
+      iconPng.type = "image/png";
+      iconPng.sizes = "32x32";
+      iconPng.href = `/hospital-logo-32x32.png?t=${Date.now()}`;
+      document.head.appendChild(iconPng);
+
+      // 3. True Windows ICO shortcut icon
+      const shortcutIco = document.createElement("link");
+      shortcutIco.rel = "shortcut icon";
+      shortcutIco.href = `/hospital-logo.ico?t=${Date.now()}`;
+      document.head.appendChild(shortcutIco);
+    } catch (e) {
+      console.warn("Favicon update notice:", e);
     }
   }, []);
 
