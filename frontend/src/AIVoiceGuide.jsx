@@ -193,7 +193,8 @@ export default function AIVoiceGuide({
       };
 
       utterance.onerror = (e) => {
-        console.warn("Speech synthesis notice:", e);
+        if (e.error === "canceled" || e.error === "interrupted") return;
+        console.warn("Speech synthesis notice:", e.error || e);
       };
 
       try {
