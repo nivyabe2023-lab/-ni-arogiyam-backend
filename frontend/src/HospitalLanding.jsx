@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./HospitalLanding.css";
 import API_BASE_URL from "./config";
+import AIVoiceGuide from "./AIVoiceGuide";
 import {
   generateLabReportPDF,
   generateIndividualBillPDF,
@@ -5540,6 +5541,22 @@ export default function HospitalLanding({ initialTab = "home" }) {
           </div>
         </div>
       )}
+
+      {/* LIVE AI VOICE GUIDE & INTERACTIVE NARRATION */}
+      <AIVoiceGuide
+        activeTab={activeTab}
+        onNavigateTab={(tabKey) => {
+          if (tabKey === "home") handleNavHome();
+          else if (tabKey === "about") handleNavAbout();
+          else if (tabKey === "specialties") handleNavSpecialties();
+          else if (tabKey === "facilities") handleNavFacilities();
+          else if (tabKey === "doctors") handleNavDoctors();
+          else if (tabKey === "patient-visitors") handleNavPatientVisitors();
+          else if (tabKey === "contact") handleNavContact();
+        }}
+        bookingModalOpen={bookingModalOpen}
+        patientPortalOpen={patientPortalOpen}
+      />
     </div>
   );
 }
