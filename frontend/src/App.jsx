@@ -1368,6 +1368,15 @@ function ApplicationLayout() {
    ========================================================= */
 
 function App() {
+  useEffect(() => {
+    document.title = "NI-AROGIYAM Hospital";
+    // Dynamic cache-busting to ensure browser tab instantly displays the hospital stethoscope logo
+    const link = document.querySelector("link[rel~='icon']");
+    if (link) {
+      link.href = "/favicon.svg?t=" + Date.now();
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <ErrorBoundary>
